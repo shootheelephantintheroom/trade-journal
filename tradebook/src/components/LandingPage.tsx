@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, Fragment } from "react";
 import { Navigate, Link } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 
@@ -25,6 +25,51 @@ const FAQS = [
   },
 ];
 
+const STEPS = [
+  {
+    step: "1",
+    title: "Log Your Trade",
+    desc: "Enter your ticker, entry/exit, share size, and tag your emotions and setup. Grade yourself honestly.",
+  },
+  {
+    step: "2",
+    title: "Review Your Patterns",
+    desc: "See your win rate, streaks, daily P&L, and which mistakes keep costing you money.",
+  },
+  {
+    step: "3",
+    title: "Improve Your Edge",
+    desc: "Cut the bad habits, double down on what works, and watch your consistency grow.",
+  },
+];
+
+const DEEP_FEATURES = [
+  {
+    title: "Trade Grading System",
+    desc: "Grade every trade A through D based on execution, not just outcome. A losing trade with perfect execution is still an A.",
+  },
+  {
+    title: "Emotional Tagging",
+    desc: "Tag your mindset — FOMO, revenge trading, disciplined, confident. See which emotions correlate with your best and worst trades.",
+  },
+  {
+    title: "Missed Trade Tracking",
+    desc: "Log the setups you saw but didn't take. See exactly how much money you're leaving on the table from hesitation.",
+  },
+  {
+    title: "Daily P&L Tracking",
+    desc: "Profit and loss broken down by day with win rates and trade counts. Spot your best and worst days.",
+  },
+  {
+    title: "Win Rate & Streaks",
+    desc: "Track your overall win rate, current streak, and profit factor. Know your numbers.",
+  },
+  {
+    title: "CSV Export",
+    desc: "Export your full trade history anytime. Your data is yours — take it wherever you want.",
+  },
+];
+
 export default function LandingPage() {
   const { user, loading } = useAuth();
   const [scrolled, setScrolled] = useState(false);
@@ -36,6 +81,22 @@ export default function LandingPage() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("visible");
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.1, rootMargin: "0px 0px -40px 0px" }
+    );
+    document.querySelectorAll(".reveal").forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
+  }, []);
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-950 flex items-center justify-center">
@@ -44,22 +105,20 @@ export default function LandingPage() {
     );
   }
 
-  if (user) {
-    return <Navigate to="/app" replace />;
-  }
+  if (user) return <Navigate to="/app" replace />;
 
   return (
     <div className="min-h-screen bg-gray-950 text-gray-100 flex flex-col">
-      {/* Sticky Header */}
+      {/* ───── Header ───── */}
       <header
-        className={`sticky top-0 z-50 border-b border-gray-800 transition-all duration-300 ${
+        className={`sticky top-0 z-50 border-b transition-all duration-300 ${
           scrolled
-            ? "bg-gray-950/90 backdrop-blur-md"
-            : "bg-gray-950"
+            ? "bg-gray-950/90 backdrop-blur-md border-gray-800"
+            : "bg-gray-950 border-transparent"
         }`}
       >
         <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
-          <h1 className="text-lg font-bold tracking-tight text-white">
+          <h1 className="text-lg font-display font-bold tracking-tight text-white">
             TradeBook
           </h1>
           <div className="flex items-center gap-3">
@@ -85,220 +144,220 @@ export default function LandingPage() {
 
       <main className="flex-1">
         {/* ───── Hero ───── */}
-        <section className="flex flex-col items-center justify-center px-4 pt-16 pb-12 sm:pt-24 sm:pb-16 gap-10">
-          <div className="text-center max-w-2xl">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white leading-tight mb-4">
+        <section className="relative flex flex-col items-center justify-center px-4 pt-24 pb-8 sm:pt-36 sm:pb-12 overflow-hidden">
+          {/* Animated glow */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none">
+            <div className="hero-glow w-[500px] h-[350px] sm:w-[700px] sm:h-[450px] rounded-full bg-accent-500/20 blur-[120px]" />
+          </div>
+
+          <div className="relative text-center max-w-2xl z-10">
+            <h2 className="hero-enter font-display text-4xl sm:text-5xl md:text-6xl font-bold text-white leading-[1.08] tracking-tight mb-6">
               Journal Your Trades.
               <br />
               Fix Your Mistakes.
               <br />
               <span className="text-accent-400">Trade Better.</span>
             </h2>
-            <p className="text-gray-400 text-sm sm:text-base max-w-md mx-auto">
-              A trading journal built for active day traders who want to stop
-              repeating mistakes and start building an edge.
+            <p className="hero-enter-d1 text-gray-300 text-base sm:text-lg max-w-lg mx-auto leading-relaxed mb-2">
+              Built by a trader. For traders who are tired of losing to
+              themselves.
             </p>
-          </div>
-
-          {/* Feature Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full max-w-2xl">
-            {[
-              {
-                icon: "\u{1F4DD}",
-                title: "Log Trades",
-                desc: "Record entries, exits, emotions, and grade every trade.",
-              },
-              {
-                icon: "\u{1F440}",
-                title: "Track Missed Opportunities",
-                desc: "Log the ones that got away so you stop hesitating.",
-              },
-              {
-                icon: "\u{1F4CA}",
-                title: "Dashboard Analytics",
-                desc: "Win rate, P&L, streaks, and daily breakdowns at a glance.",
-              },
-            ].map((card) => (
-              <div
-                key={card.title}
-                className="bg-gray-800/50 border border-gray-800 rounded-xl p-5 text-center"
+            <p className="hero-enter-d1 text-gray-500 text-sm max-w-md mx-auto mb-10">
+              Stop repeating the same mistakes. Start building a real edge with
+              data, not gut feelings.
+            </p>
+            <div className="hero-enter-d2">
+              <Link
+                to="/login?mode=signup"
+                className="cta-btn inline-block bg-accent-600 hover:bg-accent-500 text-white font-display font-semibold text-base sm:text-lg px-10 py-4 rounded-xl"
               >
-                <div className="text-2xl mb-2">{card.icon}</div>
-                <h3 className="text-sm font-semibold text-white mb-1">
-                  {card.title}
-                </h3>
-                <p className="text-xs text-gray-400">{card.desc}</p>
-              </div>
-            ))}
+                Start Journaling — It's Free
+              </Link>
+              <p className="text-gray-500 text-xs mt-3 tracking-wide">
+                Free beta — no credit card required
+              </p>
+            </div>
           </div>
-
-          {/* Dashboard Preview */}
-          <div className="w-full max-w-4xl">
-            <img
-              src="/dashboard-preview.png"
-              alt="TradeBook dashboard showing P&L, win rate, equity curve, and trade history"
-              className="w-full rounded-xl border border-gray-800 shadow-2xl shadow-accent-500/5"
-            />
-          </div>
-
-          {/* CTA */}
-          <Link
-            to="/login?mode=signup"
-            className="bg-accent-600 hover:bg-accent-500 text-white font-semibold text-sm px-8 py-3 rounded-lg transition-colors"
-          >
-            Get Started — Free Beta
-          </Link>
-          <p className="text-gray-500 text-xs -mt-6">
-            Currently in free beta. All features included.
-          </p>
         </section>
 
-        {/* ───── How It Works ───── */}
-        <section className="px-4 py-16 sm:py-20">
+        {/* ───── Feature Cards (Asymmetric) ───── */}
+        <section className="px-4 pt-20 pb-8 sm:pt-28 sm:pb-12 reveal">
+          <div className="max-w-3xl mx-auto grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {/* Large card — spans 2 rows */}
+            <div className="feature-card sm:row-span-2 bg-gray-900/60 border border-gray-800 rounded-2xl p-8 flex flex-col justify-center">
+              <div className="w-10 h-10 rounded-lg bg-accent-500/10 border border-accent-500/20 flex items-center justify-center mb-5">
+                <svg
+                  className="w-5 h-5 text-accent-400"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={1.5}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
+                  />
+                </svg>
+              </div>
+              <h3 className="font-display text-lg font-semibold text-white mb-2">
+                Log Trades
+              </h3>
+              <p className="text-sm text-gray-400 leading-relaxed">
+                Record entries, exits, emotions, and grade every trade in
+                seconds. Tag your setups, track your mindset, and build a
+                complete picture of every decision you make.
+              </p>
+            </div>
+
+            {/* Small card — missed trades */}
+            <div className="feature-card bg-gray-900/40 border border-gray-800 rounded-2xl p-6">
+              <div className="w-10 h-10 rounded-lg bg-accent-500/10 border border-accent-500/20 flex items-center justify-center mb-4">
+                <svg
+                  className="w-5 h-5 text-accent-400"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={1.5}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"
+                  />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                  />
+                </svg>
+              </div>
+              <h3 className="font-display text-base font-semibold text-white mb-1">
+                Track Missed Trades
+              </h3>
+              <p className="text-sm text-gray-400 leading-relaxed">
+                Log the ones that got away so you stop hesitating.
+              </p>
+            </div>
+
+            {/* Small card — analytics */}
+            <div className="feature-card bg-gray-900/40 border border-gray-800 rounded-2xl p-6">
+              <div className="w-10 h-10 rounded-lg bg-accent-500/10 border border-accent-500/20 flex items-center justify-center mb-4">
+                <svg
+                  className="w-5 h-5 text-accent-400"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={1.5}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"
+                  />
+                </svg>
+              </div>
+              <h3 className="font-display text-base font-semibold text-white mb-1">
+                Dashboard Analytics
+              </h3>
+              <p className="text-sm text-gray-400 leading-relaxed">
+                Win rate, P&L, streaks, and daily breakdowns at a glance.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* ───── Dashboard Preview (Perspective Float) ───── */}
+        <section className="px-4 py-20 sm:py-28 reveal">
+          <div className="max-w-4xl mx-auto dashboard-wrapper">
+            <div className="dashboard-float relative">
+              <img
+                src="/dashboard-preview.png"
+                alt="TradeBook dashboard showing P&L, win rate, equity curve, and trade history"
+                className="w-full rounded-xl border border-gray-800 relative z-10"
+              />
+              {/* Soft glow underneath */}
+              <div className="absolute -bottom-8 left-[10%] right-[10%] h-24 bg-accent-500/10 rounded-full blur-[60px]" />
+            </div>
+          </div>
+        </section>
+
+        {/* ───── Bold Quote ───── */}
+        <section className="px-4 py-20 sm:py-32 reveal">
+          <div className="max-w-3xl mx-auto text-center">
+            <div className="w-12 h-px bg-accent-500 mx-auto mb-10" />
+            <p className="text-2xl sm:text-3xl md:text-4xl font-light italic text-gray-200 leading-relaxed tracking-tight">
+              "Every trade you don't journal is a lesson you'll pay for twice."
+            </p>
+            <div className="w-12 h-px bg-accent-500 mx-auto mt-10" />
+          </div>
+        </section>
+
+        {/* ───── How It Works (Horizontal Flow) ───── */}
+        <section className="px-4 py-20 sm:py-28 reveal">
           <div className="max-w-3xl mx-auto">
-            <h2 className="text-2xl sm:text-3xl font-bold text-white text-center mb-12">
+            <h2 className="font-display text-2xl sm:text-3xl font-bold text-white text-center mb-16">
               How It Works
             </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 sm:gap-6">
-              {[
-                {
-                  step: "1",
-                  icon: "\u{270D}\u{FE0F}",
-                  title: "Log Your Trade",
-                  desc: "Enter your ticker, entry/exit, share size, and tag your emotions and setup. Grade yourself honestly.",
-                },
-                {
-                  step: "2",
-                  icon: "\u{1F50D}",
-                  title: "Review Your Patterns",
-                  desc: "See your win rate, streaks, daily P&L, and which mistakes keep costing you money.",
-                },
-                {
-                  step: "3",
-                  icon: "\u{1F4C8}",
-                  title: "Improve Your Edge",
-                  desc: "Cut the bad habits, double down on what works, and watch your consistency grow over time.",
-                },
-              ].map((item) => (
-                <div key={item.step} className="text-center">
-                  <div className="w-12 h-12 rounded-full bg-accent-600/20 border border-accent-500/30 flex items-center justify-center mx-auto mb-4">
-                    <span className="text-xl">{item.icon}</span>
+            <div className="flex flex-col sm:flex-row sm:items-start gap-10 sm:gap-0">
+              {STEPS.map((item, i) => (
+                <Fragment key={item.step}>
+                  <div className="flex-1 text-center">
+                    <div className="w-12 h-12 rounded-full bg-gray-950 border-2 border-accent-500/40 flex items-center justify-center mx-auto mb-5 relative z-10">
+                      <span className="text-accent-400 font-display font-bold">
+                        {item.step}
+                      </span>
+                    </div>
+                    <h3 className="font-display text-base font-semibold text-white mb-2">
+                      {item.title}
+                    </h3>
+                    <p className="text-sm text-gray-400 leading-relaxed max-w-[240px] mx-auto">
+                      {item.desc}
+                    </p>
                   </div>
-                  <div className="text-xs font-bold text-accent-400 uppercase tracking-widest mb-2">
-                    Step {item.step}
-                  </div>
-                  <h3 className="text-base font-semibold text-white mb-2">
-                    {item.title}
-                  </h3>
-                  <p className="text-sm text-gray-400 leading-relaxed">
-                    {item.desc}
-                  </p>
-                </div>
+                  {i < STEPS.length - 1 && (
+                    <div className="hidden sm:flex items-center shrink-0 mt-[18px]">
+                      <div className="w-8 h-px bg-accent-500/25" />
+                      <svg
+                        className="w-3 h-3 text-accent-500/40 shrink-0 -mx-0.5"
+                        fill="none"
+                        viewBox="0 0 12 12"
+                      >
+                        <path
+                          d="M4 2l4 4-4 4"
+                          stroke="currentColor"
+                          strokeWidth="1.5"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                      <div className="w-8 h-px bg-accent-500/25" />
+                    </div>
+                  )}
+                </Fragment>
               ))}
             </div>
           </div>
         </section>
 
         {/* ───── Feature Deep-Dive ───── */}
-        <section className="px-4 py-16 sm:py-20 border-t border-gray-800/50">
+        <section className="px-4 py-20 sm:py-28 reveal">
           <div className="max-w-4xl mx-auto">
-            <h2 className="text-2xl sm:text-3xl font-bold text-white text-center mb-4">
+            <h2 className="font-display text-2xl sm:text-3xl font-bold text-white text-center mb-4">
               Everything You Need to Get Better
             </h2>
-            <p className="text-gray-400 text-sm text-center mb-12 max-w-lg mx-auto">
-              TradeBook gives you the tools serious day traders actually use to
-              find their edge.
+            <p className="text-gray-500 text-sm text-center mb-14 max-w-lg mx-auto">
+              The tools serious day traders actually use to find their edge.
             </p>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              {[
-                {
-                  icon: "\u{1F3AF}",
-                  title: "Trade Grading System",
-                  desc: "Grade every trade A through D based on execution, not just outcome. A losing trade with perfect execution is still an A.",
-                },
-                {
-                  icon: "\u{1F9E0}",
-                  title: "Emotional Tagging",
-                  desc: "Tag your mindset on each trade — FOMO, revenge trading, disciplined, confident. See which emotions correlate with your best and worst trades.",
-                },
-                {
-                  icon: "\u{1F6A8}",
-                  title: "Missed Trade Tracking",
-                  desc: "Log the setups you saw but didn't take. Track your hesitation reasons and see exactly how much money you're leaving on the table.",
-                },
-                {
-                  icon: "\u{1F4B0}",
-                  title: "Daily P&L Tracking",
-                  desc: "See your profit and loss broken down by day with win rates and trade counts. Spot your best and worst days of the week.",
-                },
-                {
-                  icon: "\u{1F525}",
-                  title: "Win Rate & Streak Analytics",
-                  desc: "Track your overall win rate, current streak, and profit factor. Know your numbers and hold yourself accountable.",
-                },
-                {
-                  icon: "\u{1F4E4}",
-                  title: "CSV Export",
-                  desc: "Export your full trade history anytime. Your data is yours — take it wherever you want.",
-                },
-              ].map((feature) => (
-                <div
-                  key={feature.title}
-                  className="bg-gray-900/50 border border-gray-800 rounded-xl p-6 flex gap-4"
-                >
-                  <div className="text-2xl shrink-0 mt-0.5">{feature.icon}</div>
-                  <div>
-                    <h3 className="text-sm font-semibold text-white mb-1.5">
-                      {feature.title}
-                    </h3>
-                    <p className="text-sm text-gray-400 leading-relaxed">
-                      {feature.desc}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* ───── Who It's For ───── */}
-        <section className="px-4 py-16 sm:py-20 border-t border-gray-800/50">
-          <div className="max-w-2xl mx-auto text-center">
-            <h2 className="text-2xl sm:text-3xl font-bold text-white mb-4">
-              Built for Traders Like You
-            </h2>
-            <p className="text-gray-400 text-sm mb-10 max-w-md mx-auto">
-              If you're serious about improving, TradeBook was made for you.
-            </p>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-              {[
-                {
-                  icon: "\u{26A1}",
-                  title: "Momentum Traders",
-                  desc: "You trade the move. TradeBook helps you figure out which setups are actually working and which ones are bleeding you dry.",
-                },
-                {
-                  icon: "\u{1F4A5}",
-                  title: "Small Cap Day Traders",
-                  desc: "Low floats, high volatility, fast decisions. You need a journal that's as quick as you are — not a spreadsheet.",
-                },
-                {
-                  icon: "\u{1F504}",
-                  title: "Pattern Breakers",
-                  desc: "Tired of making the same mistakes? TradeBook shows you exactly where you keep going wrong so you can finally break the cycle.",
-                },
-              ].map((persona) => (
-                <div
-                  key={persona.title}
-                  className="bg-gray-900/30 border border-gray-800/50 rounded-xl p-6"
-                >
-                  <div className="text-3xl mb-3">{persona.icon}</div>
-                  <h3 className="text-sm font-semibold text-white mb-2">
-                    {persona.title}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-10">
+              {DEEP_FEATURES.map((f) => (
+                <div key={f.title}>
+                  <div className="w-1.5 h-1.5 rounded-full bg-accent-500 mb-3" />
+                  <h3 className="font-display text-sm font-semibold text-white mb-2">
+                    {f.title}
                   </h3>
-                  <p className="text-xs text-gray-400 leading-relaxed">
-                    {persona.desc}
+                  <p className="text-sm text-gray-500 leading-relaxed">
+                    {f.desc}
                   </p>
                 </div>
               ))}
@@ -307,9 +366,9 @@ export default function LandingPage() {
         </section>
 
         {/* ───── Social Proof ───── */}
-        <section className="px-4 py-16 sm:py-20 border-t border-gray-800/50">
+        <section className="px-4 py-20 sm:py-28 reveal">
           <div className="max-w-3xl mx-auto text-center">
-            <div className="inline-flex items-center gap-2 bg-accent-600/10 border border-accent-500/20 rounded-full px-5 py-2 mb-10">
+            <div className="inline-flex items-center gap-2 bg-accent-600/10 border border-accent-500/20 rounded-full px-5 py-2 mb-12">
               <span className="relative flex h-2.5 w-2.5">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent-400 opacity-75" />
                 <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-accent-500" />
@@ -342,14 +401,14 @@ export default function LandingPage() {
               ].map((t, i) => (
                 <div
                   key={i}
-                  className="bg-gray-900/50 border border-gray-800 rounded-xl p-6 text-left"
+                  className="bg-gray-900/40 border border-gray-800/50 rounded-xl p-6 text-left"
                 >
                   <p className="text-sm text-gray-300 leading-relaxed mb-4 italic">
                     "{t.quote}"
                   </p>
                   <div className="text-xs">
                     <span className="text-white font-medium">{t.name}</span>
-                    <span className="text-gray-500 ml-2">{t.detail}</span>
+                    <span className="text-gray-600 ml-2">{t.detail}</span>
                   </div>
                 </div>
               ))}
@@ -358,20 +417,20 @@ export default function LandingPage() {
         </section>
 
         {/* ───── FAQ ───── */}
-        <section className="px-4 py-16 sm:py-20 border-t border-gray-800/50">
+        <section className="px-4 py-20 sm:py-28 reveal">
           <div className="max-w-2xl mx-auto">
-            <h2 className="text-2xl sm:text-3xl font-bold text-white text-center mb-12">
+            <h2 className="font-display text-2xl sm:text-3xl font-bold text-white text-center mb-14">
               Frequently Asked Questions
             </h2>
             <div className="space-y-2">
               {FAQS.map((faq, i) => (
                 <div
                   key={i}
-                  className="border border-gray-800 rounded-lg overflow-hidden"
+                  className="border border-gray-800/60 rounded-lg overflow-hidden"
                 >
                   <button
                     onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                    className="w-full text-left px-5 py-4 flex items-center justify-between gap-4 hover:bg-gray-900/50 transition-colors cursor-pointer"
+                    className="w-full text-left px-5 py-4 flex items-center justify-between gap-4 hover:bg-gray-900/40 transition-colors cursor-pointer"
                   >
                     <span className="text-sm font-medium text-white">
                       {faq.q}
@@ -410,19 +469,19 @@ export default function LandingPage() {
         </section>
 
         {/* ───── Final CTA ───── */}
-        <section className="px-4 py-16 sm:py-20 border-t border-gray-800/50">
+        <section className="px-4 py-20 sm:py-28 reveal">
           <div className="max-w-lg mx-auto text-center">
-            <h2 className="text-2xl sm:text-3xl font-bold text-white mb-3">
+            <h2 className="font-display text-2xl sm:text-3xl font-bold text-white mb-3">
               Ready to Trade Better?
             </h2>
             <p className="text-gray-400 text-sm mb-8">
-              Start journaling your trades today. It's free, it takes 30
-              seconds to sign up, and it might be the thing that finally fixes
-              your trading.
+              Start journaling your trades today. It's free, it takes 30 seconds
+              to sign up, and it might be the thing that finally fixes your
+              trading.
             </p>
             <Link
               to="/login?mode=signup"
-              className="inline-block bg-accent-600 hover:bg-accent-500 text-white font-semibold text-sm px-8 py-3 rounded-lg transition-colors"
+              className="cta-btn inline-block bg-accent-600 hover:bg-accent-500 text-white font-display font-semibold text-base px-10 py-4 rounded-xl"
             >
               Get Started — Free Beta
             </Link>
@@ -434,10 +493,12 @@ export default function LandingPage() {
       </main>
 
       {/* ───── Footer ───── */}
-      <footer className="border-t border-gray-800">
-        <div className="max-w-5xl mx-auto px-4 py-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4">
-            <span className="text-sm font-bold text-white">TradeBook</span>
+      <footer className="bg-gray-900/50 border-t border-gray-800/50">
+        <div className="max-w-5xl mx-auto px-4 py-10 flex flex-col sm:flex-row items-center justify-between gap-6">
+          <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-5">
+            <span className="font-display text-sm font-bold text-white">
+              TradeBook
+            </span>
             <span className="text-xs text-gray-500">
               Built by traders, for traders.
             </span>
