@@ -95,7 +95,7 @@ export default function LandingPage() {
     );
     document.querySelectorAll(".reveal").forEach((el) => observer.observe(el));
     return () => observer.disconnect();
-  }, []);
+  }, [loading]);
 
   if (loading) {
     return (
