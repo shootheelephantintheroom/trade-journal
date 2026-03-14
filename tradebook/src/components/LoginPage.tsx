@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { setRememberMe } from "../lib/supabase";
 
 export default function LoginPage() {
   const { signIn, signUp } = useAuth();
@@ -15,7 +16,7 @@ export default function LoginPage() {
   );
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const [signupSuccess, setSignupSuccess] = useState(false);
+  const [rememberMe, setRememberMeState] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,6 +24,7 @@ export default function LoginPage() {
     setLoading(true);
 
     if (mode === "login") {
+      setRememberMe(rememberMe);
       const { error } = await signIn(email, password);
       if (error) {
         setError(error);
@@ -30,11 +32,12 @@ export default function LoginPage() {
         navigate("/app", { replace: true });
       }
     } else {
+      setRememberMe(true);
       const { error } = await signUp(email, password, username || undefined);
       if (error) {
         setError(error);
       } else {
-        setSignupSuccess(true);
+        navigate("/app", { replace: true });
       }
     }
 
@@ -51,26 +54,7 @@ export default function LoginPage() {
           {mode === "login" ? "Sign in to your journal" : "Create your account"}
         </p>
 
-        {signupSuccess ? (
-          <div className="bg-accent-600/10 border border-accent-600/30 rounded-lg p-4 text-center">
-            <p className="text-accent-400 text-sm font-medium mb-1">
-              Check your email
-            </p>
-            <p className="text-gray-400 text-xs">
-              We sent a confirmation link to {email}
-            </p>
-            <button
-              onClick={() => {
-                setMode("login");
-                setSignupSuccess(false);
-              }}
-              className="mt-4 text-sm text-accent-400 hover:underline"
-            >
-              Back to login
-            </button>
-          </div>
-        ) : (
-          <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4">
             {error && (
               <div className="bg-red-500/10 border border-red-500/30 rounded-lg px-3 py-2">
                 <p className="text-red-400 text-sm">{error}</p>
@@ -119,6 +103,18 @@ export default function LoginPage() {
               />
             </div>
 
+            {mode === "login" && (
+              <label className="flex items-center gap-2 cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  checked={rememberMe}
+                  onChange={(e) => setRememberMeState(e.target.checked)}
+                  className="w-3.5 h-3.5 rounded border-gray-600 bg-gray-900 text-accent-600 focus:ring-accent-500 focus:ring-offset-0 cursor-pointer"
+                />
+                <span className="text-sm text-gray-400">Remember me</span>
+              </label>
+            )}
+
             <button
               type="submit"
               disabled={loading}
@@ -163,7 +159,6 @@ export default function LoginPage() {
               )}
             </p>
           </form>
-        )}
       </div>
     </div>
   );
