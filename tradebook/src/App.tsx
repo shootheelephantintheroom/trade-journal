@@ -19,6 +19,7 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [fetchError, setFetchError] = useState(false);
   const [pageKey, setPageKey] = useState(0);
+  const [editingTrade, setEditingTrade] = useState<Trade | null>(null);
 
   const fetchTrades = useCallback(async () => {
     const { data, error } = await supabase
@@ -133,13 +134,22 @@ export default function App() {
           <div key={pageKey} className="page-enter">
             {tab === "log" && (
               <div className="max-w-lg mx-auto">
-                <TradeForm onSaved={fetchTrades} />
+                <TradeForm
+                  onSaved={fetchTrades}
+                  editTrade={editingTrade}
+                  onEditDone={() => setEditingTrade(null)}
+                />
               </div>
             )}
             {tab === "trades" && (
               <TradeList
                 trades={trades}
                 onLogTrade={() => switchTab("log")}
+                onEdit={(trade) => {
+                  setEditingTrade(trade);
+                  switchTab("log");
+                }}
+                onDelete={fetchTrades}
               />
             )}
             {tab === "dashboard" && (

@@ -1,6 +1,8 @@
 import { useState, Fragment } from "react";
+import { supabase } from "../lib/supabase";
 import type { Trade } from "../types/trade";
 import { calcPnl, calcRR } from "../lib/calc";
+import { useToast } from "./Toast";
 
 function escapeCsvField(value: string): string {
   if (value.includes(",") || value.includes('"') || value.includes("\n")) {
@@ -89,14 +91,34 @@ function sortTrades(
 export default function TradeList({
   trades,
   onLogTrade,
+  onEdit,
+  onDelete,
 }: {
   trades: Trade[];
   onLogTrade?: () => void;
+  onEdit?: (trade: Trade) => void;
+  onDelete?: () => void;
 }) {
+  const { showToast } = useToast();
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [sortKey, setSortKey] = useState<SortKey>("date");
   const [sortDir, setSortDir] = useState<SortDir>("desc");
   const [filter, setFilter] = useState<FilterResult>("all");
+  const [deleting, setDeleting] = useState<string | null>(null);
+
+  async function handleDelete(tradeId: string) {
+    if (!confirm("Delete this trade? This can't be undone.")) return;
+    setDeleting(tradeId);
+    const { error } = await supabase.from("trades").delete().eq("id", tradeId);
+    setDeleting(null);
+    if (error) {
+      showToast(error.message, "error");
+    } else {
+      showToast("Trade deleted", "success");
+      setExpandedId(null);
+      onDelete?.();
+    }
+  }
 
   if (trades.length === 0) {
     return (
@@ -433,6 +455,30 @@ export default function TradeList({
                                 </p>
                               </div>
                             )}
+                            {/* Edit / Delete actions */}
+                            <div className="md:col-span-2 flex gap-2 pt-2 border-t border-gray-800/40">
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  onEdit?.(t);
+                                }}
+                                className="px-3 py-1.5 rounded-lg text-xs font-medium bg-gray-800/80 border border-gray-700/80 text-gray-400 hover:text-white hover:border-gray-500 transition-colors"
+                              >
+                                Edit
+                              </button>
+                              <button
+                                type="button"
+                                disabled={deleting === t.id}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleDelete(t.id);
+                                }}
+                                className="px-3 py-1.5 rounded-lg text-xs font-medium bg-gray-800/80 border border-gray-700/80 text-red-400 hover:bg-red-500/10 hover:border-red-500/40 transition-colors disabled:opacity-50"
+                              >
+                                {deleting === t.id ? "Deleting..." : "Delete"}
+                              </button>
+                            </div>
                           </div>
                         </td>
                       </tr>

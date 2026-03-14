@@ -50,6 +50,21 @@ export default function MissedTrades({
   const [form, setForm] = useState<MissedTradeInsert>({ ...empty });
   const [saving, setSaving] = useState(false);
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState<string | null>(null);
+
+  async function handleDelete(id: string) {
+    if (!confirm("Delete this trade? This can't be undone.")) return;
+    setDeleting(id);
+    const { error } = await supabase.from("missed_trades").delete().eq("id", id);
+    setDeleting(null);
+    if (error) {
+      showToast(error.message, "error");
+    } else {
+      showToast("Missed trade deleted", "success");
+      setExpandedId(null);
+      onSaved();
+    }
+  }
 
   function set<K extends keyof MissedTradeInsert>(
     key: K,
@@ -474,6 +489,20 @@ export default function MissedTrades({
                                     </p>
                                   </div>
                                 )}
+                                {/* Delete action */}
+                                <div className="md:col-span-2 flex gap-2 pt-2 border-t border-yellow-500/10">
+                                  <button
+                                    type="button"
+                                    disabled={deleting === mt.id}
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleDelete(mt.id);
+                                    }}
+                                    className="px-3 py-1.5 rounded-lg text-xs font-medium bg-gray-800/80 border border-gray-700/80 text-red-400 hover:bg-red-500/10 hover:border-red-500/40 transition-colors disabled:opacity-50"
+                                  >
+                                    {deleting === mt.id ? "Deleting..." : "Delete"}
+                                  </button>
+                                </div>
                               </div>
                             </td>
                           </tr>

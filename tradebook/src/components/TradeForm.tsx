@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "../lib/supabase";
-import type { TradeInsert } from "../types/trade";
+import type { Trade, TradeInsert } from "../types/trade";
 import { calcPnl, calcRR, calcMaxRisk } from "../lib/calc";
 import TagSelect from "./TagSelect";
 import { useToast } from "./Toast";
@@ -31,11 +31,31 @@ const GRADES = [
   { value: "D", label: "D", desc: "Broke rules", bg: "bg-red-500/15", border: "border-red-500", text: "text-red-400", activeBg: "bg-red-500/25" },
 ] as const;
 
-export default function TradeForm({ onSaved }: { onSaved?: () => void }) {
+export default function TradeForm({
+  onSaved,
+  editTrade,
+  onEditDone,
+}: {
+  onSaved?: () => void;
+  editTrade?: Trade | null;
+  onEditDone?: () => void;
+}) {
   const { showToast } = useToast();
   const [form, setForm] = useState<TradeInsert>({ ...empty });
   const [saving, setSaving] = useState(false);
   const [emotionInput, setEmotionInput] = useState("");
+
+  // When editTrade changes, populate form
+  useEffect(() => {
+    if (editTrade) {
+      const { id, created_at, ...rest } = editTrade;
+      setForm(rest);
+      setEmotionInput("");
+    } else {
+      setForm({ ...empty, trade_date: todayLocal() });
+      setEmotionInput("");
+    }
+  }, [editTrade]);
 
   function set<K extends keyof TradeInsert>(key: K, value: TradeInsert[K]) {
     setForm((prev) => ({ ...prev, [key]: value }));
@@ -74,20 +94,25 @@ export default function TradeForm({ onSaved }: { onSaved?: () => void }) {
     e.preventDefault();
     setSaving(true);
 
-    const { error: err } = await supabase.from("trades").insert({
+    const payload = {
       ...form,
       ticker: form.ticker.toUpperCase().trim(),
       stop_loss_price: form.stop_loss_price || null,
       grade: form.grade || null,
-    });
+    };
+
+    const { error: err } = editTrade
+      ? await supabase.from("trades").update(payload).eq("id", editTrade.id)
+      : await supabase.from("trades").insert(payload);
 
     setSaving(false);
     if (err) {
       showToast(err.message, "error");
     } else {
-      showToast("Trade saved!", "success");
+      showToast(editTrade ? "Trade updated!" : "Trade saved!", "success");
       setForm({ ...empty, trade_date: todayLocal() });
       setEmotionInput("");
+      if (editTrade) onEditDone?.();
       onSaved?.();
     }
   }
@@ -100,8 +125,17 @@ export default function TradeForm({ onSaved }: { onSaved?: () => void }) {
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
       <h2 className="text-xl font-bold text-white font-display tracking-tight">
-        Log a Trade
+        {editTrade ? "Edit Trade" : "Log a Trade"}
       </h2>
+      {editTrade && (
+        <button
+          type="button"
+          onClick={() => onEditDone?.()}
+          className="text-xs text-gray-500 hover:text-gray-300 transition-colors"
+        >
+          Cancel edit
+        </button>
+      )}
 
       {/* Ticker & Side */}
       <div className="form-section">
@@ -406,7 +440,7 @@ export default function TradeForm({ onSaved }: { onSaved?: () => void }) {
         disabled={saving}
         className="btn-submit w-full rounded-lg bg-accent-600 px-4 py-3 text-sm font-bold text-white hover:bg-accent-500 disabled:opacity-50"
       >
-        {saving ? "Saving..." : "Save Trade"}
+        {saving ? "Saving..." : editTrade ? "Update Trade" : "Save Trade"}
       </button>
     </form>
   );
