@@ -150,6 +150,7 @@ export default function App() {
                   switchTab("log");
                 }}
                 onDelete={fetchTrades}
+                onImported={fetchTrades}
               />
             )}
             {tab === "dashboard" && (

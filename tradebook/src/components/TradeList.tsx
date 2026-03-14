@@ -3,6 +3,7 @@ import { supabase } from "../lib/supabase";
 import type { Trade } from "../types/trade";
 import { calcPnl, calcRR } from "../lib/calc";
 import { useToast } from "./Toast";
+import TradeImport from "./TradeImport";
 
 function escapeCsvField(value: string): string {
   if (value.includes(",") || value.includes('"') || value.includes("\n")) {
@@ -97,11 +98,13 @@ export default function TradeList({
   onLogTrade,
   onEdit,
   onDelete,
+  onImported,
 }: {
   trades: Trade[];
   onLogTrade?: () => void;
   onEdit?: (trade: Trade) => void;
   onDelete?: () => void;
+  onImported?: () => void;
 }) {
   const { showToast } = useToast();
   const [expandedId, setExpandedId] = useState<string | null>(null);
@@ -230,6 +233,7 @@ export default function TradeList({
               </button>
             ))}
           </div>
+          {onImported && <TradeImport onImported={onImported} />}
           <button
             onClick={() => exportTradesToCsv(trades)}
             className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-white border border-gray-700/80 hover:border-gray-500 px-3 py-1.5 rounded-lg transition-colors"
