@@ -159,8 +159,7 @@ export default function LandingPage() {
               <span className="text-accent-400">Trade Better.</span>
             </h2>
             <p className="hero-enter-d1 text-gray-300 text-base sm:text-lg max-w-lg mx-auto leading-relaxed mb-2">
-              Built by a trader. For traders who are tired of losing to
-              themselves.
+              For traders who are tired of losing to themselves.
             </p>
             <p className="hero-enter-d1 text-gray-500 text-sm max-w-md mx-auto mb-10">
               Stop repeating the same mistakes. Start building a real edge with
