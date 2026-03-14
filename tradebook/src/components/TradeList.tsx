@@ -56,6 +56,10 @@ function exportTradesToCsv(trades: Trade[]) {
   URL.revokeObjectURL(url);
 }
 
+// Client-side pagination — sufficient up to ~500-1000 trades.
+// TODO: switch to server-side pagination (Supabase .range()) when trade count grows beyond that.
+const PAGE_SIZE = 25;
+
 type SortKey = "date" | "ticker" | "pnl" | "grade";
 type SortDir = "asc" | "desc";
 type FilterResult = "all" | "win" | "loss";
@@ -104,6 +108,7 @@ export default function TradeList({
   const [sortKey, setSortKey] = useState<SortKey>("date");
   const [sortDir, setSortDir] = useState<SortDir>("desc");
   const [filter, setFilter] = useState<FilterResult>("all");
+  const [page, setPage] = useState(1);
   const [deleting, setDeleting] = useState<string | null>(null);
 
   async function handleDelete(tradeId: string) {
@@ -170,6 +175,11 @@ export default function TradeList({
   // Sort
   const sorted = sortTrades(filtered, sortKey, sortDir);
 
+  // Paginate
+  const totalPages = Math.max(1, Math.ceil(sorted.length / PAGE_SIZE));
+  const safePage = Math.min(page, totalPages);
+  const paged = sorted.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE);
+
   // Stats
   const totalPnl = trades.reduce((sum, t) => sum + calcPnl(t), 0);
   const winCount = trades.filter((t) => calcPnl(t) > 0).length;
@@ -205,7 +215,7 @@ export default function TradeList({
             {(["all", "win", "loss"] as FilterResult[]).map((f) => (
               <button
                 key={f}
-                onClick={() => setFilter(f)}
+                onClick={() => { setFilter(f); setPage(1); }}
                 className={`px-2.5 py-1 rounded-md text-[11px] font-medium transition-all ${
                   filter === f
                     ? f === "win"
@@ -289,7 +299,7 @@ export default function TradeList({
               </tr>
             </thead>
             <tbody>
-              {sorted.map((t) => {
+              {paged.map((t) => {
                 const pl = calcPnl(t);
                 const rr = calcRR(t);
                 const isExpanded = expandedId === t.id;
@@ -490,6 +500,37 @@ export default function TradeList({
           </table>
         </div>
       </div>
+
+      {/* Pagination controls */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-center gap-3 pt-1">
+          <button
+            disabled={safePage <= 1}
+            onClick={() => setPage(safePage - 1)}
+            className={`px-2.5 py-1 rounded-md text-[11px] font-medium transition-all ${
+              safePage <= 1
+                ? "text-gray-700 border border-transparent cursor-default"
+                : "text-gray-400 border border-gray-700/80 hover:text-white hover:border-gray-500"
+            }`}
+          >
+            Previous
+          </button>
+          <span className="text-[11px] text-gray-500">
+            {safePage} / {totalPages}
+          </span>
+          <button
+            disabled={safePage >= totalPages}
+            onClick={() => setPage(safePage + 1)}
+            className={`px-2.5 py-1 rounded-md text-[11px] font-medium transition-all ${
+              safePage >= totalPages
+                ? "text-gray-700 border border-transparent cursor-default"
+                : "text-gray-400 border border-gray-700/80 hover:text-white hover:border-gray-500"
+            }`}
+          >
+            Next
+          </button>
+        </div>
+      )}
     </div>
   );
 }

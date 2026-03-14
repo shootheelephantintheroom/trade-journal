@@ -6,6 +6,10 @@ import HesitationSelect from "./HesitationSelect";
 import { useToast } from "./Toast";
 import { todayLocal } from "../lib/date";
 
+// Client-side pagination — sufficient up to ~500-1000 missed trades.
+// TODO: switch to server-side pagination (Supabase .range()) when count grows beyond that.
+const PAGE_SIZE = 25;
+
 const empty: MissedTradeInsert = {
   ticker: "",
   trade_date: todayLocal(),
@@ -50,6 +54,7 @@ export default function MissedTrades({
   const [form, setForm] = useState<MissedTradeInsert>({ ...empty });
   const [saving, setSaving] = useState(false);
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [page, setPage] = useState(1);
   const [deleting, setDeleting] = useState<string | null>(null);
 
   async function handleDelete(id: string) {
@@ -301,7 +306,12 @@ export default function MissedTrades({
           </p>
         </div>
       )}
-      {missedTrades.length > 0 && (
+      {missedTrades.length > 0 && (() => {
+        const totalPages = Math.max(1, Math.ceil(missedTrades.length / PAGE_SIZE));
+        const safePage = Math.min(page, totalPages);
+        const paged = missedTrades.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE);
+
+        return (
         <div>
           <div className="flex items-center gap-3 mb-3">
             <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
@@ -340,7 +350,7 @@ export default function MissedTrades({
                   </tr>
                 </thead>
                 <tbody>
-                  {missedTrades.map((mt) => {
+                  {paged.map((mt) => {
                     const pnl = calcMissedPnl(mt);
                     const isExpanded = expandedId === mt.id;
 
@@ -514,8 +524,40 @@ export default function MissedTrades({
               </table>
             </div>
           </div>
+
+          {/* Pagination controls */}
+          {totalPages > 1 && (
+            <div className="flex items-center justify-center gap-3 pt-3">
+              <button
+                disabled={safePage <= 1}
+                onClick={() => setPage(safePage - 1)}
+                className={`px-2.5 py-1 rounded-md text-[11px] font-medium transition-all ${
+                  safePage <= 1
+                    ? "text-gray-700 border border-transparent cursor-default"
+                    : "text-gray-400 border border-gray-700/80 hover:text-white hover:border-gray-500"
+                }`}
+              >
+                Previous
+              </button>
+              <span className="text-[11px] text-gray-500">
+                {safePage} / {totalPages}
+              </span>
+              <button
+                disabled={safePage >= totalPages}
+                onClick={() => setPage(safePage + 1)}
+                className={`px-2.5 py-1 rounded-md text-[11px] font-medium transition-all ${
+                  safePage >= totalPages
+                    ? "text-gray-700 border border-transparent cursor-default"
+                    : "text-gray-400 border border-gray-700/80 hover:text-white hover:border-gray-500"
+                }`}
+              >
+                Next
+              </button>
+            </div>
+          )}
         </div>
-      )}
+        );
+      })()}
     </div>
   );
 }
