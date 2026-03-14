@@ -70,6 +70,83 @@ function buildDailyStats(trades: Trade[]): DayStats[] {
   return days;
 }
 
+interface TagStats {
+  tag: string;
+  totalTrades: number;
+  winRate: number;
+  avgPnl: number;
+  totalPnl: number;
+  avgRR: number | null;
+}
+
+function buildTagStats(trades: Trade[]): TagStats[] {
+  const byTag = new Map<string, Trade[]>();
+  for (const t of trades) {
+    for (const tag of t.tags || []) {
+      const existing = byTag.get(tag) || [];
+      existing.push(t);
+      byTag.set(tag, existing);
+    }
+  }
+
+  const stats: TagStats[] = [];
+  for (const [tag, tagTrades] of byTag) {
+    const pnls = tagTrades.map(calcPnl);
+    const totalPnl = pnls.reduce((a, b) => a + b, 0);
+    const wins = pnls.filter((p) => p > 0).length;
+    const rrValues = tagTrades.map(calcRR).filter((r): r is number => r !== null);
+    stats.push({
+      tag,
+      totalTrades: tagTrades.length,
+      winRate: (wins / tagTrades.length) * 100,
+      avgPnl: totalPnl / tagTrades.length,
+      totalPnl,
+      avgRR: rrValues.length > 0 ? rrValues.reduce((a, b) => a + b, 0) / rrValues.length : null,
+    });
+  }
+
+  stats.sort((a, b) => b.totalTrades - a.totalTrades);
+  return stats;
+}
+
+interface EmotionStats {
+  emotion: string;
+  totalTrades: number;
+  winRate: number;
+  avgPnl: number;
+  totalPnl: number;
+}
+
+function buildEmotionStats(trades: Trade[]): EmotionStats[] {
+  const byEmotion = new Map<string, Trade[]>();
+  for (const t of trades) {
+    if (!t.emotions) continue;
+    const emotions = t.emotions.split(",").map((e) => e.trim()).filter(Boolean);
+    for (const emotion of emotions) {
+      const existing = byEmotion.get(emotion) || [];
+      existing.push(t);
+      byEmotion.set(emotion, existing);
+    }
+  }
+
+  const stats: EmotionStats[] = [];
+  for (const [emotion, emotionTrades] of byEmotion) {
+    const pnls = emotionTrades.map(calcPnl);
+    const totalPnl = pnls.reduce((a, b) => a + b, 0);
+    const wins = pnls.filter((p) => p > 0).length;
+    stats.push({
+      emotion,
+      totalTrades: emotionTrades.length,
+      winRate: (wins / emotionTrades.length) * 100,
+      avgPnl: totalPnl / emotionTrades.length,
+      totalPnl,
+    });
+  }
+
+  stats.sort((a, b) => b.totalTrades - a.totalTrades);
+  return stats;
+}
+
 function AmberStatCard({
   label,
   value,
@@ -378,6 +455,10 @@ export default function Dashboard({
   // Daily stats
   const dailyStats = buildDailyStats(trades);
 
+  // Tag & emotion stats
+  const tagStats = buildTagStats(trades);
+  const emotionStats = buildEmotionStats(trades);
+
   // Equity curve data (cumulative P&L, chronological)
   const equityDays = [...dailyStats].reverse();
   let runningPnl = 0;
@@ -684,6 +765,114 @@ export default function Dashboard({
                 </tbody>
               </table>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Setup Performance */}
+      {hasTrades && tagStats.length > 0 && (
+        <div className="card-panel p-5">
+          <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4">
+            Setup Performance
+          </h3>
+          <div className="overflow-x-auto">
+            <table className="trade-table w-full text-sm text-left">
+              <thead>
+                <tr className="border-b border-gray-800">
+                  <th className="pb-2.5 text-[10px] text-gray-500 uppercase font-semibold tracking-wider">
+                    Setup
+                  </th>
+                  <th className="pb-2.5 text-[10px] text-gray-500 uppercase font-semibold tracking-wider">
+                    Trades
+                  </th>
+                  <th className="pb-2.5 text-[10px] text-gray-500 uppercase font-semibold tracking-wider">
+                    Win Rate
+                  </th>
+                  <th className="pb-2.5 text-[10px] text-gray-500 uppercase font-semibold tracking-wider text-right">
+                    Avg P&L
+                  </th>
+                  <th className="pb-2.5 text-[10px] text-gray-500 uppercase font-semibold tracking-wider text-right">
+                    Total P&L
+                  </th>
+                  <th className="pb-2.5 text-[10px] text-gray-500 uppercase font-semibold tracking-wider text-right">
+                    Avg R:R
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {tagStats.map((s) => (
+                  <tr key={s.tag} className="border-t border-gray-800/40">
+                    <td className="py-2.5">
+                      <span className="px-1.5 py-0.5 rounded-full text-[10px] font-medium bg-accent-500/10 text-accent-400/80 border border-accent-500/20">
+                        {s.tag}
+                      </span>
+                    </td>
+                    <td className="py-2.5 text-gray-300 text-xs">{s.totalTrades}</td>
+                    <td className={`py-2.5 text-xs font-semibold ${s.winRate >= 50 ? "text-accent-400" : "text-red-400"}`}>
+                      {s.winRate.toFixed(0)}%
+                    </td>
+                    <td className={`py-2.5 text-right text-xs font-semibold ${s.avgPnl >= 0 ? "text-accent-400" : "text-red-400"}`}>
+                      {s.avgPnl >= 0 ? "+" : ""}${s.avgPnl.toFixed(2)}
+                    </td>
+                    <td className={`py-2.5 text-right text-xs font-semibold ${s.totalPnl >= 0 ? "text-accent-400" : "text-red-400"}`}>
+                      {s.totalPnl >= 0 ? "+" : ""}${s.totalPnl.toFixed(2)}
+                    </td>
+                    <td className="py-2.5 text-right text-xs text-gray-300">
+                      {s.avgRR !== null ? `${s.avgRR.toFixed(2)}R` : "—"}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* Emotion Performance */}
+      {hasTrades && emotionStats.length > 0 && (
+        <div className="card-panel p-5">
+          <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4">
+            Emotion Performance
+          </h3>
+          <div className="overflow-x-auto">
+            <table className="trade-table w-full text-sm text-left">
+              <thead>
+                <tr className="border-b border-gray-800">
+                  <th className="pb-2.5 text-[10px] text-gray-500 uppercase font-semibold tracking-wider">
+                    Emotion
+                  </th>
+                  <th className="pb-2.5 text-[10px] text-gray-500 uppercase font-semibold tracking-wider">
+                    Trades
+                  </th>
+                  <th className="pb-2.5 text-[10px] text-gray-500 uppercase font-semibold tracking-wider">
+                    Win Rate
+                  </th>
+                  <th className="pb-2.5 text-[10px] text-gray-500 uppercase font-semibold tracking-wider text-right">
+                    Avg P&L
+                  </th>
+                  <th className="pb-2.5 text-[10px] text-gray-500 uppercase font-semibold tracking-wider text-right">
+                    Total P&L
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {emotionStats.map((s) => (
+                  <tr key={s.emotion} className="border-t border-gray-800/40">
+                    <td className="py-2.5 text-gray-300 text-xs">{s.emotion}</td>
+                    <td className="py-2.5 text-gray-300 text-xs">{s.totalTrades}</td>
+                    <td className={`py-2.5 text-xs font-semibold ${s.winRate >= 50 ? "text-accent-400" : "text-red-400"}`}>
+                      {s.winRate.toFixed(0)}%
+                    </td>
+                    <td className={`py-2.5 text-right text-xs font-semibold ${s.avgPnl >= 0 ? "text-accent-400" : "text-red-400"}`}>
+                      {s.avgPnl >= 0 ? "+" : ""}${s.avgPnl.toFixed(2)}
+                    </td>
+                    <td className={`py-2.5 text-right text-xs font-semibold ${s.totalPnl >= 0 ? "text-accent-400" : "text-red-400"}`}>
+                      {s.totalPnl >= 0 ? "+" : ""}${s.totalPnl.toFixed(2)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
       )}
