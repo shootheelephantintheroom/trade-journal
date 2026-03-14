@@ -490,167 +490,72 @@ export default function Dashboard({
         </>
       )}
 
-      {/* Daily Breakdown */}
+      {/* Equity Curve & Daily Breakdown */}
       {hasTrades && (
-        <div>
-          <h3 className="text-sm font-semibold text-gray-300 mb-3">
-            Daily Breakdown
-          </h3>
-          <div className="overflow-x-auto rounded-xl border border-gray-700">
-            <table className="w-full text-sm text-left">
-              <thead className="text-xs text-gray-400 uppercase bg-gray-800/50">
-                <tr>
-                  <th className="px-4 py-3">Date</th>
-                  <th className="px-4 py-3">Trades</th>
-                  <th className="px-4 py-3">W / L</th>
-                  <th className="px-4 py-3">Win Rate</th>
-                  <th className="px-4 py-3">P&L</th>
-                </tr>
-              </thead>
-              <tbody>
-                {dailyStats.map((day) => {
-                  const wr =
-                    day.trades > 0
-                      ? ((day.wins / day.trades) * 100).toFixed(0)
-                      : "0";
-                  return (
-                    <tr
-                      key={day.date}
-                      className="border-t border-gray-800 hover:bg-gray-800/30 transition-colors"
-                    >
-                      <td className="px-4 py-2.5 text-gray-300">{day.date}</td>
-                      <td className="px-4 py-2.5 text-gray-300">
-                        {day.trades}
-                      </td>
-                      <td className="px-4 py-2.5 text-gray-300">
-                        <span className="text-accent-400">{day.wins}</span>
-                        {" / "}
-                        <span className="text-red-400">{day.losses}</span>
-                      </td>
-                      <td className="px-4 py-2.5 text-gray-300">{wr}%</td>
-                      <td
-                        className={
-                          "px-4 py-2.5 font-medium " +
-                          (day.pnl >= 0 ? "text-accent-400" : "text-red-400")
-                        }
-                      >
-                        {day.pnl >= 0 ? "+" : ""}${day.pnl.toFixed(2)}
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      )}
-
-      {/* Equity Curve & Recent Trades */}
-      {hasTrades && equityPoints.length >= 2 && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Equity Curve */}
-          <div className="rounded-xl border border-gray-800 bg-gray-900/50 p-5">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-sm font-semibold text-white">
-                Equity Curve
-              </h3>
-              <span
-                className={`text-xs font-semibold px-2.5 py-1 rounded-md ${
-                  totalPnl >= 0
-                    ? "text-accent-400 bg-accent-500/10 border border-accent-500/20"
-                    : "text-red-400 bg-red-500/10 border border-red-500/20"
-                }`}
-              >
-                {totalPnl >= 0 ? "+" : ""}${totalPnl.toFixed(2)}
-              </span>
+          {equityPoints.length >= 2 && (
+            <div className="rounded-xl border border-gray-800 bg-gray-900/50 p-5">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-sm font-semibold text-white">
+                  Equity Curve
+                </h3>
+                <span
+                  className={`text-xs font-semibold px-2.5 py-1 rounded-md ${
+                    totalPnl >= 0
+                      ? "text-accent-400 bg-accent-500/10 border border-accent-500/20"
+                      : "text-red-400 bg-red-500/10 border border-red-500/20"
+                  }`}
+                >
+                  {totalPnl >= 0 ? "+" : ""}${totalPnl.toFixed(2)}
+                </span>
+              </div>
+              <EquityCurve points={equityPoints} />
             </div>
-            <EquityCurve points={equityPoints} />
-          </div>
+          )}
 
-          {/* Recent Trades */}
+          {/* Daily Breakdown */}
           <div className="rounded-xl border border-gray-800 bg-gray-900/50 p-5">
             <h3 className="text-sm font-semibold text-white mb-4">
-              Recent Trades
+              Daily Breakdown
             </h3>
             <div className="overflow-x-auto">
               <table className="w-full text-sm text-left">
                 <thead className="text-[10px] text-gray-500 uppercase">
                   <tr>
-                    <th className="pb-2">Time</th>
-                    <th className="pb-2">Ticker</th>
-                    <th className="pb-2">Side</th>
-                    <th className="pb-2">Entry / Exit</th>
-                    <th className="pb-2">Grade</th>
+                    <th className="pb-2">Date</th>
+                    <th className="pb-2">Trades</th>
+                    <th className="pb-2">W / L</th>
+                    <th className="pb-2">Win Rate</th>
                     <th className="pb-2 text-right">P&L</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {recentTrades.map((t) => {
-                    const pl = calcPnl(t);
+                  {dailyStats.map((day) => {
+                    const wr =
+                      day.trades > 0
+                        ? ((day.wins / day.trades) * 100).toFixed(0)
+                        : "0";
                     return (
                       <tr
-                        key={t.id}
+                        key={day.date}
                         className="border-t border-gray-800/50 hover:bg-gray-800/30 transition-colors"
                       >
-                        <td className="py-2 text-gray-400 text-xs">
-                          {t.entry_time || "—"}
+                        <td className="py-2 text-gray-300">{day.date}</td>
+                        <td className="py-2 text-gray-300">{day.trades}</td>
+                        <td className="py-2 text-gray-300">
+                          <span className="text-accent-400">{day.wins}</span>
+                          {" / "}
+                          <span className="text-red-400">{day.losses}</span>
                         </td>
-                        <td className="py-2">
-                          <span className="font-medium text-white">
-                            {t.ticker}
-                          </span>
-                          {t.tags &&
-                            t.tags.slice(0, 1).map((tag) => (
-                              <span
-                                key={tag}
-                                className="ml-1.5 px-1.5 py-0.5 rounded text-[10px] font-medium bg-accent-500/10 text-accent-400/80 border border-accent-500/20"
-                              >
-                                {tag}
-                              </span>
-                            ))}
-                        </td>
-                        <td
-                          className={`py-2 text-xs ${
-                            t.side === "long"
-                              ? "text-accent-400"
-                              : "text-red-400"
-                          }`}
-                        >
-                          {t.side === "long" ? "Long" : "Short"}
-                        </td>
-                        <td className="py-2 text-xs text-gray-400">
-                          ${t.entry_price.toFixed(2)} → $
-                          {t.exit_price.toFixed(2)}
-                        </td>
-                        <td className="py-2">
-                          {t.grade ? (
-                            <span
-                              className={
-                                "inline-block w-6 text-center rounded text-xs font-bold py-0.5 " +
-                                (t.grade === "A"
-                                  ? "bg-accent-500/20 text-accent-400"
-                                  : t.grade === "B"
-                                    ? "bg-blue-500/20 text-blue-400"
-                                    : t.grade === "C"
-                                      ? "bg-yellow-500/20 text-yellow-400"
-                                      : "bg-red-500/20 text-red-400")
-                              }
-                            >
-                              {t.grade}
-                            </span>
-                          ) : (
-                            "—"
-                          )}
-                        </td>
+                        <td className="py-2 text-gray-300">{wr}%</td>
                         <td
                           className={
                             "py-2 text-right font-medium " +
-                            (pl >= 0
-                              ? "text-accent-400"
-                              : "text-red-400")
+                            (day.pnl >= 0 ? "text-accent-400" : "text-red-400")
                           }
                         >
-                          {pl >= 0 ? "+" : ""}${pl.toFixed(2)}
+                          {day.pnl >= 0 ? "+" : ""}${day.pnl.toFixed(2)}
                         </td>
                       </tr>
                     );
@@ -658,6 +563,101 @@ export default function Dashboard({
                 </tbody>
               </table>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Recent Trades */}
+      {hasTrades && (
+        <div className="rounded-xl border border-gray-800 bg-gray-900/50 p-5">
+          <h3 className="text-sm font-semibold text-white mb-4">
+            Recent Trades
+          </h3>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm text-left">
+              <thead className="text-[10px] text-gray-500 uppercase">
+                <tr>
+                  <th className="pb-2">Time</th>
+                  <th className="pb-2">Ticker</th>
+                  <th className="pb-2">Side</th>
+                  <th className="pb-2">Entry / Exit</th>
+                  <th className="pb-2">Grade</th>
+                  <th className="pb-2 text-right">P&L</th>
+                </tr>
+              </thead>
+              <tbody>
+                {recentTrades.map((t) => {
+                  const pl = calcPnl(t);
+                  return (
+                    <tr
+                      key={t.id}
+                      className="border-t border-gray-800/50 hover:bg-gray-800/30 transition-colors"
+                    >
+                      <td className="py-2 text-gray-400 text-xs">
+                        {t.entry_time || "—"}
+                      </td>
+                      <td className="py-2">
+                        <span className="font-medium text-white">
+                          {t.ticker}
+                        </span>
+                        {t.tags &&
+                          t.tags.slice(0, 1).map((tag) => (
+                            <span
+                              key={tag}
+                              className="ml-1.5 px-1.5 py-0.5 rounded text-[10px] font-medium bg-accent-500/10 text-accent-400/80 border border-accent-500/20"
+                            >
+                              {tag}
+                            </span>
+                          ))}
+                      </td>
+                      <td
+                        className={`py-2 text-xs ${
+                          t.side === "long"
+                            ? "text-accent-400"
+                            : "text-red-400"
+                        }`}
+                      >
+                        {t.side === "long" ? "Long" : "Short"}
+                      </td>
+                      <td className="py-2 text-xs text-gray-400">
+                        ${t.entry_price.toFixed(2)} → $
+                        {t.exit_price.toFixed(2)}
+                      </td>
+                      <td className="py-2">
+                        {t.grade ? (
+                          <span
+                            className={
+                              "inline-block w-6 text-center rounded text-xs font-bold py-0.5 " +
+                              (t.grade === "A"
+                                ? "bg-accent-500/20 text-accent-400"
+                                : t.grade === "B"
+                                  ? "bg-blue-500/20 text-blue-400"
+                                  : t.grade === "C"
+                                    ? "bg-yellow-500/20 text-yellow-400"
+                                    : "bg-red-500/20 text-red-400")
+                            }
+                          >
+                            {t.grade}
+                          </span>
+                        ) : (
+                          "—"
+                        )}
+                      </td>
+                      <td
+                        className={
+                          "py-2 text-right font-medium " +
+                          (pl >= 0
+                            ? "text-accent-400"
+                            : "text-red-400")
+                        }
+                      >
+                        {pl >= 0 ? "+" : ""}${pl.toFixed(2)}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
           </div>
         </div>
       )}
