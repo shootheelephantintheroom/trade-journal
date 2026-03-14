@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cd \"/c/Users/gamer/trade journal\" && npm create vite@latest tradebook -- --template react-ts 2>&1)",
+      "Bash(cd \"/c/Users/gamer/trade journal/tradebook\" && npm install 2>&1)",
+      "Bash(cd \"/c/Users/gamer/trade journal/tradebook\" && npm install @supabase/supabase-js react-router-dom 2>&1)",
+      "Bash(cd \"/c/Users/gamer/trade journal/tradebook\" && npm install -D tailwindcss @tailwindcss/vite 2>&1)",
+      "Bash(cd \"/c/Users/gamer/trade journal/tradebook\" && npm install -D tailwindcss @tailwindcss/postcss postcss 2>&1)",
+      "Bash(cd \"/c/Users/gamer/trade journal/tradebook\" && npx tsc --noEmit 2>&1)",
+      "Bash(cd \"/c/Users/gamer/trade journal/tradebook\" && npx vite build 2>&1)",
+      "Bash(find \"/c/Users/gamer/trade journal/tradebook/src\" -type f \\\\\\( -name \"*.tsx\" -o -name \"*.ts\" -o -name \"*.css\" \\\\\\) 2>/dev/null | sort)",
+      "Bash(tree -L 3 -I 'node_modules|dist' \"/c/Users/gamer/trade journal/tradebook\" 2>/dev/null || find \"/c/Users/gamer/trade journal/tradebook\" -maxdepth 3 -not -path \"*/node_modules/*\" -not -path \"*/dist/*\" -type d | sort)",
+      "Bash(cd \"C:\\\\Users\\\\gamer\\\\trade journal\\\\tradebook\" && npx tsc -b --noEmit 2>&1)",
+      "Bash(cd \"C:\\\\Users\\\\gamer\\\\trade journal\\\\tradebook\" && npm run build 2>&1)",
+      "Bash(cd \"C:\\\\Users\\\\gamer\\\\trade journal\\\\tradebook\" && npx tsc --noEmit 2>&1)",
+      "Bash(cd \"C:/Users/gamer/trade journal/tradebook\" && npx tsc --noEmit 2>&1)",
+      "Bash(cd \"/c/Users/gamer/trade journal/tradebook\" && npx tsc --noEmit 2>&1 | head -20)",
+      "Bash(find \"C:\\\\Users\\\\gamer\\\\trade journal\" -type f -name \"*History*\" -o -name \"*history*\" -o -name \"*types*\" -o -name \"*Trade*\" 2>/dev/null | head -20)",
+      "Bash(find \"C:\\\\Users\\\\gamer\\\\trade journal\\\\tradebook\\\\src\" -type f \\\\\\( -name \"*.tsx\" -o -name \"*.ts\" \\\\\\) 2>/dev/null | grep -v node_modules)"
+    ]
+  }
+}
