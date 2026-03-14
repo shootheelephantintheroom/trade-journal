@@ -16,7 +16,8 @@
       "Bash(cd \"C:/Users/gamer/trade journal/tradebook\" && npx tsc --noEmit 2>&1)",
       "Bash(cd \"/c/Users/gamer/trade journal/tradebook\" && npx tsc --noEmit 2>&1 | head -20)",
       "Bash(find \"C:\\\\Users\\\\gamer\\\\trade journal\" -type f -name \"*History*\" -o -name \"*history*\" -o -name \"*types*\" -o -name \"*Trade*\" 2>/dev/null | head -20)",
-      "Bash(find \"C:\\\\Users\\\\gamer\\\\trade journal\\\\tradebook\\\\src\" -type f \\\\\\( -name \"*.tsx\" -o -name \"*.ts\" \\\\\\) 2>/dev/null | grep -v node_modules)"
+      "Bash(find \"C:\\\\Users\\\\gamer\\\\trade journal\\\\tradebook\\\\src\" -type f \\\\\\( -name \"*.tsx\" -o -name \"*.ts\" \\\\\\) 2>/dev/null | grep -v node_modules)",
+      "Bash(cd:*)"
     ]
   }
 }

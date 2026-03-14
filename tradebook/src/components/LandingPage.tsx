@@ -132,11 +132,13 @@ export default function LandingPage() {
             ))}
           </div>
 
-          {/* Dashboard Preview Placeholder */}
-          <div className="w-full max-w-2xl bg-gray-900 border border-gray-800 rounded-xl h-48 sm:h-64 flex items-center justify-center">
-            <span className="text-gray-600 text-sm">
-              Dashboard screenshot coming soon
-            </span>
+          {/* Dashboard Preview */}
+          <div className="w-full max-w-4xl">
+            <img
+              src="/dashboard-preview.png"
+              alt="TradeBook dashboard showing P&L, win rate, equity curve, and trade history"
+              className="w-full rounded-xl border border-gray-800 shadow-2xl shadow-accent-500/5"
+            />
           </div>
 
           {/* CTA */}
