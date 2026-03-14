@@ -48,10 +48,10 @@ export default function HesitationSelect({
               type="button"
               onClick={() => toggle(reason)}
               className={
-                "px-2.5 py-1 rounded-md text-xs font-medium transition-colors border " +
+                "pill-tag px-3 py-1.5 rounded-full text-xs font-medium transition-all border " +
                 (active
-                  ? "bg-yellow-500/20 border-yellow-500 text-yellow-400"
-                  : "bg-gray-800 border-gray-700 text-gray-400 hover:border-gray-600")
+                  ? "bg-yellow-500/20 border-yellow-500 text-yellow-400 shadow-[0_0_8px_rgba(234,179,8,0.15)]"
+                  : "bg-gray-800/80 border-gray-700/80 text-gray-400 hover:border-gray-500 hover:text-gray-300")
               }
             >
               {reason}
@@ -65,15 +65,15 @@ export default function HesitationSelect({
           {customReasons.map((reason) => (
             <span
               key={reason}
-              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-medium bg-yellow-500/20 border border-yellow-500 text-yellow-400"
+              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium bg-yellow-500/20 border border-yellow-500 text-yellow-400"
             >
               {reason}
               <button
                 type="button"
                 onClick={() => toggle(reason)}
-                className="text-yellow-400/60 hover:text-yellow-400"
+                className="text-yellow-400/50 hover:text-yellow-400 text-sm leading-none"
               >
-                &times;
+                ×
               </button>
             </span>
           ))}
@@ -92,12 +92,12 @@ export default function HesitationSelect({
             }
           }}
           placeholder="Add custom reason..."
-          className="flex-1 rounded-lg border border-gray-700 bg-gray-800 px-3 py-1.5 text-xs text-white placeholder-gray-500 focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500"
+          className="flex-1 rounded-lg border border-gray-700/80 bg-gray-800/80 px-3 py-1.5 text-xs text-white placeholder-gray-500 focus:border-yellow-500 focus:outline-none transition-colors"
         />
         <button
           type="button"
           onClick={addCustom}
-          className="px-3 py-1.5 rounded-lg text-xs font-medium bg-gray-800 border border-gray-700 text-gray-400 hover:text-white hover:border-gray-600 transition-colors"
+          className="px-3 py-1.5 rounded-lg text-xs font-medium bg-gray-800/80 border border-gray-700/80 text-gray-400 hover:text-white hover:border-gray-500 transition-colors"
         >
           Add
         </button>

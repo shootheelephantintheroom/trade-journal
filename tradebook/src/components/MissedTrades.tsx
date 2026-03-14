@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, Fragment } from "react";
 import { supabase } from "../lib/supabase";
 import type { MissedTrade, MissedTradeInsert } from "../types/trade";
 import TagSelect from "./TagSelect";
@@ -48,6 +48,7 @@ export default function MissedTrades({
   const { showToast } = useToast();
   const [form, setForm] = useState<MissedTradeInsert>({ ...empty });
   const [saving, setSaving] = useState(false);
+  const [expandedId, setExpandedId] = useState<string | null>(null);
 
   function set<K extends keyof MissedTradeInsert>(
     key: K,
@@ -84,8 +85,9 @@ export default function MissedTrades({
   }
 
   const inputClass =
-    "w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-sm text-white placeholder-gray-500 focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500";
-  const labelClass = "block text-xs font-medium text-gray-400 mb-1";
+    "w-full rounded-lg border border-gray-700/80 bg-gray-800/80 px-3 py-2.5 text-sm text-white placeholder-gray-500 focus:border-yellow-500 focus:outline-none transition-colors";
+  const labelClass =
+    "block text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-1.5";
 
   return (
     <div className="space-y-8">
@@ -94,96 +96,121 @@ export default function MissedTrades({
         onSubmit={handleSubmit}
         className="max-w-lg mx-auto space-y-5"
       >
-        <h2 className="text-xl font-semibold text-white">Log Missed Trade</h2>
+        <h2 className="text-xl font-bold text-white font-display tracking-tight">
+          Log Missed Trade
+        </h2>
 
         {/* Ticker, Side, Date */}
-        <div className="grid grid-cols-3 gap-4">
-          <div>
-            <label className={labelClass}>Ticker</label>
-            <input
-              className={inputClass}
-              placeholder="e.g. TSLA"
-              value={form.ticker}
-              onChange={(e) => set("ticker", e.target.value)}
-              required
-            />
-          </div>
-          <div>
-            <label className={labelClass}>Side</label>
-            <select
-              className={inputClass}
-              value={form.side || "long"}
-              onChange={(e) => set("side", e.target.value as "long" | "short")}
-            >
-              <option value="long">Long</option>
-              <option value="short">Short</option>
-            </select>
-          </div>
-          <div>
-            <label className={labelClass}>Date</label>
-            <input
-              type="date"
-              className={inputClass}
-              value={form.trade_date}
-              onChange={(e) => set("trade_date", e.target.value)}
-              required
-            />
+        <div className="form-section" style={{ borderColor: "rgba(234, 179, 8, 0.15)" }}>
+          <div className="grid grid-cols-3 gap-3">
+            <div>
+              <label className={labelClass}>Ticker</label>
+              <input
+                className={inputClass}
+                placeholder="e.g. TSLA"
+                value={form.ticker}
+                onChange={(e) => set("ticker", e.target.value)}
+                required
+              />
+            </div>
+            <div>
+              <label className={labelClass}>Side</label>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => set("side", "long")}
+                  className={`flex-1 py-2.5 rounded-lg text-xs font-semibold transition-all ${
+                    form.side === "long"
+                      ? "bg-accent-500/15 border border-accent-500 text-accent-400"
+                      : "bg-gray-800/80 border border-gray-700/80 text-gray-400 hover:border-gray-600"
+                  }`}
+                >
+                  Long
+                </button>
+                <button
+                  type="button"
+                  onClick={() => set("side", "short")}
+                  className={`flex-1 py-2.5 rounded-lg text-xs font-semibold transition-all ${
+                    form.side === "short"
+                      ? "bg-red-500/15 border border-red-500 text-red-400"
+                      : "bg-gray-800/80 border border-gray-700/80 text-gray-400 hover:border-gray-600"
+                  }`}
+                >
+                  Short
+                </button>
+              </div>
+            </div>
+            <div>
+              <label className={labelClass}>Date</label>
+              <input
+                type="date"
+                className={inputClass}
+                value={form.trade_date}
+                onChange={(e) => set("trade_date", e.target.value)}
+                required
+              />
+            </div>
           </div>
         </div>
 
         {/* Estimated Entry, Exit, Shares */}
-        <div className="grid grid-cols-3 gap-4">
-          <div>
-            <label className={labelClass}>Est. Entry Price</label>
-            <input
-              type="number"
-              step="any"
-              min="0"
-              className={inputClass}
-              placeholder="0.00"
-              value={form.estimated_entry ?? ""}
-              onChange={(e) =>
-                set("estimated_entry", e.target.value ? parseFloat(e.target.value) : null)
-              }
-            />
-          </div>
-          <div>
-            <label className={labelClass}>Est. Exit Price</label>
-            <input
-              type="number"
-              step="any"
-              min="0"
-              className={inputClass}
-              placeholder="0.00"
-              value={form.estimated_exit ?? ""}
-              onChange={(e) =>
-                set("estimated_exit", e.target.value ? parseFloat(e.target.value) : null)
-              }
-            />
-          </div>
-          <div>
-            <label className={labelClass}>Shares</label>
-            <input
-              type="number"
-              min="1"
-              className={inputClass}
-              placeholder="0"
-              value={form.estimated_shares ?? ""}
-              onChange={(e) =>
-                set("estimated_shares", e.target.value ? parseInt(e.target.value) : null)
-              }
-            />
+        <div className="form-section" style={{ borderColor: "rgba(234, 179, 8, 0.15)" }}>
+          <p className="text-[10px] font-semibold text-gray-600 uppercase tracking-widest mb-3">
+            Estimated Position
+          </p>
+          <div className="grid grid-cols-3 gap-3">
+            <div>
+              <label className={labelClass}>Est. Entry</label>
+              <input
+                type="number"
+                step="any"
+                min="0"
+                className={inputClass}
+                placeholder="0.00"
+                value={form.estimated_entry ?? ""}
+                onChange={(e) =>
+                  set("estimated_entry", e.target.value ? parseFloat(e.target.value) : null)
+                }
+              />
+            </div>
+            <div>
+              <label className={labelClass}>Est. Exit</label>
+              <input
+                type="number"
+                step="any"
+                min="0"
+                className={inputClass}
+                placeholder="0.00"
+                value={form.estimated_exit ?? ""}
+                onChange={(e) =>
+                  set("estimated_exit", e.target.value ? parseFloat(e.target.value) : null)
+                }
+              />
+            </div>
+            <div>
+              <label className={labelClass}>Shares</label>
+              <input
+                type="number"
+                min="1"
+                className={inputClass}
+                placeholder="0"
+                value={form.estimated_shares ?? ""}
+                onChange={(e) =>
+                  set("estimated_shares", e.target.value ? parseInt(e.target.value) : null)
+                }
+              />
+            </div>
           </div>
         </div>
 
         {/* Estimated P&L preview */}
         {estimatedPnl !== null && (
-          <div className="rounded-lg border border-gray-700 bg-gray-800/50 px-4 py-3 text-sm">
-            <span className="text-gray-400">
-              Est. P&L:{" "}
+          <div className="card-panel px-4 py-3" style={{ borderColor: "rgba(234, 179, 8, 0.2)" }}>
+            <span className="text-xs text-gray-500 uppercase tracking-wider">
+              Est. P&L{" "}
               <span
                 className={
-                  "font-semibold " +
+                  "text-sm font-bold ml-1 " +
                   (estimatedPnl >= 0 ? "text-accent-400" : "text-red-400")
                 }
               >
@@ -211,8 +238,11 @@ export default function MissedTrades({
           />
         </div>
 
-        <div>
-          <label className={labelClass}>What Stopped You?</label>
+        {/* Why I Hesitated — Prominent */}
+        <div className="rounded-xl border border-yellow-500/20 bg-yellow-500/5 p-4">
+          <label className="block text-[11px] font-bold text-yellow-400 uppercase tracking-wider mb-2">
+            Why I Hesitated
+          </label>
           <HesitationSelect
             selected={form.hesitation_reasons}
             onChange={(reasons) => set("hesitation_reasons", reasons)}
@@ -233,7 +263,8 @@ export default function MissedTrades({
         <button
           type="submit"
           disabled={saving}
-          className="w-full rounded-lg bg-accent-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-accent-500 disabled:opacity-50 transition-colors"
+          className="btn-submit w-full rounded-lg bg-yellow-600 px-4 py-3 text-sm font-bold text-white hover:bg-yellow-500 disabled:opacity-50"
+          style={{ boxShadow: "0 0 20px rgba(234, 179, 8, 0.15)" }}
         >
           {saving ? "Saving..." : "Save Missed Trade"}
         </button>
@@ -242,8 +273,10 @@ export default function MissedTrades({
       {/* List */}
       {missedTrades.length === 0 && (
         <div className="flex flex-col items-center justify-center py-12 gap-3">
-          <div className="text-4xl">👀</div>
-          <h3 className="text-lg font-semibold text-white">
+          <div className="w-16 h-16 rounded-2xl bg-gray-900 border border-yellow-500/20 flex items-center justify-center text-3xl">
+            👀
+          </div>
+          <h3 className="text-lg font-bold text-white font-display">
             No missed trades yet
           </h3>
           <p className="text-sm text-gray-400 text-center max-w-xs">
@@ -254,116 +287,202 @@ export default function MissedTrades({
       )}
       {missedTrades.length > 0 && (
         <div>
-          <h3 className="text-sm font-semibold text-gray-300 mb-3">
-            Missed Trades Log
-          </h3>
-          <div className="overflow-x-auto rounded-xl border border-gray-700">
-            <table className="w-full text-sm text-left">
-              <thead className="text-xs text-gray-400 uppercase bg-gray-800/50">
-                <tr>
-                  <th className="px-4 py-3">Date</th>
-                  <th className="px-4 py-3">Ticker</th>
-                  <th className="px-4 py-3">Side</th>
-                  <th className="px-4 py-3">Est. Entry</th>
-                  <th className="px-4 py-3">Est. Exit</th>
-                  <th className="px-4 py-3">Est. P&L</th>
-                  <th className="px-4 py-3">Setup</th>
-                  <th className="px-4 py-3">Hesitation</th>
-                </tr>
-              </thead>
-              <tbody>
-                {missedTrades.map((mt) => {
-                  const pnl = calcMissedPnl(mt);
-                  return (
-                    <tr
-                      key={mt.id}
-                      className="border-t border-gray-800 hover:bg-gray-800/30 transition-colors"
-                    >
-                      <td className="px-4 py-2.5 text-gray-300">
-                        {mt.trade_date}
-                      </td>
-                      <td className="px-4 py-2.5 font-medium text-white">
-                        {mt.ticker}
-                      </td>
-                      <td className="px-4 py-2.5">
-                        {mt.side ? (
-                          <span
+          <div className="flex items-center gap-3 mb-3">
+            <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
+              Missed Trades Log
+            </h3>
+            <span className="text-[10px] text-yellow-400/70 bg-yellow-500/10 border border-yellow-500/20 px-2 py-0.5 rounded-full font-medium">
+              {missedTrades.length} missed
+            </span>
+          </div>
+          <div className="card-panel overflow-hidden" style={{ borderColor: "rgba(234, 179, 8, 0.15)" }}>
+            <div className="overflow-x-auto">
+              <table className="trade-table w-full text-sm text-left">
+                <thead>
+                  <tr className="border-b border-yellow-500/10">
+                    <th className="px-4 py-3 text-[10px] text-gray-500 uppercase font-semibold tracking-wider">
+                      Date
+                    </th>
+                    <th className="px-4 py-3 text-[10px] text-gray-500 uppercase font-semibold tracking-wider">
+                      Ticker
+                    </th>
+                    <th className="px-4 py-3 text-[10px] text-gray-500 uppercase font-semibold tracking-wider">
+                      Side
+                    </th>
+                    <th className="px-4 py-3 text-[10px] text-gray-500 uppercase font-semibold tracking-wider">
+                      Est. Entry
+                    </th>
+                    <th className="px-4 py-3 text-[10px] text-gray-500 uppercase font-semibold tracking-wider">
+                      Est. Exit
+                    </th>
+                    <th className="px-4 py-3 text-[10px] text-gray-500 uppercase font-semibold tracking-wider">
+                      Est. P&L
+                    </th>
+                    <th className="px-4 py-3 text-[10px] text-gray-500 uppercase font-semibold tracking-wider">
+                      Hesitation
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {missedTrades.map((mt) => {
+                    const pnl = calcMissedPnl(mt);
+                    const isExpanded = expandedId === mt.id;
+
+                    return (
+                      <Fragment key={mt.id}>
+                        <tr
+                          onClick={() =>
+                            setExpandedId(isExpanded ? null : mt.id)
+                          }
+                          className={`border-t border-gray-800/40 cursor-pointer ${
+                            isExpanded ? "bg-yellow-500/5" : ""
+                          }`}
+                        >
+                          <td className="px-4 py-3 text-gray-400 text-xs">
+                            {mt.trade_date}
+                          </td>
+                          <td className="px-4 py-3">
+                            <div className="flex items-center gap-1.5">
+                              <span className="w-1.5 h-1.5 rounded-full bg-yellow-500" />
+                              <span className="font-semibold text-white">
+                                {mt.ticker}
+                              </span>
+                            </div>
+                          </td>
+                          <td className="px-4 py-3">
+                            {mt.side ? (
+                              <span
+                                className={`text-xs font-medium ${
+                                  mt.side === "long"
+                                    ? "text-accent-400"
+                                    : "text-red-400"
+                                }`}
+                              >
+                                {mt.side.toUpperCase()}
+                              </span>
+                            ) : (
+                              <span className="text-gray-600">—</span>
+                            )}
+                          </td>
+                          <td className="px-4 py-3 text-gray-400 text-xs">
+                            {mt.estimated_entry != null
+                              ? `$${Number(mt.estimated_entry).toFixed(2)}`
+                              : "—"}
+                          </td>
+                          <td className="px-4 py-3 text-gray-400 text-xs">
+                            {mt.estimated_exit != null
+                              ? `$${Number(mt.estimated_exit).toFixed(2)}`
+                              : "—"}
+                          </td>
+                          <td
                             className={
-                              mt.side === "long"
-                                ? "text-accent-400"
-                                : "text-red-400"
+                              "px-4 py-3 font-semibold text-sm " +
+                              (pnl === null
+                                ? "text-gray-600"
+                                : pnl >= 0
+                                  ? "text-accent-400"
+                                  : "text-red-400")
                             }
                           >
-                            {mt.side.toUpperCase()}
-                          </span>
-                        ) : (
-                          "—"
+                            {pnl !== null
+                              ? `${pnl >= 0 ? "+" : ""}$${pnl.toFixed(2)}`
+                              : "—"}
+                          </td>
+                          <td className="px-4 py-3 max-w-[200px]">
+                            {mt.hesitation_reasons && mt.hesitation_reasons.length > 0 ? (
+                              <div className="flex flex-wrap gap-1">
+                                {mt.hesitation_reasons.slice(0, 2).map((r) => (
+                                  <span
+                                    key={r}
+                                    className="px-1.5 py-0.5 rounded-full text-[10px] font-medium bg-yellow-500/10 text-yellow-400/80 border border-yellow-500/20"
+                                  >
+                                    {r}
+                                  </span>
+                                ))}
+                                {mt.hesitation_reasons.length > 2 && (
+                                  <span className="text-[10px] text-yellow-400/50">
+                                    +{mt.hesitation_reasons.length - 2}
+                                  </span>
+                                )}
+                              </div>
+                            ) : (
+                              <span className="text-gray-600 text-xs">—</span>
+                            )}
+                          </td>
+                        </tr>
+                        {/* Expanded detail */}
+                        {isExpanded && (
+                          <tr key={`${mt.id}-detail`}>
+                            <td
+                              colSpan={7}
+                              className="px-4 py-0 bg-yellow-500/5 border-t border-yellow-500/10"
+                            >
+                              <div className="trade-expand py-4 grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                                {mt.setup && (
+                                  <div>
+                                    <span className="text-gray-500 uppercase tracking-wider text-[10px] font-semibold">
+                                      Setup
+                                    </span>
+                                    <p className="text-gray-300 mt-0.5">
+                                      {mt.setup}
+                                    </p>
+                                  </div>
+                                )}
+                                {mt.tags && mt.tags.length > 0 && (
+                                  <div>
+                                    <span className="text-gray-500 uppercase tracking-wider text-[10px] font-semibold">
+                                      Tags
+                                    </span>
+                                    <div className="flex flex-wrap gap-1 mt-1">
+                                      {mt.tags.map((tag) => (
+                                        <span
+                                          key={tag}
+                                          className="px-1.5 py-0.5 rounded-full text-[10px] font-medium bg-accent-500/10 text-accent-400/80 border border-accent-500/20"
+                                        >
+                                          {tag}
+                                        </span>
+                                      ))}
+                                    </div>
+                                  </div>
+                                )}
+                                {mt.hesitation_reasons &&
+                                  mt.hesitation_reasons.length > 0 && (
+                                    <div>
+                                      <span className="text-yellow-400 uppercase tracking-wider text-[10px] font-bold">
+                                        Why I Hesitated
+                                      </span>
+                                      <div className="flex flex-wrap gap-1 mt-1">
+                                        {mt.hesitation_reasons.map((r) => (
+                                          <span
+                                            key={r}
+                                            className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-yellow-500/10 text-yellow-400 border border-yellow-500/20"
+                                          >
+                                            {r}
+                                          </span>
+                                        ))}
+                                      </div>
+                                    </div>
+                                  )}
+                                {mt.reason && (
+                                  <div>
+                                    <span className="text-yellow-400 uppercase tracking-wider text-[10px] font-bold">
+                                      Why I Passed
+                                    </span>
+                                    <p className="text-gray-300 mt-0.5">
+                                      {mt.reason}
+                                    </p>
+                                  </div>
+                                )}
+                              </div>
+                            </td>
+                          </tr>
                         )}
-                      </td>
-                      <td className="px-4 py-2.5 text-gray-300">
-                        {mt.estimated_entry != null
-                          ? `$${Number(mt.estimated_entry).toFixed(2)}`
-                          : "—"}
-                      </td>
-                      <td className="px-4 py-2.5 text-gray-300">
-                        {mt.estimated_exit != null
-                          ? `$${Number(mt.estimated_exit).toFixed(2)}`
-                          : "—"}
-                      </td>
-                      <td
-                        className={
-                          "px-4 py-2.5 font-medium " +
-                          (pnl === null
-                            ? "text-gray-500"
-                            : pnl >= 0
-                              ? "text-accent-400"
-                              : "text-red-400")
-                        }
-                      >
-                        {pnl !== null
-                          ? `${pnl >= 0 ? "+" : ""}$${pnl.toFixed(2)}`
-                          : "—"}
-                      </td>
-                      <td className="px-4 py-2.5 max-w-[180px]">
-                        {mt.tags && mt.tags.length > 0 && (
-                          <div className="flex flex-wrap gap-1 mb-1">
-                            {mt.tags.map((tag) => (
-                              <span
-                                key={tag}
-                                className="px-1.5 py-0.5 rounded text-[10px] font-medium bg-accent-500/10 text-accent-400/80 border border-accent-500/20"
-                              >
-                                {tag}
-                              </span>
-                            ))}
-                          </div>
-                        )}
-                        <span className="text-gray-500 text-xs truncate block">
-                          {mt.setup || "—"}
-                        </span>
-                      </td>
-                      <td className="px-4 py-2.5 max-w-[180px]">
-                        {mt.hesitation_reasons && mt.hesitation_reasons.length > 0 ? (
-                          <div className="flex flex-wrap gap-1">
-                            {mt.hesitation_reasons.map((r) => (
-                              <span
-                                key={r}
-                                className="px-1.5 py-0.5 rounded text-[10px] font-medium bg-yellow-500/10 text-yellow-400/80 border border-yellow-500/20"
-                              >
-                                {r}
-                              </span>
-                            ))}
-                          </div>
-                        ) : (
-                          <span className="text-gray-500 text-xs">
-                            {mt.reason || "—"}
-                          </span>
-                        )}
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+                      </Fragment>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       )}
