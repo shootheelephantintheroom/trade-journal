@@ -1,6 +1,6 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 import "./index.css";
 import App from "./App";
 import LoginPage from "./components/LoginPage";
@@ -10,6 +10,17 @@ import TermsPage from "./components/TermsPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { AuthProvider } from "./contexts/AuthContext";
 import { ToastProvider } from "./components/Toast";
+
+function NotFoundPage() {
+  return (
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-950 text-white">
+      <h1 className="text-4xl font-bold font-display mb-4">Page not found</h1>
+      <Link to="/" className="text-accent-400 hover:underline">
+        Go back home
+      </Link>
+    </div>
+  );
+}
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -29,6 +40,7 @@ createRoot(document.getElementById("root")!).render(
                 </ProtectedRoute>
               }
             />
+            <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </ToastProvider>
       </AuthProvider>

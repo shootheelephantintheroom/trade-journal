@@ -1,6 +1,7 @@
 import type { Trade, MissedTrade } from "../types/trade";
 import { calcPnl, calcRR, calcStreak } from "../lib/calc";
 import { calcMissedPnl } from "./MissedTrades";
+import { todayLocal } from "../lib/date";
 
 function StatCard({
   label,
@@ -251,7 +252,7 @@ function EquityCurve({
 }
 
 function TodaySummary({ trades }: { trades: Trade[] }) {
-  const today = new Date().toISOString().split("T")[0];
+  const today = todayLocal();
   const todayTrades = trades.filter((t) => t.trade_date === today);
   if (todayTrades.length === 0) return null;
 

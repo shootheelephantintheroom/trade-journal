@@ -4,6 +4,7 @@ import type { TradeInsert } from "../types/trade";
 import { calcPnl, calcRR, calcMaxRisk } from "../lib/calc";
 import TagSelect from "./TagSelect";
 import { useToast } from "./Toast";
+import { todayLocal } from "../lib/date";
 
 const empty: TradeInsert = {
   ticker: "",
@@ -11,7 +12,7 @@ const empty: TradeInsert = {
   entry_price: 0,
   exit_price: 0,
   shares: 0,
-  trade_date: new Date().toISOString().split("T")[0],
+  trade_date: todayLocal(),
   entry_time: "",
   exit_time: "",
   setup: "",
@@ -85,7 +86,7 @@ export default function TradeForm({ onSaved }: { onSaved?: () => void }) {
       showToast(err.message, "error");
     } else {
       showToast("Trade saved!", "success");
-      setForm({ ...empty, trade_date: new Date().toISOString().split("T")[0] });
+      setForm({ ...empty, trade_date: todayLocal() });
       setEmotionInput("");
       onSaved?.();
     }

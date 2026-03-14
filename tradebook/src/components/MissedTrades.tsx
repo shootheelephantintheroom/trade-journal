@@ -4,10 +4,11 @@ import type { MissedTrade, MissedTradeInsert } from "../types/trade";
 import TagSelect from "./TagSelect";
 import HesitationSelect from "./HesitationSelect";
 import { useToast } from "./Toast";
+import { todayLocal } from "../lib/date";
 
 const empty: MissedTradeInsert = {
   ticker: "",
-  trade_date: new Date().toISOString().split("T")[0],
+  trade_date: todayLocal(),
   setup: "",
   tags: [],
   reason: "",
@@ -78,7 +79,7 @@ export default function MissedTrades({
       showToast("Missed trade saved!", "success");
       setForm({
         ...empty,
-        trade_date: new Date().toISOString().split("T")[0],
+        trade_date: todayLocal(),
       });
       onSaved();
     }
