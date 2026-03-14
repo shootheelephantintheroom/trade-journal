@@ -2,6 +2,7 @@ import type { Trade, MissedTrade } from "../types/trade";
 import { calcPnl, calcRR, calcStreak } from "../lib/calc";
 import { calcMissedPnl } from "./MissedTrades";
 import { todayLocal } from "../lib/date";
+import CalendarHeatmap from "./CalendarHeatmap";
 
 function StatCard({
   label,
@@ -766,6 +767,16 @@ export default function Dashboard({
               </table>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* Trade Calendar */}
+      {hasTrades && dailyStats.length > 0 && (
+        <div className="card-panel p-5 page-enter">
+          <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4">
+            Trade Calendar
+          </h3>
+          <CalendarHeatmap dailyStats={dailyStats} />
         </div>
       )}
 
