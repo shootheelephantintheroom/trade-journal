@@ -78,6 +78,150 @@ function AmberStatCard({
   );
 }
 
+function EquityCurve({
+  points,
+}: {
+  points: { date: string; value: number }[];
+}) {
+  if (points.length < 2) return null;
+
+  const values = points.map((p) => p.value);
+  const minVal = Math.min(0, ...values);
+  const maxVal = Math.max(0, ...values);
+  const range = maxVal - minVal || 1;
+
+  const W = 520;
+  const H = 200;
+  const pad = { t: 10, b: 25, l: 45, r: 10 };
+  const cW = W - pad.l - pad.r;
+  const cH = H - pad.t - pad.b;
+
+  const coords = points.map((p, i) => ({
+    x: pad.l + (i / (points.length - 1)) * cW,
+    y: pad.t + cH - ((p.value - minVal) / range) * cH,
+  }));
+
+  const polyline = coords.map((c) => `${c.x},${c.y}`).join(" ");
+  const last = coords[coords.length - 1];
+
+  const areaPath =
+    `M${coords[0].x},${coords[0].y} ` +
+    coords
+      .slice(1)
+      .map((c) => `L${c.x},${c.y}`)
+      .join(" ") +
+    ` L${last.x},${pad.t + cH} L${coords[0].x},${pad.t + cH} Z`;
+
+  const zeroY = pad.t + cH - ((0 - minVal) / range) * cH;
+
+  const gridLines = [0.25, 0.5, 0.75].map((f) => ({
+    y: pad.t + cH * (1 - f),
+    val: minVal + range * f,
+  }));
+
+  const fmtDollar = (v: number) =>
+    Math.abs(v) >= 1000
+      ? `$${(v / 1000).toFixed(1)}k`
+      : `$${v.toFixed(0)}`;
+
+  const lineColor =
+    points[points.length - 1].value >= 0 ? "#00C853" : "#ef4444";
+
+  const firstDateIdx = points.findIndex((p) => p.date);
+  const lastDateIdx = points.length - 1;
+
+  return (
+    <svg viewBox={`0 0 ${W} ${H}`} className="w-full" style={{ height: 200 }}>
+      <defs>
+        <linearGradient id="eqGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor={lineColor} stopOpacity={0.25} />
+          <stop offset="100%" stopColor={lineColor} stopOpacity={0.02} />
+        </linearGradient>
+      </defs>
+      {gridLines.map((g, i) => (
+        <g key={i}>
+          <line
+            x1={pad.l}
+            y1={g.y}
+            x2={W - pad.r}
+            y2={g.y}
+            stroke="rgba(55,65,81,0.3)"
+            strokeWidth="1"
+          />
+          <text
+            x={pad.l - 4}
+            y={g.y + 3}
+            fill="#6b7280"
+            fontSize="9"
+            textAnchor="end"
+          >
+            {fmtDollar(g.val)}
+          </text>
+        </g>
+      ))}
+      <line
+        x1={pad.l}
+        y1={zeroY}
+        x2={W - pad.r}
+        y2={zeroY}
+        stroke="rgba(107,114,128,0.3)"
+        strokeWidth="1"
+        strokeDasharray="4,4"
+      />
+      <text
+        x={pad.l - 4}
+        y={zeroY + 3}
+        fill="#6b7280"
+        fontSize="9"
+        textAnchor="end"
+      >
+        $0
+      </text>
+      <path d={areaPath} fill="url(#eqGrad)" />
+      <polyline
+        points={polyline}
+        fill="none"
+        stroke={lineColor}
+        strokeWidth="2.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <circle cx={last.x} cy={last.y} r="4" fill={lineColor} />
+      <circle
+        cx={last.x}
+        cy={last.y}
+        r="7"
+        fill="none"
+        stroke={lineColor}
+        strokeWidth="1.5"
+        opacity="0.4"
+      />
+      {firstDateIdx >= 0 && (
+        <text
+          x={coords[firstDateIdx].x}
+          y={H - 4}
+          fill="#6b7280"
+          fontSize="9"
+          textAnchor="start"
+        >
+          {points[firstDateIdx].date}
+        </text>
+      )}
+      {lastDateIdx !== firstDateIdx && (
+        <text
+          x={last.x}
+          y={H - 4}
+          fill="#6b7280"
+          fontSize="9"
+          textAnchor="end"
+        >
+          {points[lastDateIdx].date}
+        </text>
+      )}
+    </svg>
+  );
+}
+
 export default function Dashboard({
   trades,
   missedTrades = [],
@@ -156,6 +300,26 @@ export default function Dashboard({
 
   // Daily stats
   const dailyStats = buildDailyStats(trades);
+
+  // Equity curve data (cumulative P&L, chronological)
+  const equityDays = [...dailyStats].reverse();
+  let runningPnl = 0;
+  const equityPoints = [
+    { date: "", value: 0 },
+    ...equityDays.map((d) => {
+      runningPnl += d.pnl;
+      return { date: d.date, value: runningPnl };
+    }),
+  ];
+
+  // Recent trades (5 most recent by date + time)
+  const recentTrades = [...trades]
+    .sort((a, b) => {
+      if (a.trade_date !== b.trade_date)
+        return b.trade_date.localeCompare(a.trade_date);
+      return (b.entry_time || "").localeCompare(a.entry_time || "");
+    })
+    .slice(0, 5);
 
   return (
     <div className="space-y-8">
@@ -377,6 +541,123 @@ export default function Dashboard({
                 })}
               </tbody>
             </table>
+          </div>
+        </div>
+      )}
+
+      {/* Equity Curve & Recent Trades */}
+      {hasTrades && equityPoints.length >= 2 && (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Equity Curve */}
+          <div className="rounded-xl border border-gray-800 bg-gray-900/50 p-5">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-sm font-semibold text-white">
+                Equity Curve
+              </h3>
+              <span
+                className={`text-xs font-semibold px-2.5 py-1 rounded-md ${
+                  totalPnl >= 0
+                    ? "text-accent-400 bg-accent-500/10 border border-accent-500/20"
+                    : "text-red-400 bg-red-500/10 border border-red-500/20"
+                }`}
+              >
+                {totalPnl >= 0 ? "+" : ""}${totalPnl.toFixed(2)}
+              </span>
+            </div>
+            <EquityCurve points={equityPoints} />
+          </div>
+
+          {/* Recent Trades */}
+          <div className="rounded-xl border border-gray-800 bg-gray-900/50 p-5">
+            <h3 className="text-sm font-semibold text-white mb-4">
+              Recent Trades
+            </h3>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm text-left">
+                <thead className="text-[10px] text-gray-500 uppercase">
+                  <tr>
+                    <th className="pb-2">Time</th>
+                    <th className="pb-2">Ticker</th>
+                    <th className="pb-2">Side</th>
+                    <th className="pb-2">Entry / Exit</th>
+                    <th className="pb-2">Grade</th>
+                    <th className="pb-2 text-right">P&L</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {recentTrades.map((t) => {
+                    const pl = calcPnl(t);
+                    return (
+                      <tr
+                        key={t.id}
+                        className="border-t border-gray-800/50 hover:bg-gray-800/30 transition-colors"
+                      >
+                        <td className="py-2 text-gray-400 text-xs">
+                          {t.entry_time || "—"}
+                        </td>
+                        <td className="py-2">
+                          <span className="font-medium text-white">
+                            {t.ticker}
+                          </span>
+                          {t.tags &&
+                            t.tags.slice(0, 1).map((tag) => (
+                              <span
+                                key={tag}
+                                className="ml-1.5 px-1.5 py-0.5 rounded text-[10px] font-medium bg-accent-500/10 text-accent-400/80 border border-accent-500/20"
+                              >
+                                {tag}
+                              </span>
+                            ))}
+                        </td>
+                        <td
+                          className={`py-2 text-xs ${
+                            t.side === "long"
+                              ? "text-accent-400"
+                              : "text-red-400"
+                          }`}
+                        >
+                          {t.side === "long" ? "Long" : "Short"}
+                        </td>
+                        <td className="py-2 text-xs text-gray-400">
+                          ${t.entry_price.toFixed(2)} → $
+                          {t.exit_price.toFixed(2)}
+                        </td>
+                        <td className="py-2">
+                          {t.grade ? (
+                            <span
+                              className={
+                                "inline-block w-6 text-center rounded text-xs font-bold py-0.5 " +
+                                (t.grade === "A"
+                                  ? "bg-accent-500/20 text-accent-400"
+                                  : t.grade === "B"
+                                    ? "bg-blue-500/20 text-blue-400"
+                                    : t.grade === "C"
+                                      ? "bg-yellow-500/20 text-yellow-400"
+                                      : "bg-red-500/20 text-red-400")
+                              }
+                            >
+                              {t.grade}
+                            </span>
+                          ) : (
+                            "—"
+                          )}
+                        </td>
+                        <td
+                          className={
+                            "py-2 text-right font-medium " +
+                            (pl >= 0
+                              ? "text-accent-400"
+                              : "text-red-400")
+                          }
+                        >
+                          {pl >= 0 ? "+" : ""}${pl.toFixed(2)}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       )}
