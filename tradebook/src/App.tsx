@@ -73,7 +73,7 @@ export default function App() {
       <header className="sticky top-0 z-40 bg-gray-950/80 backdrop-blur-xl border-b border-gray-800/80">
         <div className="max-w-5xl mx-auto px-4 py-0 flex items-center justify-between">
           <h1 className="text-lg font-bold tracking-tight text-white font-display">
-            TradeBook
+            MyTradeBook
           </h1>
           <nav className="flex gap-0.5 items-center">
             {tabs.map((t) => (

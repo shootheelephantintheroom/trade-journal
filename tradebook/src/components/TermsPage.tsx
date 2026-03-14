@@ -6,7 +6,7 @@ export default function TermsPage() {
       <header className="border-b border-gray-800/50">
         <div className="max-w-3xl mx-auto px-4 py-5 flex items-center justify-between">
           <Link to="/" className="font-display text-lg font-bold text-white">
-            TradeBook
+            MyTradeBook
           </Link>
           <Link to="/" className="text-xs text-gray-500 hover:text-gray-300 transition-colors">
             Back to Home
@@ -23,7 +23,7 @@ export default function TermsPage() {
           <section>
             <h2 className="text-base font-semibold text-white mb-2">1. Acceptance of Terms</h2>
             <p>
-              By accessing or using TradeBook, you agree to be bound by these Terms of Service. If
+              By accessing or using MyTradeBook, you agree to be bound by these Terms of Service. If
               you do not agree, do not use the service.
             </p>
           </section>
@@ -31,8 +31,8 @@ export default function TermsPage() {
           <section>
             <h2 className="text-base font-semibold text-white mb-2">2. Description of Service</h2>
             <p>
-              TradeBook is a personal trade journaling tool. It allows you to log, review, and
-              analyze your trades. TradeBook is not a broker, financial advisor, or trading platform.
+              MyTradeBook is a personal trade journaling tool. It allows you to log, review, and
+              analyze your trades. MyTradeBook is not a broker, financial advisor, or trading platform.
               We do not execute trades, provide financial advice, or make investment recommendations.
             </p>
           </section>
@@ -40,7 +40,7 @@ export default function TermsPage() {
           <section>
             <h2 className="text-base font-semibold text-white mb-2">3. Not Financial Advice</h2>
             <p>
-              Nothing on TradeBook constitutes financial, investment, or trading advice. All trade
+              Nothing on MyTradeBook constitutes financial, investment, or trading advice. All trade
               data, analytics, and metrics are for personal journaling purposes only. You are solely
               responsible for your trading decisions.
             </p>
@@ -58,7 +58,7 @@ export default function TermsPage() {
           <section>
             <h2 className="text-base font-semibold text-white mb-2">5. Limitation of Liability</h2>
             <p>
-              TradeBook is provided "as is" without warranties of any kind. We are not liable for any
+              MyTradeBook is provided "as is" without warranties of any kind. We are not liable for any
               losses, damages, or missed opportunities arising from your use of the service or
               reliance on any data displayed within it.
             </p>
@@ -67,7 +67,7 @@ export default function TermsPage() {
           <section>
             <h2 className="text-base font-semibold text-white mb-2">6. Changes to Terms</h2>
             <p>
-              We may update these terms from time to time. Continued use of TradeBook after changes
+              We may update these terms from time to time. Continued use of MyTradeBook after changes
               constitutes acceptance of the updated terms.
             </p>
           </section>

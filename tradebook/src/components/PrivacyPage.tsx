@@ -6,7 +6,7 @@ export default function PrivacyPage() {
       <header className="border-b border-gray-800/50">
         <div className="max-w-3xl mx-auto px-4 py-5 flex items-center justify-between">
           <Link to="/" className="font-display text-lg font-bold text-white">
-            TradeBook
+            MyTradeBook
           </Link>
           <Link to="/" className="text-xs text-gray-500 hover:text-gray-300 transition-colors">
             Back to Home
@@ -24,7 +24,7 @@ export default function PrivacyPage() {
             <h2 className="text-base font-semibold text-white mb-2">1. Information We Collect</h2>
             <p>
               When you create an account, we collect your email address and display name. When you
-              use TradeBook, we store the trade data you voluntarily enter — including ticker
+              use MyTradeBook, we store the trade data you voluntarily enter — including ticker
               symbols, prices, notes, and other journal entries. We do not collect payment
               information, browsing history, or device data beyond what is necessary to operate the
               service.
@@ -34,7 +34,7 @@ export default function PrivacyPage() {
           <section>
             <h2 className="text-base font-semibold text-white mb-2">2. How We Use Your Data</h2>
             <p>
-              Your trade data is used solely to provide you with the TradeBook journaling service —
+              Your trade data is used solely to provide you with the MyTradeBook journaling service —
               dashboards, analytics, and history. We do not sell, share, or monetize your data. We do
               not use your trade data for advertising or profiling.
             </p>

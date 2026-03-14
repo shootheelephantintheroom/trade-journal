@@ -1,5 +1,5 @@
 -- =============================================================
--- TradeBook Auth Migration
+-- MyTradeBook Auth Migration
 -- Paste this into your Supabase SQL Editor and run it
 -- =============================================================
 

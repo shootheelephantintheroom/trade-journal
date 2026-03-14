@@ -4,8 +4,8 @@ import { useAuth } from "../contexts/AuthContext";
 
 const FAQS = [
   {
-    q: "Is TradeBook really free?",
-    a: "Yes. TradeBook is completely free during the beta. Every feature is included — no paywalls, no credit card required.",
+    q: "Is MyTradeBook really free?",
+    a: "Yes. MyTradeBook is completely free during the beta. Every feature is included — no paywalls, no credit card required.",
   },
   {
     q: "What data do I need to enter?",
@@ -119,7 +119,7 @@ export default function LandingPage() {
       >
         <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
           <h1 className="text-lg font-display font-bold tracking-tight text-white">
-            TradeBook
+            MyTradeBook
           </h1>
           <div className="flex items-center gap-3">
             <Link
@@ -273,7 +273,7 @@ export default function LandingPage() {
             <div className="dashboard-float relative">
               <img
                 src="/dashboard-preview.png"
-                alt="TradeBook dashboard showing P&L, win rate, equity curve, and trade history"
+                alt="MyTradeBook dashboard showing P&L, win rate, equity curve, and trade history"
                 className="w-full rounded-xl border border-gray-800 relative z-10"
               />
               {/* Soft glow underneath */}
@@ -382,7 +382,7 @@ export default function LandingPage() {
               {[
                 {
                   quote:
-                    "I was using spreadsheets for months. TradeBook actually made me want to review my trades.",
+                    "I was using spreadsheets for months. MyTradeBook actually made me want to review my trades.",
                   name: "Day Trader",
                   detail: "Small caps",
                 },
@@ -497,7 +497,7 @@ export default function LandingPage() {
         <div className="max-w-5xl mx-auto px-4 py-10 flex flex-col sm:flex-row items-center justify-between gap-6">
           <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-5">
             <span className="font-display text-sm font-bold text-white">
-              TradeBook
+              MyTradeBook
             </span>
             <span className="text-xs text-gray-500">
               Made by ohjudo

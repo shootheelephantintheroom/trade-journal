@@ -3,7 +3,7 @@ import { createClient } from "@supabase/supabase-js";
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-const REMEMBER_ME_KEY = "tradebook_remember_me";
+const REMEMBER_ME_KEY = "mytradebook_remember_me";
 
 export function setRememberMe(value: boolean) {
   if (value) {

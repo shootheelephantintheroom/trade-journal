@@ -48,7 +48,7 @@ export default function LoginPage() {
     <div className="min-h-screen bg-gray-950 flex items-center justify-center px-4">
       <div className="w-full max-w-sm">
         <h1 className="text-2xl font-bold text-white text-center mb-1">
-          TradeBook
+          MyTradeBook
         </h1>
         <p className="text-gray-500 text-center text-sm mb-8">
           {mode === "login" ? "Sign in to your journal" : "Create your account"}
