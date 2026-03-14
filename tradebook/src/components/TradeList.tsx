@@ -465,6 +465,26 @@ export default function TradeList({
                                 </p>
                               </div>
                             )}
+                            {t.screenshot_url && (
+                              <div className="md:col-span-2">
+                                <span className="text-gray-500 uppercase tracking-wider text-[10px] font-semibold">
+                                  Chart Screenshot
+                                </span>
+                                <a
+                                  href={t.screenshot_url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  onClick={(e) => e.stopPropagation()}
+                                  className="block mt-1"
+                                >
+                                  <img
+                                    src={t.screenshot_url}
+                                    alt={`${t.ticker} chart`}
+                                    className="max-h-[200px] rounded-lg border border-gray-700/80 hover:border-gray-500 transition-colors"
+                                  />
+                                </a>
+                              </div>
+                            )}
                             {/* Edit / Delete actions */}
                             <div className="md:col-span-2 flex gap-2 pt-2 border-t border-gray-800/40">
                               <button

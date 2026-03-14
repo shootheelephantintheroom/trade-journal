@@ -15,6 +15,7 @@ export interface Trade {
   tags: string[];
   grade: string;
   premarket_plan: string;
+  screenshot_url: string | null;
   created_at: string;
 }
 

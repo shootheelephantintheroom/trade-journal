@@ -1,10 +1,13 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { supabase } from "../lib/supabase";
 import type { Trade, TradeInsert } from "../types/trade";
 import { calcPnl, calcRR, calcMaxRisk } from "../lib/calc";
 import TagSelect from "./TagSelect";
 import { useToast } from "./Toast";
 import { todayLocal } from "../lib/date";
+
+const ALLOWED_TYPES = ["image/png", "image/jpeg", "image/webp"];
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
 const empty: TradeInsert = {
   ticker: "",
@@ -22,6 +25,7 @@ const empty: TradeInsert = {
   tags: [],
   grade: "",
   premarket_plan: "",
+  screenshot_url: null,
 };
 
 const GRADES = [
@@ -44,6 +48,10 @@ export default function TradeForm({
   const [form, setForm] = useState<TradeInsert>({ ...empty });
   const [saving, setSaving] = useState(false);
   const [emotionInput, setEmotionInput] = useState("");
+  const [screenshotFile, setScreenshotFile] = useState<File | null>(null);
+  const [screenshotPreview, setScreenshotPreview] = useState<string | null>(null);
+  const [removeExisting, setRemoveExisting] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // When editTrade changes, populate form
   useEffect(() => {
@@ -51,9 +59,15 @@ export default function TradeForm({
       const { id, created_at, ...rest } = editTrade;
       setForm(rest);
       setEmotionInput("");
+      setScreenshotFile(null);
+      setScreenshotPreview(null);
+      setRemoveExisting(false);
     } else {
       setForm({ ...empty, trade_date: todayLocal() });
       setEmotionInput("");
+      setScreenshotFile(null);
+      setScreenshotPreview(null);
+      setRemoveExisting(false);
     }
   }, [editTrade]);
 
@@ -90,15 +104,65 @@ export default function TradeForm({
     set("emotions", updated);
   }
 
+  function handleScreenshotSelect(file: File | undefined) {
+    if (!file) return;
+    if (!ALLOWED_TYPES.includes(file.type)) {
+      showToast("Only PNG, JPEG, and WebP images are allowed", "error");
+      return;
+    }
+    if (file.size > MAX_FILE_SIZE) {
+      showToast("Image must be under 5MB", "error");
+      return;
+    }
+    setScreenshotFile(file);
+    setRemoveExisting(false);
+    const url = URL.createObjectURL(file);
+    setScreenshotPreview(url);
+  }
+
+  function clearScreenshot() {
+    setScreenshotFile(null);
+    if (screenshotPreview) URL.revokeObjectURL(screenshotPreview);
+    setScreenshotPreview(null);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+    if (editTrade?.screenshot_url) setRemoveExisting(true);
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setSaving(true);
+
+    // Upload screenshot if a new file is selected
+    let screenshotUrl: string | null = form.screenshot_url;
+    if (screenshotFile) {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const ext = screenshotFile.name.split(".").pop() || "png";
+        const ticker = form.ticker.toUpperCase().trim() || "UNKNOWN";
+        const filePath = `${user.id}/${Date.now()}-${ticker}.${ext}`;
+        const { error: uploadErr } = await supabase.storage
+          .from("screenshots")
+          .upload(filePath, screenshotFile);
+        if (uploadErr) {
+          showToast("Screenshot upload failed — saving trade without it", "error");
+          screenshotUrl = editTrade?.screenshot_url ?? null;
+        } else {
+          const { data: urlData } = supabase.storage
+            .from("screenshots")
+            .getPublicUrl(filePath);
+          screenshotUrl = urlData.publicUrl;
+        }
+      }
+    } else if (removeExisting) {
+      screenshotUrl = null;
+    }
 
     const payload = {
       ...form,
       ticker: form.ticker.toUpperCase().trim(),
       stop_loss_price: form.stop_loss_price || null,
       grade: form.grade || null,
+      screenshot_url: screenshotUrl,
     };
 
     const { error: err } = editTrade
@@ -112,6 +176,11 @@ export default function TradeForm({
       showToast(editTrade ? "Trade updated!" : "Trade saved!", "success");
       setForm({ ...empty, trade_date: todayLocal() });
       setEmotionInput("");
+      setScreenshotFile(null);
+      if (screenshotPreview) URL.revokeObjectURL(screenshotPreview);
+      setScreenshotPreview(null);
+      setRemoveExisting(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
       if (editTrade) onEditDone?.();
       onSaved?.();
     }
@@ -433,6 +502,79 @@ export default function TradeForm({
             Add
           </button>
         </div>
+      </div>
+
+      {/* Chart Screenshot */}
+      <div>
+        <label className={labelClass}>Chart Screenshot</label>
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/png,image/jpeg,image/webp"
+          className="hidden"
+          onChange={(e) => handleScreenshotSelect(e.target.files?.[0])}
+        />
+
+        {/* Show existing screenshot in edit mode */}
+        {editTrade?.screenshot_url && !removeExisting && !screenshotFile && (
+          <div className="mb-2">
+            <div className="relative inline-block">
+              <img
+                src={editTrade.screenshot_url}
+                alt="Current screenshot"
+                className="max-h-[150px] rounded-lg border border-gray-700/80"
+              />
+              <button
+                type="button"
+                onClick={clearScreenshot}
+                className="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center hover:bg-red-400 transition-colors"
+              >
+                &times;
+              </button>
+            </div>
+            <p className="text-[10px] text-gray-500 mt-1">Upload a new image to replace</p>
+          </div>
+        )}
+
+        {/* Preview of newly selected file */}
+        {screenshotPreview && (
+          <div className="mb-2">
+            <div className="relative inline-block">
+              <img
+                src={screenshotPreview}
+                alt="Screenshot preview"
+                className="max-h-[150px] rounded-lg border border-gray-700/80"
+              />
+              <button
+                type="button"
+                onClick={clearScreenshot}
+                className="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center hover:bg-red-400 transition-colors"
+              >
+                &times;
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Dropzone — show when no preview */}
+        {!screenshotPreview && !(editTrade?.screenshot_url && !removeExisting) && (
+          <div
+            onClick={() => fileInputRef.current?.click()}
+            onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); }}
+            onDrop={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              handleScreenshotSelect(e.dataTransfer.files[0]);
+            }}
+            className="flex flex-col items-center justify-center gap-1.5 py-6 rounded-lg border-2 border-dashed border-gray-700/80 bg-gray-800/80 cursor-pointer hover:border-gray-600 transition-colors"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5 text-gray-600">
+              <path fillRule="evenodd" d="M1 5.25A2.25 2.25 0 0 1 3.25 3h13.5A2.25 2.25 0 0 1 19 5.25v9.5A2.25 2.25 0 0 1 16.75 17H3.25A2.25 2.25 0 0 1 1 14.75v-9.5Zm1.5 5.81v3.69c0 .414.336.75.75.75h13.5a.75.75 0 0 0 .75-.75v-2.69l-2.22-2.219a.75.75 0 0 0-1.06 0l-1.91 1.909-4.97-4.969a.75.75 0 0 0-1.06 0L2.5 11.06Zm12.22-4.81a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0Z" clipRule="evenodd" />
+            </svg>
+            <span className="text-xs text-gray-500">Drop chart screenshot or click to upload</span>
+            <span className="text-[10px] text-gray-600">PNG, JPG, WebP — max 5MB</span>
+          </div>
+        )}
       </div>
 
       <button
