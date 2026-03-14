@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client";
 import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 import "./index.css";
 import App from "./App";
+import ErrorBoundary from "./components/ErrorBoundary";
 import LoginPage from "./components/LoginPage";
 import LandingPage from "./components/LandingPage";
 import PrivacyPage from "./components/PrivacyPage";
@@ -36,7 +37,9 @@ createRoot(document.getElementById("root")!).render(
               path="/app/*"
               element={
                 <ProtectedRoute>
-                  <App />
+                  <ErrorBoundary>
+                    <App />
+                  </ErrorBoundary>
                 </ProtectedRoute>
               }
             />

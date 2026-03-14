@@ -503,12 +503,12 @@ export default function LandingPage() {
             </span>
           </div>
           <div className="flex items-center gap-6 text-xs text-gray-500">
-            <a href="/privacy" className="hover:text-gray-300 transition-colors">
+            <Link to="/privacy" className="hover:text-gray-300 transition-colors">
               Privacy
-            </a>
-            <a href="/terms" className="hover:text-gray-300 transition-colors">
+            </Link>
+            <Link to="/terms" className="hover:text-gray-300 transition-colors">
               Terms
-            </a>
+            </Link>
             <a
               href="https://instagram.com/ohjudo"
               target="_blank"
