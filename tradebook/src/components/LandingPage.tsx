@@ -500,17 +500,22 @@ export default function LandingPage() {
               TradeBook
             </span>
             <span className="text-xs text-gray-500">
-              Built by traders, for traders.
+              Made by ohjudo
             </span>
           </div>
           <div className="flex items-center gap-6 text-xs text-gray-500">
-            <a href="#" className="hover:text-gray-300 transition-colors">
+            <a href="/privacy" className="hover:text-gray-300 transition-colors">
               Privacy
             </a>
-            <a href="#" className="hover:text-gray-300 transition-colors">
+            <a href="/terms" className="hover:text-gray-300 transition-colors">
               Terms
             </a>
-            <a href="#" className="hover:text-gray-300 transition-colors">
+            <a
+              href="https://instagram.com/ohjudo"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-gray-300 transition-colors"
+            >
               Contact
             </a>
           </div>
