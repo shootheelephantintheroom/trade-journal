@@ -1,5 +1,6 @@
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { useSubscription } from "../contexts/SubscriptionContext";
+import { supabase } from "../lib/supabase";
 
 interface PaywallGateProps {
   feature: string;
@@ -17,8 +18,42 @@ const PRO_FEATURES = [
 
 export default function PaywallGate({ feature, children }: PaywallGateProps) {
   const { isPro, isTrialing } = useSubscription();
+  const [loading, setLoading] = useState(false);
 
   if (isPro || isTrialing) return <>{children}</>;
+
+  async function handleUpgrade() {
+    setLoading(true);
+    try {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      if (!session) throw new Error("Not authenticated");
+
+      const res = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/create-checkout-session`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${session.access_token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        throw new Error(data.error || "Failed to create checkout session");
+      }
+    } catch (err) {
+      console.error("Upgrade error:", err);
+      alert("Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
     <div className="flex items-center justify-center py-16 px-4">
@@ -72,9 +107,11 @@ export default function PaywallGate({ feature, children }: PaywallGateProps) {
 
         {/* CTA */}
         <button
-          className="w-full rounded-xl bg-accent-500 px-6 py-3 text-sm font-semibold text-gray-950 transition-all hover:bg-accent-400 hover:shadow-[0_0_24px_rgba(0,200,83,0.25)] active:scale-[0.98]"
+          onClick={handleUpgrade}
+          disabled={loading}
+          className="w-full rounded-xl bg-accent-500 px-6 py-3 text-sm font-semibold text-gray-950 transition-all hover:bg-accent-400 hover:shadow-[0_0_24px_rgba(0,200,83,0.25)] active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed"
         >
-          Upgrade to Pro
+          {loading ? "Redirecting..." : "Upgrade to Pro — $29/mo"}
         </button>
 
         <p className="mt-3 text-[11px] text-gray-600">
