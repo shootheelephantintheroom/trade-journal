@@ -7,6 +7,7 @@ import {
 } from "react";
 import type { Session, User } from "@supabase/supabase-js";
 import { supabase } from "../lib/supabase";
+import { SubscriptionProvider } from "./SubscriptionContext";
 
 interface AuthContextType {
   user: User | null;
@@ -77,7 +78,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         signOut,
       }}
     >
-      {children}
+      <SubscriptionProvider>{children}</SubscriptionProvider>
     </AuthContext.Provider>
   );
 }
