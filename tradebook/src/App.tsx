@@ -1,20 +1,47 @@
 import { useEffect, useState, useCallback, useRef } from "react";
+import {
+  Routes,
+  Route,
+  Navigate,
+  NavLink,
+  useNavigate,
+  useLocation,
+} from "react-router-dom";
 import { supabase } from "./lib/supabase";
 import type { Trade, MissedTrade } from "./types/trade";
 import TradeForm from "./components/TradeForm";
 import TradeList from "./components/TradeList";
 import Dashboard from "./components/Dashboard";
 import MissedTrades from "./components/MissedTrades";
+import PaywallGate from "./components/PaywallGate";
 import { useAuth } from "./contexts/AuthContext";
 import { useSubscription } from "./contexts/SubscriptionContext";
 import { useToast } from "./components/Toast";
 
-type Tab = "log" | "trades" | "dashboard" | "missed";
+const tabs = [
+  { to: "log", label: "Log Trade", icon: "+" },
+  { to: "trades", label: "History", icon: "☰" },
+  { to: "missed", label: "Missed", icon: "◎" },
+  { to: "journal", label: "Journal", icon: "✎" },
+  { to: "analytics", label: "Analytics", icon: "▣" },
+  { to: "dashboard", label: "Dashboard", icon: "◈" },
+];
+
+function navClassName({ isActive }: { isActive: boolean }) {
+  return (
+    "nav-tab px-3 py-3.5 text-sm font-medium transition-colors " +
+    (isActive
+      ? "nav-tab-active text-white"
+      : "text-gray-500 hover:text-gray-200")
+  );
+}
 
 export default function App() {
   const { signOut, displayName } = useAuth();
   const { isPro } = useSubscription();
   const { showToast } = useToast();
+  const navigate = useNavigate();
+  const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -28,13 +55,14 @@ export default function App() {
     document.addEventListener("mousedown", handleClick);
     return () => document.removeEventListener("mousedown", handleClick);
   }, []);
-  const [tab, setTab] = useState<Tab>("log");
+
   const [trades, setTrades] = useState<Trade[]>([]);
   const [missedTrades, setMissedTrades] = useState<MissedTrade[]>([]);
   const [loading, setLoading] = useState(true);
   const [fetchError, setFetchError] = useState(false);
-  const [pageKey, setPageKey] = useState(0);
-  const [editingTrade, setEditingTrade] = useState<Trade | null>(null);
+
+  const editingTrade =
+    (location.state as { editTrade?: Trade } | null)?.editTrade ?? null;
 
   const fetchTrades = useCallback(async () => {
     const { data, error } = await supabase
@@ -71,18 +99,6 @@ export default function App() {
     );
   }, [fetchTrades, fetchMissedTrades]);
 
-  function switchTab(t: Tab) {
-    setTab(t);
-    setPageKey((k) => k + 1);
-  }
-
-  const tabs: { key: Tab; label: string; icon: string }[] = [
-    { key: "log", label: "Log Trade", icon: "+" },
-    { key: "trades", label: "History", icon: "☰" },
-    { key: "missed", label: "Missed", icon: "◎" },
-    { key: "dashboard", label: "Dashboard", icon: "◈" },
-  ];
-
   return (
     <div className="min-h-screen bg-gray-950 text-gray-100">
       {/* Header */}
@@ -93,19 +109,15 @@ export default function App() {
           </h1>
           <nav className="flex gap-0.5 items-center">
             {tabs.map((t) => (
-              <button
-                key={t.key}
-                onClick={() => switchTab(t.key)}
-                className={
-                  "nav-tab px-3 py-3.5 text-sm font-medium transition-colors " +
-                  (tab === t.key
-                    ? "nav-tab-active text-white"
-                    : "text-gray-500 hover:text-gray-200")
-                }
+              <NavLink
+                key={t.to}
+                to={t.to}
+                end
+                className={navClassName}
               >
                 <span className="hidden sm:inline">{t.label}</span>
                 <span className="sm:hidden text-base">{t.icon}</span>
-              </button>
+              </NavLink>
             ))}
             <div className="w-px h-5 bg-gray-800 mx-2" />
             <div className="relative" ref={menuRef}>
@@ -188,41 +200,85 @@ export default function App() {
             </button>
           </div>
         ) : (
-          <div key={pageKey} className="page-enter">
-            {tab === "log" && (
-              <div className="max-w-lg mx-auto">
-                <TradeForm
-                  onSaved={fetchTrades}
-                  editTrade={editingTrade}
-                  onEditDone={() => setEditingTrade(null)}
-                />
-              </div>
-            )}
-            {tab === "trades" && (
-              <TradeList
-                trades={trades}
-                onLogTrade={() => switchTab("log")}
-                onEdit={(trade) => {
-                  setEditingTrade(trade);
-                  switchTab("log");
-                }}
-                onDelete={fetchTrades}
-                onImported={fetchTrades}
+          <div key={location.pathname} className="page-enter">
+            <Routes>
+              <Route index element={<Navigate to="log" replace />} />
+              <Route
+                path="log"
+                element={
+                  <div className="max-w-lg mx-auto">
+                    <TradeForm
+                      onSaved={fetchTrades}
+                      editTrade={editingTrade}
+                      onEditDone={() =>
+                        navigate(".", { replace: true, state: {} })
+                      }
+                    />
+                  </div>
+                }
               />
-            )}
-            {tab === "dashboard" && (
-              <Dashboard
-                trades={trades}
-                missedTrades={missedTrades}
-                onLogTrade={() => switchTab("log")}
+              <Route
+                path="trades"
+                element={
+                  <TradeList
+                    trades={trades}
+                    onLogTrade={() => navigate("log")}
+                    onEdit={(trade) =>
+                      navigate("log", { state: { editTrade: trade } })
+                    }
+                    onDelete={fetchTrades}
+                    onImported={fetchTrades}
+                  />
+                }
               />
-            )}
-            {tab === "missed" && (
-              <MissedTrades
-                missedTrades={missedTrades}
-                onSaved={fetchMissedTrades}
+              <Route
+                path="missed"
+                element={
+                  <MissedTrades
+                    missedTrades={missedTrades}
+                    onSaved={fetchMissedTrades}
+                  />
+                }
               />
-            )}
+              <Route
+                path="journal"
+                element={
+                  <PaywallGate feature="Journal">
+                    <div className="text-center py-20">
+                      <h2 className="text-xl font-bold font-display text-white mb-2">
+                        Journal
+                      </h2>
+                      <p className="text-sm text-gray-400">Coming soon.</p>
+                    </div>
+                  </PaywallGate>
+                }
+              />
+              <Route
+                path="analytics"
+                element={
+                  <PaywallGate feature="Analytics">
+                    <div className="text-center py-20">
+                      <h2 className="text-xl font-bold font-display text-white mb-2">
+                        Analytics
+                      </h2>
+                      <p className="text-sm text-gray-400">Coming soon.</p>
+                    </div>
+                  </PaywallGate>
+                }
+              />
+              <Route
+                path="dashboard"
+                element={
+                  <PaywallGate feature="Dashboard">
+                    <Dashboard
+                      trades={trades}
+                      missedTrades={missedTrades}
+                      onLogTrade={() => navigate("log")}
+                    />
+                  </PaywallGate>
+                }
+              />
+            </Routes>
           </div>
         )}
       </main>
