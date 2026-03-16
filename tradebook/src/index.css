@@ -108,6 +108,50 @@ html {
   box-shadow: 0 0 50px rgba(0, 200, 83, 0.3);
 }
 
+/* ── Hero floating orbs ── */
+@keyframes orb-drift-1 {
+  0%, 100% { transform: translate(0, 0); }
+  33% { transform: translate(40px, -30px); }
+  66% { transform: translate(-20px, 20px); }
+}
+@keyframes orb-drift-2 {
+  0%, 100% { transform: translate(0, 0); }
+  33% { transform: translate(-30px, 40px); }
+  66% { transform: translate(25px, -15px); }
+}
+@keyframes orb-drift-3 {
+  0%, 100% { transform: translate(0, 0); }
+  33% { transform: translate(20px, 25px); }
+  66% { transform: translate(-35px, -20px); }
+}
+.hero-orb-1 { animation: orb-drift-1 12s ease-in-out infinite; }
+.hero-orb-2 { animation: orb-drift-2 15s ease-in-out infinite; }
+.hero-orb-3 { animation: orb-drift-3 18s ease-in-out infinite; }
+
+/* ── Step connector draw-in ── */
+.step-connector {
+  opacity: 0;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: opacity 0.5s ease, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.reveal.visible .step-connector {
+  opacity: 1;
+  transform: scaleX(1);
+}
+.step-connector-2 {
+  transition-delay: 0.2s;
+}
+
+/* ── Section accent divider ── */
+.section-divider {
+  height: 1px;
+  max-width: 320px;
+  margin: 0 auto;
+  background: linear-gradient(90deg, transparent, var(--color-accent-500), transparent);
+  opacity: 0.2;
+}
+
 /* ══════════════════════════════════════
    IN-APP PREMIUM STYLES
    ══════════════════════════════════════ */

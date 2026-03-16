@@ -240,6 +240,12 @@ export default function LandingPage() {
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none">
             <div className="hero-glow w-[500px] h-[350px] sm:w-[700px] sm:h-[450px] rounded-full bg-accent-500/20 blur-[120px]" />
           </div>
+          {/* Floating orbs */}
+          <div className="absolute inset-0 pointer-events-none overflow-hidden">
+            <div className="hero-orb-1 absolute top-[20%] left-[15%] w-[180px] h-[180px] rounded-full bg-accent-500/8 blur-[80px]" />
+            <div className="hero-orb-2 absolute top-[60%] right-[10%] w-[140px] h-[140px] rounded-full bg-emerald-400/6 blur-[70px]" />
+            <div className="hero-orb-3 absolute top-[30%] right-[25%] w-[120px] h-[120px] rounded-full bg-accent-400/5 blur-[60px]" />
+          </div>
 
           <div className="relative text-center max-w-2xl z-10">
             <h2 className="hero-enter font-display text-4xl sm:text-5xl md:text-6xl font-bold text-white leading-[1.08] tracking-tight mb-6">
@@ -292,7 +298,7 @@ export default function LandingPage() {
                     </p>
                   </div>
                   {i < STEPS.length - 1 && (
-                    <div className="hidden sm:flex items-center shrink-0 mt-[18px]">
+                    <div className={`hidden sm:flex items-center shrink-0 mt-[18px] step-connector${i === 1 ? " step-connector-2" : ""}`}>
                       <div className="w-8 h-px bg-accent-500/25" />
                       <svg
                         className="w-3 h-3 text-accent-500/40 shrink-0 -mx-0.5"
@@ -316,68 +322,8 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* ───── Feature Tiers (Free vs Pro cards) ───── */}
-        <section className="px-4 py-20 sm:py-28 reveal">
-          <div className="max-w-4xl mx-auto">
-            <h2 className="font-display text-2xl sm:text-3xl font-bold text-white text-center mb-4">
-              Everything You Need to Get Better
-            </h2>
-            <p className="text-gray-500 text-sm text-center mb-14 max-w-lg mx-auto">
-              Start free. Unlock the full edge when you're ready.
-            </p>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Free tier card */}
-              <div className="bg-gray-900/40 border border-gray-800 rounded-2xl p-8">
-                <div className="text-sm font-medium text-gray-400 mb-1">Free</div>
-                <div className="font-display text-3xl font-bold text-white mb-1">
-                  $0
-                </div>
-                <div className="text-xs text-gray-500 mb-6">Forever</div>
-                <ul className="space-y-3">
-                  {FREE_FEATURES.map((f) => (
-                    <li key={f} className="flex items-start gap-2.5 text-sm text-gray-300">
-                      <CheckIcon />
-                      {f}
-                    </li>
-                  ))}
-                </ul>
-                <Link
-                  to="/login?mode=signup"
-                  className="mt-8 block w-full text-center rounded-xl border border-gray-700 bg-gray-800/50 px-6 py-3 text-sm font-semibold text-white transition-all hover:border-gray-600 hover:bg-gray-800"
-                >
-                  Get Started Free
-                </Link>
-              </div>
-
-              {/* Pro tier card — highlighted */}
-              <div className="relative bg-gray-900/60 border-2 border-accent-500/40 rounded-2xl p-8">
-                <div className="absolute -top-3 left-6 bg-accent-600 text-white text-[11px] font-bold uppercase tracking-wider px-3 py-1 rounded-full">
-                  Most Popular
-                </div>
-                <div className="text-sm font-medium text-accent-400 mb-1">Pro</div>
-                <div className="font-display text-3xl font-bold text-white mb-1">
-                  $29<span className="text-base font-normal text-gray-400">/mo</span>
-                </div>
-                <div className="text-xs text-gray-500 mb-6">14-day free trial</div>
-                <ul className="space-y-3">
-                  {PRO_FEATURES.map((f) => (
-                    <li key={f} className="flex items-start gap-2.5 text-sm text-gray-300">
-                      <CheckIcon className="mt-0.5 h-4 w-4 shrink-0 text-accent-400" />
-                      {f}
-                    </li>
-                  ))}
-                </ul>
-                <Link
-                  to="/login?mode=signup"
-                  className="cta-btn mt-8 block w-full text-center rounded-xl bg-accent-600 hover:bg-accent-500 px-6 py-3 text-sm font-semibold text-white transition-all"
-                >
-                  Start 14-Day Free Trial
-                </Link>
-              </div>
-            </div>
-          </div>
-        </section>
+        {/* ───── Divider ───── */}
+        <div className="section-divider" />
 
         {/* ───── Built for Momentum Traders ───── */}
         <section className="px-4 py-20 sm:py-28 reveal">
@@ -431,6 +377,9 @@ export default function LandingPage() {
             </div>
           </div>
         </section>
+
+        {/* ───── Divider ───── */}
+        <div className="section-divider" />
 
         {/* ───── Pricing ───── */}
         <section id="pricing" className="px-4 py-20 sm:py-28 reveal scroll-mt-20">
