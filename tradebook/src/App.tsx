@@ -13,6 +13,7 @@ import TradeForm from "./components/TradeForm";
 import TradeList from "./components/TradeList";
 import Dashboard from "./components/Dashboard";
 import MissedTrades from "./components/MissedTrades";
+import Journal from "./components/Journal";
 import PaywallGate from "./components/PaywallGate";
 import { useAuth } from "./contexts/AuthContext";
 import { useSubscription } from "./contexts/SubscriptionContext";
@@ -227,12 +228,7 @@ export default function App() {
                 path="journal"
                 element={
                   <PaywallGate feature="Journal">
-                    <div className="text-center py-20">
-                      <h2 className="text-xl font-bold font-display text-white mb-2">
-                        Journal
-                      </h2>
-                      <p className="text-sm text-gray-400">Coming soon.</p>
-                    </div>
+                    <Journal />
                   </PaywallGate>
                 }
               />
