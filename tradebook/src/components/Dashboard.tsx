@@ -1,7 +1,10 @@
+import { useState, useEffect } from "react";
+import { supabase } from "../lib/supabase";
 import type { Trade, MissedTrade } from "../types/trade";
 import { calcPnl, calcRR, calcStreak } from "../lib/calc";
 import { calcMissedPnl } from "./MissedTrades";
 import { todayLocal } from "../lib/date";
+import { useToast } from "./Toast";
 import CalendarHeatmap from "./CalendarHeatmap";
 import { StatCard, AmberStatCard } from "./dashboard/StatCards";
 import EquityCurve from "./dashboard/EquityCurve";
@@ -58,14 +61,42 @@ function TodaySummary({ trades }: { trades: Trade[] }) {
 }
 
 export default function Dashboard({
-  trades,
   missedTrades = [],
   onLogTrade,
 }: {
-  trades: Trade[];
   missedTrades?: MissedTrade[];
   onLogTrade?: () => void;
 }) {
+  const { showToast } = useToast();
+  const [trades, setTrades] = useState<Trade[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchAllTrades() {
+      const { data, error } = await supabase
+        .from("trades")
+        .select("*")
+        .order("trade_date", { ascending: false })
+        .order("entry_time", { ascending: false });
+      if (error) {
+        showToast("Failed to load trades", "error");
+      } else {
+        setTrades((data as Trade[]) || []);
+      }
+      setLoading(false);
+    }
+    fetchAllTrades();
+  }, [showToast]);
+
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center py-20 gap-3">
+        <div className="h-6 w-6 border-2 border-gray-600 border-t-accent-500 rounded-full animate-spin" />
+        <p className="text-sm text-gray-500">Loading dashboard...</p>
+      </div>
+    );
+  }
+
   if (trades.length === 0 && missedTrades.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-20 gap-4">

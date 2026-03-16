@@ -56,28 +56,13 @@ export default function App() {
     return () => document.removeEventListener("mousedown", handleClick);
   }, []);
 
-  const [trades, setTrades] = useState<Trade[]>([]);
   const [missedTrades, setMissedTrades] = useState<MissedTrade[]>([]);
   const [loading, setLoading] = useState(true);
   const [fetchError, setFetchError] = useState(false);
+  const [tradeRefreshKey, setTradeRefreshKey] = useState(0);
 
   const editingTrade =
     (location.state as { editTrade?: Trade } | null)?.editTrade ?? null;
-
-  const fetchTrades = useCallback(async () => {
-    const { data, error } = await supabase
-      .from("trades")
-      .select("*")
-      .order("trade_date", { ascending: false })
-      .order("entry_time", { ascending: false });
-    if (error) {
-      showToast("Failed to load trades", "error");
-      setFetchError(true);
-      return;
-    }
-    setFetchError(false);
-    setTrades((data as Trade[]) || []);
-  }, [showToast]);
 
   const fetchMissedTrades = useCallback(async () => {
     const { data, error } = await supabase
@@ -94,10 +79,12 @@ export default function App() {
   }, [showToast]);
 
   useEffect(() => {
-    Promise.all([fetchTrades(), fetchMissedTrades()]).finally(() =>
-      setLoading(false)
-    );
-  }, [fetchTrades, fetchMissedTrades]);
+    fetchMissedTrades().finally(() => setLoading(false));
+  }, [fetchMissedTrades]);
+
+  const handleTradeChanged = useCallback(() => {
+    setTradeRefreshKey((k) => k + 1);
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-950 text-gray-100">
@@ -182,7 +169,7 @@ export default function App() {
             <div className="h-6 w-6 border-2 border-gray-600 border-t-accent-500 rounded-full animate-spin" />
             <p className="text-sm text-gray-500">Loading...</p>
           </div>
-        ) : fetchError && trades.length === 0 && missedTrades.length === 0 ? (
+        ) : fetchError && missedTrades.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 gap-3">
             <p className="text-gray-400 text-sm">
               Something went wrong, try again
@@ -190,9 +177,7 @@ export default function App() {
             <button
               onClick={() => {
                 setLoading(true);
-                Promise.all([fetchTrades(), fetchMissedTrades()]).finally(() =>
-                  setLoading(false)
-                );
+                fetchMissedTrades().finally(() => setLoading(false));
               }}
               className="px-4 py-2 rounded-lg bg-gray-800 text-sm text-white hover:bg-gray-700 transition-colors"
             >
@@ -208,7 +193,7 @@ export default function App() {
                 element={
                   <div className="max-w-lg mx-auto">
                     <TradeForm
-                      onSaved={fetchTrades}
+                      onSaved={handleTradeChanged}
                       editTrade={editingTrade}
                       onEditDone={() =>
                         navigate(".", { replace: true, state: {} })
@@ -221,13 +206,11 @@ export default function App() {
                 path="trades"
                 element={
                   <TradeList
-                    trades={trades}
                     onLogTrade={() => navigate("log")}
                     onEdit={(trade) =>
                       navigate("log", { state: { editTrade: trade } })
                     }
-                    onDelete={fetchTrades}
-                    onImported={fetchTrades}
+                    refreshKey={tradeRefreshKey}
                   />
                 }
               />
@@ -271,7 +254,6 @@ export default function App() {
                 element={
                   <PaywallGate feature="Dashboard">
                     <Dashboard
-                      trades={trades}
                       missedTrades={missedTrades}
                       onLogTrade={() => navigate("log")}
                     />
