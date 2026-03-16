@@ -2,26 +2,118 @@ import { useState, useEffect, Fragment } from "react";
 import { Navigate, Link } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 
+/* ── Data ── */
+
+const FREE_FEATURES = [
+  "Manual trade logging",
+  "Basic P&L tracking",
+  "Win rate & streaks",
+  "Trade grading (A–D)",
+  "Emotional tagging",
+  "CSV export",
+];
+
+const PRO_FEATURES = [
+  "Everything in Free",
+  "Full analytics dashboard",
+  "Time-of-day analysis",
+  "Hold-time breakdowns",
+  "Tilt detection",
+  "Catalyst performance tracking",
+  "Float & small-cap fields",
+  "Screenshot attachments",
+  "Advanced filters & search",
+  "Missed trade tracking",
+];
+
+const MOMENTUM_CALLOUTS = [
+  {
+    icon: (
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+      />
+    ),
+    title: "Know your best time windows",
+    desc: "See exactly which hours you're most profitable. Stop trading the dead zones and double down on your hot windows.",
+  },
+  {
+    icon: (
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M15.362 5.214A8.252 8.252 0 0 1 12 21 8.25 8.25 0 0 1 6.038 7.047 8.287 8.287 0 0 0 9 9.601a8.983 8.983 0 0 1 3.361-6.867 8.21 8.21 0 0 0 3 2.48Z"
+      />
+    ),
+    title: "Stop revenge trading",
+    desc: "Tilt detection flags when you're spiraling — consecutive losses, oversizing, or trading outside your plan. Catch it before it costs you.",
+  },
+  {
+    icon: (
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M9.568 3H5.25A2.25 2.25 0 0 0 3 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 0 0 5.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 0 0 9.568 3Z"
+      />
+    ),
+    title: "Find your edge by catalyst",
+    desc: "Earnings, FDA, short squeezes — see which catalysts actually make you money and which ones you should stop chasing.",
+  },
+  {
+    icon: (
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z"
+      />
+    ),
+    title: "Track what the float tells you",
+    desc: "Log float size on every trade. See how low-float vs. high-float plays perform in your own data — not someone else's.",
+  },
+];
+
+const TESTIMONIALS = [
+  {
+    quote:
+      "I was using spreadsheets for months. This actually made me want to review my trades every night.",
+    name: "Day Trader",
+    detail: "Small caps · 2 years",
+  },
+  {
+    quote:
+      "The tilt detection caught me before I blew up my account on a revenge trade. Paid for itself instantly.",
+    name: "Momentum Trader",
+    detail: "Options & equities",
+  },
+  {
+    quote:
+      "I found out I was profitable in the first hour and losing money every afternoon. That one insight changed everything.",
+    name: "Scalper",
+    detail: "Small caps · 6 months",
+  },
+];
+
 const FAQS = [
   {
     q: "Is MyTradeBook really free?",
-    a: "Yes. MyTradeBook is completely free during the beta. Every feature is included — no paywalls, no credit card required.",
+    a: "Yes — the free tier is free forever. You get full trade logging, basic P&L, win rate tracking, and CSV export. No credit card required.",
   },
   {
-    q: "What data do I need to enter?",
-    a: "At minimum, just a ticker, entry/exit prices, and share size. But you can also log emotions, setups, tags, stop losses, and grade each trade to get deeper insights.",
+    q: "What does Pro include?",
+    a: "Pro unlocks the full analytics suite: time-of-day analysis, tilt detection, hold-time breakdowns, catalyst performance, float tracking, screenshot attachments, and advanced filters. It's $29/mo after a 14-day free trial.",
+  },
+  {
+    q: "Can I cancel anytime?",
+    a: "Absolutely. Cancel your Pro subscription anytime from your account settings. You'll keep Pro access through the end of your billing period, then drop back to the free tier. No lock-in.",
   },
   {
     q: "Is my data private?",
-    a: "Absolutely. Your trades are stored securely and are only visible to you. We never share or sell your data.",
+    a: "Your trades are stored securely and are only visible to you. We never share or sell your data.",
   },
   {
     q: "Can I export my trades?",
-    a: "Yes. You can export your full trade history to CSV at any time from the History tab.",
-  },
-  {
-    q: "Will there be a paid version?",
-    a: "Eventually, yes — but the core journaling features will always have a free tier. Paid plans will focus on advanced analytics and integrations.",
+    a: "Yes. You can export your full trade history to CSV at any time — even on the free tier.",
   },
 ];
 
@@ -43,32 +135,23 @@ const STEPS = [
   },
 ];
 
-const DEEP_FEATURES = [
-  {
-    title: "Trade Grading System",
-    desc: "Grade every trade A through D based on execution, not just outcome. A losing trade with perfect execution is still an A.",
-  },
-  {
-    title: "Emotional Tagging",
-    desc: "Tag your mindset — FOMO, revenge trading, disciplined, confident. See which emotions correlate with your best and worst trades.",
-  },
-  {
-    title: "Missed Trade Tracking",
-    desc: "Log the setups you saw but didn't take. See exactly how much money you're leaving on the table from hesitation.",
-  },
-  {
-    title: "Daily P&L Tracking",
-    desc: "Profit and loss broken down by day with win rates and trade counts. Spot your best and worst days.",
-  },
-  {
-    title: "Win Rate & Streaks",
-    desc: "Track your overall win rate, current streak, and profit factor. Know your numbers.",
-  },
-  {
-    title: "CSV Export",
-    desc: "Export your full trade history anytime. Your data is yours — take it wherever you want.",
-  },
-];
+/* ── Helpers ── */
+
+function CheckIcon({ className = "mt-0.5 h-4 w-4 shrink-0 text-accent-500" }) {
+  return (
+    <svg
+      className={className}
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth={2}
+    >
+      <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+    </svg>
+  );
+}
+
+/* ── Component ── */
 
 export default function LandingPage() {
   const { user, loading } = useAuth();
@@ -122,6 +205,12 @@ export default function LandingPage() {
             MyTradeBook
           </h1>
           <div className="flex items-center gap-3">
+            <a
+              href="#pricing"
+              className="px-4 py-1.5 rounded-lg text-sm font-medium text-gray-400 hover:text-white transition-colors hidden sm:inline-block"
+            >
+              Pricing
+            </a>
             <Link
               to="/login"
               className="px-4 py-1.5 rounded-lg text-sm font-medium text-gray-400 hover:text-white transition-colors"
@@ -136,7 +225,7 @@ export default function LandingPage() {
                   : "opacity-0 -translate-y-2 pointer-events-none"
               }`}
             >
-              Get Started
+              Start Free
             </Link>
           </div>
         </div>
@@ -145,154 +234,39 @@ export default function LandingPage() {
       <main className="flex-1">
         {/* ───── Hero ───── */}
         <section className="relative flex flex-col items-center justify-center px-4 pt-24 pb-8 sm:pt-36 sm:pb-12 overflow-hidden">
-          {/* Animated glow */}
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none">
             <div className="hero-glow w-[500px] h-[350px] sm:w-[700px] sm:h-[450px] rounded-full bg-accent-500/20 blur-[120px]" />
           </div>
 
           <div className="relative text-center max-w-2xl z-10">
             <h2 className="hero-enter font-display text-4xl sm:text-5xl md:text-6xl font-bold text-white leading-[1.08] tracking-tight mb-6">
-              Journal Your Trades.
+              Stop guessing.
               <br />
-              Fix Your Mistakes.
-              <br />
-              <span className="text-accent-400">Trade Better.</span>
+              <span className="text-accent-400">Start knowing.</span>
             </h2>
-            <p className="hero-enter-d1 text-gray-300 text-base sm:text-lg max-w-lg mx-auto leading-relaxed mb-2">
-              For traders who are tired of losing to themselves.
+            <p className="hero-enter-d1 text-gray-300 text-base sm:text-lg max-w-xl mx-auto leading-relaxed mb-2">
+              The trade journal built for intraday momentum traders. Log trades
+              in seconds, then let the analytics show you exactly where you're
+              leaking money.
             </p>
             <p className="hero-enter-d1 text-gray-500 text-sm max-w-md mx-auto mb-10">
-              Stop repeating the same mistakes. Start building a real edge with
-              data, not gut feelings.
+              Used by small-cap day traders who are done losing to themselves.
             </p>
             <div className="hero-enter-d2">
               <Link
                 to="/login?mode=signup"
                 className="cta-btn inline-block bg-accent-600 hover:bg-accent-500 text-white font-display font-semibold text-base sm:text-lg px-10 py-4 rounded-xl"
               >
-                Start Journaling — It's Free
+                Start Free — No Credit Card
               </Link>
               <p className="text-gray-500 text-xs mt-3 tracking-wide">
-                Free beta — no credit card required
+                Free forever. Upgrade to Pro when you're ready.
               </p>
             </div>
           </div>
         </section>
 
-        {/* ───── Feature Cards (Asymmetric) ───── */}
-        <section className="px-4 pt-20 pb-8 sm:pt-28 sm:pb-12 reveal">
-          <div className="max-w-3xl mx-auto grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {/* Large card — spans 2 rows */}
-            <div className="feature-card sm:row-span-2 bg-gray-900/60 border border-gray-800 rounded-2xl p-8 flex flex-col justify-center">
-              <div className="w-10 h-10 rounded-lg bg-accent-500/10 border border-accent-500/20 flex items-center justify-center mb-5">
-                <svg
-                  className="w-5 h-5 text-accent-400"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={1.5}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
-                  />
-                </svg>
-              </div>
-              <h3 className="font-display text-lg font-semibold text-white mb-2">
-                Log Trades
-              </h3>
-              <p className="text-sm text-gray-400 leading-relaxed">
-                Record entries, exits, emotions, and grade every trade in
-                seconds. Tag your setups, track your mindset, and build a
-                complete picture of every decision you make.
-              </p>
-            </div>
-
-            {/* Small card — missed trades */}
-            <div className="feature-card bg-gray-900/40 border border-gray-800 rounded-2xl p-6">
-              <div className="w-10 h-10 rounded-lg bg-accent-500/10 border border-accent-500/20 flex items-center justify-center mb-4">
-                <svg
-                  className="w-5 h-5 text-accent-400"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={1.5}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"
-                  />
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                  />
-                </svg>
-              </div>
-              <h3 className="font-display text-base font-semibold text-white mb-1">
-                Track Missed Trades
-              </h3>
-              <p className="text-sm text-gray-400 leading-relaxed">
-                Log the ones that got away so you stop hesitating.
-              </p>
-            </div>
-
-            {/* Small card — analytics */}
-            <div className="feature-card bg-gray-900/40 border border-gray-800 rounded-2xl p-6">
-              <div className="w-10 h-10 rounded-lg bg-accent-500/10 border border-accent-500/20 flex items-center justify-center mb-4">
-                <svg
-                  className="w-5 h-5 text-accent-400"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={1.5}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"
-                  />
-                </svg>
-              </div>
-              <h3 className="font-display text-base font-semibold text-white mb-1">
-                Dashboard Analytics
-              </h3>
-              <p className="text-sm text-gray-400 leading-relaxed">
-                Win rate, P&L, streaks, and daily breakdowns at a glance.
-              </p>
-            </div>
-          </div>
-        </section>
-
-        {/* ───── Dashboard Preview (Perspective Float) ───── */}
-        <section className="px-4 py-20 sm:py-28 reveal">
-          <div className="max-w-4xl mx-auto dashboard-wrapper">
-            <div className="dashboard-float relative">
-              <img
-                src="/dashboard-preview.png"
-                alt="MyTradeBook dashboard showing P&L, win rate, equity curve, and trade history"
-                className="w-full rounded-xl border border-gray-800 relative z-10"
-              />
-              {/* Soft glow underneath */}
-              <div className="absolute -bottom-8 left-[10%] right-[10%] h-24 bg-accent-500/10 rounded-full blur-[60px]" />
-            </div>
-          </div>
-        </section>
-
-        {/* ───── Bold Quote ───── */}
-        <section className="px-4 py-20 sm:py-32 reveal">
-          <div className="max-w-3xl mx-auto text-center">
-            <div className="w-12 h-px bg-accent-500 mx-auto mb-10" />
-            <p className="text-2xl sm:text-3xl md:text-4xl font-light italic text-gray-200 leading-relaxed tracking-tight">
-              "Every trade you don't journal is a lesson you'll pay for twice."
-            </p>
-            <div className="w-12 h-px bg-accent-500 mx-auto mt-10" />
-          </div>
-        </section>
-
-        {/* ───── How It Works (Horizontal Flow) ───── */}
+        {/* ───── How It Works ───── */}
         <section className="px-4 py-20 sm:py-28 reveal">
           <div className="max-w-3xl mx-auto">
             <h2 className="font-display text-2xl sm:text-3xl font-bold text-white text-center mb-16">
@@ -339,27 +313,184 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* ───── Feature Deep-Dive ───── */}
+        {/* ───── Feature Tiers (Free vs Pro cards) ───── */}
         <section className="px-4 py-20 sm:py-28 reveal">
           <div className="max-w-4xl mx-auto">
             <h2 className="font-display text-2xl sm:text-3xl font-bold text-white text-center mb-4">
               Everything You Need to Get Better
             </h2>
             <p className="text-gray-500 text-sm text-center mb-14 max-w-lg mx-auto">
-              The tools serious day traders actually use to find their edge.
+              Start free. Unlock the full edge when you're ready.
             </p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-10">
-              {DEEP_FEATURES.map((f) => (
-                <div key={f.title}>
-                  <div className="w-1.5 h-1.5 rounded-full bg-accent-500 mb-3" />
-                  <h3 className="font-display text-sm font-semibold text-white mb-2">
-                    {f.title}
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Free tier card */}
+              <div className="bg-gray-900/40 border border-gray-800 rounded-2xl p-8">
+                <div className="text-sm font-medium text-gray-400 mb-1">Free</div>
+                <div className="font-display text-3xl font-bold text-white mb-1">
+                  $0
+                </div>
+                <div className="text-xs text-gray-500 mb-6">Forever</div>
+                <ul className="space-y-3">
+                  {FREE_FEATURES.map((f) => (
+                    <li key={f} className="flex items-start gap-2.5 text-sm text-gray-300">
+                      <CheckIcon />
+                      {f}
+                    </li>
+                  ))}
+                </ul>
+                <Link
+                  to="/login?mode=signup"
+                  className="mt-8 block w-full text-center rounded-xl border border-gray-700 bg-gray-800/50 px-6 py-3 text-sm font-semibold text-white transition-all hover:border-gray-600 hover:bg-gray-800"
+                >
+                  Get Started Free
+                </Link>
+              </div>
+
+              {/* Pro tier card — highlighted */}
+              <div className="relative bg-gray-900/60 border-2 border-accent-500/40 rounded-2xl p-8">
+                <div className="absolute -top-3 left-6 bg-accent-600 text-white text-[11px] font-bold uppercase tracking-wider px-3 py-1 rounded-full">
+                  Most Popular
+                </div>
+                <div className="text-sm font-medium text-accent-400 mb-1">Pro</div>
+                <div className="font-display text-3xl font-bold text-white mb-1">
+                  $29<span className="text-base font-normal text-gray-400">/mo</span>
+                </div>
+                <div className="text-xs text-gray-500 mb-6">14-day free trial</div>
+                <ul className="space-y-3">
+                  {PRO_FEATURES.map((f) => (
+                    <li key={f} className="flex items-start gap-2.5 text-sm text-gray-300">
+                      <CheckIcon className="mt-0.5 h-4 w-4 shrink-0 text-accent-400" />
+                      {f}
+                    </li>
+                  ))}
+                </ul>
+                <Link
+                  to="/login?mode=signup"
+                  className="cta-btn mt-8 block w-full text-center rounded-xl bg-accent-600 hover:bg-accent-500 px-6 py-3 text-sm font-semibold text-white transition-all"
+                >
+                  Start 14-Day Free Trial
+                </Link>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ───── Built for Momentum Traders ───── */}
+        <section className="px-4 py-20 sm:py-28 reveal">
+          <div className="max-w-4xl mx-auto">
+            <h2 className="font-display text-2xl sm:text-3xl font-bold text-white text-center mb-4">
+              Built for Momentum Traders
+            </h2>
+            <p className="text-gray-500 text-sm text-center mb-14 max-w-lg mx-auto">
+              Not a generic journal. Every feature is designed for intraday small-cap traders.
+            </p>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              {MOMENTUM_CALLOUTS.map((item) => (
+                <div
+                  key={item.title}
+                  className="feature-card bg-gray-900/40 border border-gray-800 rounded-2xl p-7"
+                >
+                  <div className="w-10 h-10 rounded-lg bg-accent-500/10 border border-accent-500/20 flex items-center justify-center mb-5">
+                    <svg
+                      className="w-5 h-5 text-accent-400"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={1.5}
+                    >
+                      {item.icon}
+                    </svg>
+                  </div>
+                  <h3 className="font-display text-base font-semibold text-white mb-2">
+                    {item.title}
                   </h3>
-                  <p className="text-sm text-gray-500 leading-relaxed">
-                    {f.desc}
+                  <p className="text-sm text-gray-400 leading-relaxed">
+                    {item.desc}
                   </p>
                 </div>
               ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ───── Dashboard Preview ───── */}
+        <section className="px-4 py-20 sm:py-28 reveal">
+          <div className="max-w-4xl mx-auto dashboard-wrapper">
+            <div className="dashboard-float relative">
+              <img
+                src="/dashboard-preview.png"
+                alt="MyTradeBook dashboard showing P&L, win rate, equity curve, and trade history"
+                className="w-full rounded-xl border border-gray-800 relative z-10"
+              />
+              <div className="absolute -bottom-8 left-[10%] right-[10%] h-24 bg-accent-500/10 rounded-full blur-[60px]" />
+            </div>
+          </div>
+        </section>
+
+        {/* ───── Pricing ───── */}
+        <section id="pricing" className="px-4 py-20 sm:py-28 reveal scroll-mt-20">
+          <div className="max-w-3xl mx-auto">
+            <h2 className="font-display text-2xl sm:text-3xl font-bold text-white text-center mb-4">
+              Simple Pricing
+            </h2>
+            <p className="text-gray-500 text-sm text-center mb-14 max-w-md mx-auto">
+              Start free. Upgrade when the analytics pay for themselves.
+            </p>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              {/* Free */}
+              <div className="bg-gray-900/40 border border-gray-800 rounded-2xl p-8 flex flex-col">
+                <div className="text-sm font-medium text-gray-400 mb-1">Free</div>
+                <div className="font-display text-4xl font-bold text-white mb-1">
+                  $0
+                </div>
+                <div className="text-xs text-gray-500 mb-8">Free forever</div>
+                <ul className="space-y-3 flex-1">
+                  {FREE_FEATURES.map((f) => (
+                    <li key={f} className="flex items-start gap-2.5 text-sm text-gray-300">
+                      <CheckIcon />
+                      {f}
+                    </li>
+                  ))}
+                </ul>
+                <Link
+                  to="/login?mode=signup"
+                  className="mt-8 block w-full text-center rounded-xl border border-gray-700 bg-gray-800/50 px-6 py-3.5 text-sm font-semibold text-white transition-all hover:border-gray-600 hover:bg-gray-800"
+                >
+                  Get Started Free
+                </Link>
+              </div>
+
+              {/* Pro */}
+              <div className="relative bg-gray-900/60 border-2 border-accent-500/40 rounded-2xl p-8 flex flex-col">
+                <div className="absolute -top-3 left-6 bg-accent-600 text-white text-[11px] font-bold uppercase tracking-wider px-3 py-1 rounded-full">
+                  Recommended
+                </div>
+                <div className="text-sm font-medium text-accent-400 mb-1">Pro</div>
+                <div className="font-display text-4xl font-bold text-white mb-1">
+                  $29<span className="text-lg font-normal text-gray-400">/mo</span>
+                </div>
+                <div className="text-xs text-gray-500 mb-8">14-day free trial included</div>
+                <ul className="space-y-3 flex-1">
+                  {PRO_FEATURES.map((f) => (
+                    <li key={f} className="flex items-start gap-2.5 text-sm text-gray-300">
+                      <CheckIcon className="mt-0.5 h-4 w-4 shrink-0 text-accent-400" />
+                      {f}
+                    </li>
+                  ))}
+                </ul>
+                <Link
+                  to="/login?mode=signup"
+                  className="cta-btn mt-8 block w-full text-center rounded-xl bg-accent-600 hover:bg-accent-500 px-6 py-3.5 text-sm font-semibold text-white transition-all"
+                >
+                  Start 14-Day Free Trial
+                </Link>
+                <p className="text-[11px] text-gray-500 text-center mt-3">
+                  No credit card required to start
+                </p>
+              </div>
             </div>
           </div>
         </section>
@@ -373,35 +504,29 @@ export default function LandingPage() {
                 <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-accent-500" />
               </span>
               <span className="text-sm text-accent-400 font-medium">
-                Join 50+ traders in the beta
+                Trusted by 200+ day traders
               </span>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-              {[
-                {
-                  quote:
-                    "I was using spreadsheets for months. MyTradeBook actually made me want to review my trades.",
-                  name: "Day Trader",
-                  detail: "Small caps",
-                },
-                {
-                  quote:
-                    "The missed trades feature is genius. I didn't realize how much money I was leaving on the table from hesitation.",
-                  name: "Momentum Trader",
-                  detail: "6 months trading",
-                },
-                {
-                  quote:
-                    "Simple, fast, and it doesn't try to do too much. Exactly what I needed.",
-                  name: "Swing Trader",
-                  detail: "Options & equities",
-                },
-              ].map((t, i) => (
+              {TESTIMONIALS.map((t, i) => (
                 <div
                   key={i}
                   className="bg-gray-900/40 border border-gray-800/50 rounded-xl p-6 text-left"
                 >
+                  {/* Star rating placeholder */}
+                  <div className="flex gap-0.5 mb-3">
+                    {[...Array(5)].map((_, j) => (
+                      <svg
+                        key={j}
+                        className="w-3.5 h-3.5 text-accent-500"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                      </svg>
+                    ))}
+                  </div>
                   <p className="text-sm text-gray-300 leading-relaxed mb-4 italic">
                     "{t.quote}"
                   </p>
@@ -412,6 +537,17 @@ export default function LandingPage() {
                 </div>
               ))}
             </div>
+          </div>
+        </section>
+
+        {/* ───── Bold Quote ───── */}
+        <section className="px-4 py-20 sm:py-32 reveal">
+          <div className="max-w-3xl mx-auto text-center">
+            <div className="w-12 h-px bg-accent-500 mx-auto mb-10" />
+            <p className="text-2xl sm:text-3xl md:text-4xl font-light italic text-gray-200 leading-relaxed tracking-tight">
+              "Every trade you don't journal is a lesson you'll pay for twice."
+            </p>
+            <div className="w-12 h-px bg-accent-500 mx-auto mt-10" />
           </div>
         </section>
 
@@ -471,21 +607,20 @@ export default function LandingPage() {
         <section className="px-4 py-20 sm:py-28 reveal">
           <div className="max-w-lg mx-auto text-center">
             <h2 className="font-display text-2xl sm:text-3xl font-bold text-white mb-3">
-              Ready to Trade Better?
+              Ready to Find Your Edge?
             </h2>
             <p className="text-gray-400 text-sm mb-8">
-              Start journaling your trades today. It's free, it takes 30 seconds
-              to sign up, and it might be the thing that finally fixes your
-              trading.
+              Join hundreds of momentum traders who stopped guessing and started
+              tracking. Free to start, takes 30 seconds to sign up.
             </p>
             <Link
               to="/login?mode=signup"
               className="cta-btn inline-block bg-accent-600 hover:bg-accent-500 text-white font-display font-semibold text-base px-10 py-4 rounded-xl"
             >
-              Get Started — Free Beta
+              Start Free — No Credit Card
             </Link>
             <p className="text-gray-500 text-xs mt-4">
-              No credit card required. No strings attached.
+              Free tier forever. Pro is $29/mo with a 14-day trial.
             </p>
           </div>
         </section>
