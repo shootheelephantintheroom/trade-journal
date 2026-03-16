@@ -22,12 +22,12 @@ import { useSubscription } from "./contexts/SubscriptionContext";
 import { useToast } from "./components/Toast";
 
 const tabs = [
-  { to: "log", label: "Log Trade", icon: "+" },
-  { to: "trades", label: "History", icon: "☰" },
-  { to: "missed", label: "Missed", icon: "◎" },
-  { to: "journal", label: "Journal", icon: "✎" },
-  { to: "analytics", label: "Analytics", icon: "▣" },
-  { to: "dashboard", label: "Dashboard", icon: "◈" },
+  { to: "/app/log", label: "Log Trade", icon: "+" },
+  { to: "/app/trades", label: "History", icon: "☰" },
+  { to: "/app/missed", label: "Missed", icon: "◎" },
+  { to: "/app/journal", label: "Journal", icon: "✎" },
+  { to: "/app/analytics", label: "Analytics", icon: "▣" },
+  { to: "/app/dashboard", label: "Dashboard", icon: "◈" },
 ];
 
 function navClassName({ isActive }: { isActive: boolean }) {
@@ -201,7 +201,7 @@ export default function App() {
         ) : (
           <div key={location.pathname} className="page-enter">
             <Routes>
-              <Route index element={<Navigate to="log" replace />} />
+              <Route index element={<Navigate to="/app/log" replace />} />
               <Route
                 path="log"
                 element={
@@ -220,9 +220,9 @@ export default function App() {
                 path="trades"
                 element={
                   <TradeList
-                    onLogTrade={() => navigate("log")}
+                    onLogTrade={() => navigate("/app/log")}
                     onEdit={(trade) =>
-                      navigate("log", { state: { editTrade: trade } })
+                      navigate("/app/log", { state: { editTrade: trade } })
                     }
                     refreshKey={tradeRefreshKey}
                   />
@@ -258,7 +258,7 @@ export default function App() {
                 element={
                   <Dashboard
                     missedTrades={missedTrades}
-                    onLogTrade={() => navigate("log")}
+                    onLogTrade={() => navigate("/app/log")}
                   />
                 }
               />
