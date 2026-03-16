@@ -1,3 +1,13 @@
+export type CatalystType =
+  | "earnings"
+  | "news_pr"
+  | "fda"
+  | "sec_filing"
+  | "short_squeeze"
+  | "sympathy"
+  | "technical"
+  | "other";
+
 export interface Trade {
   id: string;
   ticker: string;
@@ -16,6 +26,16 @@ export interface Trade {
   grade: string;
   premarket_plan: string;
   screenshot_url: string | null;
+  catalyst: string;
+  catalyst_type: CatalystType | null;
+  float_shares: number | null;
+  market_cap: number | null;
+  rvol: number | null;
+  commission: number;
+  is_scaled: boolean;
+  avg_entry_price: number | null;
+  avg_exit_price: number | null;
+  total_shares: number | null;
   created_at: string;
 }
 

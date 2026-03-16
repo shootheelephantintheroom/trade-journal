@@ -20,6 +20,10 @@ export function calcMaxRisk(t: Pick<Trade, "entry_price" | "stop_loss_price" | "
   return Math.abs(t.entry_price - t.stop_loss_price) * t.shares;
 }
 
+export function calcNetPnl(t: Pick<Trade, "side" | "entry_price" | "exit_price" | "shares"> & { commission?: number }): number {
+  return calcPnl(t) - (t.commission || 0);
+}
+
 export function calcStreak(trades: Trade[]): { type: "win" | "loss" | "none"; count: number } {
   if (trades.length === 0) return { type: "none", count: 0 };
 

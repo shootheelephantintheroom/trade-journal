@@ -1,13 +1,33 @@
 import { useState, useEffect, useRef } from "react";
 import { supabase } from "../lib/supabase";
-import type { Trade, TradeInsert } from "../types/trade";
-import { calcPnl, calcRR, calcMaxRisk } from "../lib/calc";
+import type { Trade, TradeInsert, CatalystType } from "../types/trade";
+import { calcPnl, calcNetPnl, calcRR, calcMaxRisk } from "../lib/calc";
 import TagSelect from "./TagSelect";
 import { useToast } from "./Toast";
 import { todayLocal } from "../lib/date";
+import { useSubscription } from "../contexts/SubscriptionContext";
 
 const ALLOWED_TYPES = ["image/png", "image/jpeg", "image/webp"];
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+
+const CATALYST_OPTIONS: { value: CatalystType; label: string }[] = [
+  { value: "earnings", label: "Earnings" },
+  { value: "news_pr", label: "News/PR" },
+  { value: "fda", label: "FDA" },
+  { value: "sec_filing", label: "SEC Filing" },
+  { value: "short_squeeze", label: "Short Squeeze" },
+  { value: "sympathy", label: "Sympathy Play" },
+  { value: "technical", label: "Technical" },
+  { value: "other", label: "Other" },
+];
+
+function formatLargeNumber(n: number | null): string {
+  if (n == null || n === 0) return "";
+  if (n >= 1_000_000_000) return (n / 1_000_000_000).toFixed(1).replace(/\.0$/, "") + "B";
+  if (n >= 1_000_000) return (n / 1_000_000).toFixed(1).replace(/\.0$/, "") + "M";
+  if (n >= 1_000) return (n / 1_000).toFixed(1).replace(/\.0$/, "") + "K";
+  return n.toString();
+}
 
 const empty: TradeInsert = {
   ticker: "",
@@ -26,6 +46,16 @@ const empty: TradeInsert = {
   grade: "",
   premarket_plan: "",
   screenshot_url: null,
+  catalyst: "",
+  catalyst_type: null,
+  float_shares: null,
+  market_cap: null,
+  rvol: null,
+  commission: 0,
+  is_scaled: false,
+  avg_entry_price: null,
+  avg_exit_price: null,
+  total_shares: null,
 };
 
 const GRADES = [
@@ -45,12 +75,14 @@ export default function TradeForm({
   onEditDone?: () => void;
 }) {
   const { showToast } = useToast();
+  const { isPro } = useSubscription();
   const [form, setForm] = useState<TradeInsert>({ ...empty });
   const [saving, setSaving] = useState(false);
   const [emotionInput, setEmotionInput] = useState("");
   const [screenshotFile, setScreenshotFile] = useState<File | null>(null);
   const [screenshotPreview, setScreenshotPreview] = useState<string | null>(null);
   const [removeExisting, setRemoveExisting] = useState(false);
+  const [marketContextOpen, setMarketContextOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // When editTrade changes, populate form
@@ -78,6 +110,10 @@ export default function TradeForm({
   const pnl =
     form.entry_price > 0 && form.exit_price > 0 && form.shares > 0
       ? calcPnl(form)
+      : null;
+  const netPnl =
+    pnl !== null && form.commission > 0
+      ? calcNetPnl(form)
       : null;
   const rr = form.stop_loss_price ? calcRR(form) : null;
   const maxRisk = form.stop_loss_price ? calcMaxRisk(form) : null;
@@ -320,7 +356,7 @@ export default function TradeForm({
       {pnl !== null && (
         <div className="card-panel px-4 py-3 flex flex-wrap gap-x-6 gap-y-1.5">
           <span className="text-xs text-gray-500 uppercase tracking-wider">
-            P&L{" "}
+            {netPnl !== null ? "Gross " : ""}P&L{" "}
             <span
               className={
                 "text-sm font-bold ml-1 " +
@@ -330,6 +366,19 @@ export default function TradeForm({
               {pnl >= 0 ? "+" : ""}${pnl.toFixed(2)}
             </span>
           </span>
+          {netPnl !== null && (
+            <span className="text-xs text-gray-500 uppercase tracking-wider">
+              Net P&L{" "}
+              <span
+                className={
+                  "text-sm font-bold ml-1 " +
+                  (netPnl >= 0 ? "text-accent-400" : "text-red-400")
+                }
+              >
+                {netPnl >= 0 ? "+" : ""}${netPnl.toFixed(2)}
+              </span>
+            </span>
+          )}
           {rr !== null && (
             <span className="text-xs text-gray-500 uppercase tracking-wider">
               R:R{" "}
@@ -415,6 +464,144 @@ export default function TradeForm({
             />
           </div>
         </div>
+      </div>
+
+      {/* Market Context — Pro only, collapsible */}
+      <div className="form-section">
+        <button
+          type="button"
+          onClick={() => setMarketContextOpen((o) => !o)}
+          className="w-full flex items-center justify-between"
+        >
+          <div className="flex items-center gap-2">
+            <p className="text-[10px] font-semibold text-gray-600 uppercase tracking-widest">
+              Market Context
+            </p>
+            {!isPro && (
+              <span className="text-[9px] font-bold uppercase tracking-wider bg-accent-500/15 text-accent-400 border border-accent-500/30 rounded px-1.5 py-0.5">
+                Pro
+              </span>
+            )}
+          </div>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 20 20"
+            fill="currentColor"
+            className={`w-4 h-4 text-gray-600 transition-transform ${marketContextOpen ? "rotate-180" : ""}`}
+          >
+            <path fillRule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clipRule="evenodd" />
+          </svg>
+        </button>
+
+        {marketContextOpen && (
+          <div className={`mt-3 space-y-3 ${!isPro ? "opacity-50 pointer-events-none select-none" : ""}`}>
+            {/* Catalyst */}
+            <div>
+              <label className={labelClass}>Catalyst</label>
+              <input
+                className={inputClass}
+                placeholder="e.g. FDA approval, partnership announced"
+                value={form.catalyst}
+                onChange={(e) => set("catalyst", e.target.value)}
+                disabled={!isPro}
+              />
+            </div>
+
+            {/* Catalyst Type */}
+            <div>
+              <label className={labelClass}>Catalyst Type</label>
+              <select
+                className={inputClass}
+                value={form.catalyst_type ?? ""}
+                onChange={(e) =>
+                  set("catalyst_type", (e.target.value || null) as CatalystType | null)
+                }
+                disabled={!isPro}
+              >
+                <option value="">Select type...</option>
+                {CATALYST_OPTIONS.map((o) => (
+                  <option key={o.value} value={o.value}>{o.label}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* Float & Market Cap */}
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className={labelClass}>
+                  Float
+                  {form.float_shares ? (
+                    <span className="ml-1.5 text-accent-400 normal-case">{formatLargeNumber(form.float_shares)}</span>
+                  ) : null}
+                </label>
+                <input
+                  type="number"
+                  min="0"
+                  className={inputClass}
+                  placeholder="e.g. 15000000"
+                  value={form.float_shares ?? ""}
+                  onChange={(e) =>
+                    set("float_shares", e.target.value ? parseFloat(e.target.value) : null)
+                  }
+                  disabled={!isPro}
+                />
+              </div>
+              <div>
+                <label className={labelClass}>
+                  Market Cap
+                  {form.market_cap ? (
+                    <span className="ml-1.5 text-accent-400 normal-case">{formatLargeNumber(form.market_cap)}</span>
+                  ) : null}
+                </label>
+                <input
+                  type="number"
+                  min="0"
+                  className={inputClass}
+                  placeholder="e.g. 50000000"
+                  value={form.market_cap ?? ""}
+                  onChange={(e) =>
+                    set("market_cap", e.target.value ? parseFloat(e.target.value) : null)
+                  }
+                  disabled={!isPro}
+                />
+              </div>
+            </div>
+
+            {/* RVOL & Commission */}
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className={labelClass}>RVOL</label>
+                <input
+                  type="number"
+                  step="any"
+                  min="0"
+                  className={inputClass}
+                  placeholder="e.g. 3.5"
+                  value={form.rvol ?? ""}
+                  onChange={(e) =>
+                    set("rvol", e.target.value ? parseFloat(e.target.value) : null)
+                  }
+                  disabled={!isPro}
+                />
+              </div>
+              <div>
+                <label className={labelClass}>Commission</label>
+                <input
+                  type="number"
+                  step="any"
+                  min="0"
+                  className={inputClass}
+                  placeholder="$0.00"
+                  value={form.commission || ""}
+                  onChange={(e) =>
+                    set("commission", parseFloat(e.target.value) || 0)
+                  }
+                  disabled={!isPro}
+                />
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Playbook Tags */}
