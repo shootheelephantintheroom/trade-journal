@@ -159,7 +159,7 @@ export default function LandingPage() {
   const { user, loading } = useAuth();
   const [scrolled, setScrolled] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
-  const [pricingPlan, setPricingPlan] = useState<"monthly" | "yearly">("monthly");
+  const [pricingPlan, setPricingPlan] = useState<"monthly" | "yearly">("yearly");
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 80);
@@ -443,15 +443,15 @@ export default function LandingPage() {
             </p>
 
             {/* Monthly/Yearly toggle */}
-            <div className="flex items-center justify-center mb-10">
-              <div className="flex items-center gap-1 rounded-lg bg-gray-800/60 p-1">
+            <div className="flex items-center justify-center gap-3 mb-12">
+              <div className="flex items-center gap-1 rounded-full bg-gray-800/70 border border-gray-700/50 p-1.5">
                 <button
                   type="button"
                   onClick={() => setPricingPlan("monthly")}
-                  className={`rounded-md px-5 py-2 text-sm font-medium transition-colors ${
+                  className={`rounded-full px-6 py-2.5 text-sm font-semibold transition-all duration-200 ${
                     pricingPlan === "monthly"
-                      ? "bg-gray-700 text-white shadow-sm"
-                      : "text-gray-400 hover:text-gray-300"
+                      ? "bg-white text-gray-900 shadow-md"
+                      : "text-gray-400 hover:text-gray-200"
                   }`}
                 >
                   Monthly
@@ -459,16 +459,20 @@ export default function LandingPage() {
                 <button
                   type="button"
                   onClick={() => setPricingPlan("yearly")}
-                  className={`rounded-md px-5 py-2 text-sm font-medium transition-colors flex items-center gap-2 ${
+                  className={`rounded-full px-6 py-2.5 text-sm font-semibold transition-all duration-200 ${
                     pricingPlan === "yearly"
-                      ? "bg-gray-700 text-white shadow-sm"
-                      : "text-gray-400 hover:text-gray-300"
+                      ? "bg-white text-gray-900 shadow-md"
+                      : "text-gray-400 hover:text-gray-200"
                   }`}
                 >
                   Yearly
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-accent-400">Save 28%</span>
                 </button>
               </div>
+              {pricingPlan === "yearly" && (
+                <span className="inline-flex items-center rounded-full bg-emerald-500/15 border border-emerald-500/30 px-3 py-1.5 text-xs font-bold text-emerald-400 tracking-wide">
+                  Save 28%
+                </span>
+              )}
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -501,18 +505,28 @@ export default function LandingPage() {
                   Recommended
                 </div>
                 <div className="text-sm font-medium text-accent-400 mb-1">Pro</div>
-                <div className="font-display text-4xl font-bold text-white mb-1">
-                  {pricingPlan === "monthly" ? (
-                    <>$29<span className="text-lg font-normal text-gray-400">/mo</span></>
-                  ) : (
-                    <>$249<span className="text-lg font-normal text-gray-400">/yr</span></>
-                  )}
-                </div>
-                <div className="text-xs text-gray-500 mb-8">
-                  {pricingPlan === "monthly"
-                    ? "14-day free trial included"
-                    : "$20.75/mo billed annually · 14-day free trial"}
-                </div>
+                {pricingPlan === "monthly" ? (
+                  <>
+                    <div className="font-display text-4xl font-bold text-white mb-1">
+                      $29<span className="text-lg font-normal text-gray-400">/mo</span>
+                    </div>
+                    <div className="text-xs text-gray-500 mb-8">
+                      14-day free trial included
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="flex items-baseline gap-2 mb-1">
+                      <span className="font-display text-4xl font-bold text-white">
+                        $249<span className="text-lg font-normal text-gray-400">/yr</span>
+                      </span>
+                      <span className="text-base text-gray-500 line-through">$348</span>
+                    </div>
+                    <div className="text-xs text-gray-500 mb-8">
+                      ~$20.75/mo · 14-day free trial included
+                    </div>
+                  </>
+                )}
                 <ul className="space-y-3 flex-1">
                   {PRO_FEATURES.map((f) => (
                     <li key={f} className="flex items-start gap-2.5 text-sm text-gray-300">
