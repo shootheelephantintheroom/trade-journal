@@ -146,7 +146,7 @@ export default function PaywallGate({ feature, children }: PaywallGateProps) {
 
         {plan === "yearly" && (
           <p className="mb-3 text-xs font-medium text-accent-400">
-            Save 17% with annual billing
+            Save 28% with annual billing
           </p>
         )}
 
@@ -160,7 +160,7 @@ export default function PaywallGate({ feature, children }: PaywallGateProps) {
             ? "Redirecting..."
             : plan === "monthly"
               ? "Upgrade to Pro — $29/mo"
-              : "Upgrade to Pro — $290/yr"}
+              : "Upgrade to Pro — $249/yr"}
         </button>
 
         <p className="mt-3 text-[11px] text-gray-600">

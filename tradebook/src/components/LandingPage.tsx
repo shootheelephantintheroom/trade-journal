@@ -157,6 +157,7 @@ export default function LandingPage() {
   const { user, loading } = useAuth();
   const [scrolled, setScrolled] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const [pricingPlan, setPricingPlan] = useState<"monthly" | "yearly">("monthly");
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 80);
@@ -439,6 +440,35 @@ export default function LandingPage() {
               Start free. Upgrade when the analytics pay for themselves.
             </p>
 
+            {/* Monthly/Yearly toggle */}
+            <div className="flex items-center justify-center mb-10">
+              <div className="flex items-center gap-1 rounded-lg bg-gray-800/60 p-1">
+                <button
+                  type="button"
+                  onClick={() => setPricingPlan("monthly")}
+                  className={`rounded-md px-5 py-2 text-sm font-medium transition-colors ${
+                    pricingPlan === "monthly"
+                      ? "bg-gray-700 text-white shadow-sm"
+                      : "text-gray-400 hover:text-gray-300"
+                  }`}
+                >
+                  Monthly
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setPricingPlan("yearly")}
+                  className={`rounded-md px-5 py-2 text-sm font-medium transition-colors flex items-center gap-2 ${
+                    pricingPlan === "yearly"
+                      ? "bg-gray-700 text-white shadow-sm"
+                      : "text-gray-400 hover:text-gray-300"
+                  }`}
+                >
+                  Yearly
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-accent-400">Save 28%</span>
+                </button>
+              </div>
+            </div>
+
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               {/* Free */}
               <div className="bg-gray-900/40 border border-gray-800 rounded-2xl p-8 flex flex-col">
@@ -470,9 +500,17 @@ export default function LandingPage() {
                 </div>
                 <div className="text-sm font-medium text-accent-400 mb-1">Pro</div>
                 <div className="font-display text-4xl font-bold text-white mb-1">
-                  $29<span className="text-lg font-normal text-gray-400">/mo</span>
+                  {pricingPlan === "monthly" ? (
+                    <>$29<span className="text-lg font-normal text-gray-400">/mo</span></>
+                  ) : (
+                    <>$249<span className="text-lg font-normal text-gray-400">/yr</span></>
+                  )}
                 </div>
-                <div className="text-xs text-gray-500 mb-8">14-day free trial included</div>
+                <div className="text-xs text-gray-500 mb-8">
+                  {pricingPlan === "monthly"
+                    ? "14-day free trial included"
+                    : "$20.75/mo billed annually · 14-day free trial"}
+                </div>
                 <ul className="space-y-3 flex-1">
                   {PRO_FEATURES.map((f) => (
                     <li key={f} className="flex items-start gap-2.5 text-sm text-gray-300">
@@ -504,7 +542,7 @@ export default function LandingPage() {
                 <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-accent-500" />
               </span>
               <span className="text-sm text-accent-400 font-medium">
-                Trusted by 200+ day traders
+                Built for momentum day traders
               </span>
             </div>
 
@@ -610,8 +648,8 @@ export default function LandingPage() {
               Ready to Find Your Edge?
             </h2>
             <p className="text-gray-400 text-sm mb-8">
-              Join hundreds of momentum traders who stopped guessing and started
-              tracking. Free to start, takes 30 seconds to sign up.
+              The trade journal built for momentum day traders. Free to start,
+              takes 30 seconds to sign up.
             </p>
             <Link
               to="/login?mode=signup"

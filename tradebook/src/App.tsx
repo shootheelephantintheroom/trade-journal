@@ -47,11 +47,13 @@ export default function App() {
   const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+  const [missedTrades, setMissedTrades] = useState<MissedTrade[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState(false);
+  const [tradeRefreshKey, setTradeRefreshKey] = useState(0);
 
-  // Show onboarding for users who haven't completed it
-  if (!profileLoading && profile && !profile.onboarded) {
-    return <Onboarding />;
-  }
+  const editingTrade =
+    (location.state as { editTrade?: Trade } | null)?.editTrade ?? null;
 
   // Close dropdown on outside click
   useEffect(() => {
@@ -63,14 +65,6 @@ export default function App() {
     document.addEventListener("mousedown", handleClick);
     return () => document.removeEventListener("mousedown", handleClick);
   }, []);
-
-  const [missedTrades, setMissedTrades] = useState<MissedTrade[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [fetchError, setFetchError] = useState(false);
-  const [tradeRefreshKey, setTradeRefreshKey] = useState(0);
-
-  const editingTrade =
-    (location.state as { editTrade?: Trade } | null)?.editTrade ?? null;
 
   const fetchMissedTrades = useCallback(async () => {
     const { data, error } = await supabase
@@ -93,6 +87,11 @@ export default function App() {
   const handleTradeChanged = useCallback(() => {
     setTradeRefreshKey((k) => k + 1);
   }, []);
+
+  // Show onboarding for users who haven't completed it
+  if (!profileLoading && profile && !profile.onboarded) {
+    return <Onboarding />;
+  }
 
   return (
     <div className="min-h-screen bg-gray-950 text-gray-100">
