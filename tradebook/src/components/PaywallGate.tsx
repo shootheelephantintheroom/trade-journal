@@ -17,11 +17,19 @@ const PRO_FEATURES = [
 ];
 
 export default function PaywallGate({ feature, children }: PaywallGateProps) {
-  const { isPro, isTrialing } = useSubscription();
+  const { isPro, isTrialing, profile } = useSubscription();
   const [loading, setLoading] = useState(false);
   const [plan, setPlan] = useState<"monthly" | "yearly">("monthly");
 
   if (isPro || isTrialing) return <>{children}</>;
+
+  const hadPaidSubscription =
+    profile?.subscription_status === "canceled" ||
+    (profile?.stripe_subscription_id != null && profile?.plan === "free");
+
+  const statusMessage = hadPaidSubscription
+    ? "Your Pro subscription has ended."
+    : "Your free trial has ended.";
 
   async function handleUpgrade() {
     setLoading(true);
@@ -81,7 +89,10 @@ export default function PaywallGate({ feature, children }: PaywallGateProps) {
         <h3 className="text-lg font-bold font-display text-white mb-1">
           Unlock {feature}
         </h3>
-        <p className="text-sm text-gray-400 mb-6">
+        <p className="text-sm text-gray-400 mb-1">
+          {statusMessage}
+        </p>
+        <p className="text-sm text-gray-500 mb-6">
           Upgrade to Pro for the full trading toolkit.
         </p>
 
@@ -153,7 +164,7 @@ export default function PaywallGate({ feature, children }: PaywallGateProps) {
         </button>
 
         <p className="mt-3 text-[11px] text-gray-600">
-          Your 14-day free trial has ended.
+          {statusMessage}
         </p>
       </div>
     </div>
