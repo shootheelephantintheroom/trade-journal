@@ -3,7 +3,7 @@ import { supabase } from "../lib/supabase";
 import { calcPnl } from "../lib/calc";
 import { todayLocal } from "../lib/date";
 import { useToast } from "./Toast";
-import type { JournalEntry, JournalMood, JournalGrade } from "../types/journal";
+import type { JournalEntry, JournalMood } from "../types/journal";
 import type { Trade } from "../types/trade";
 
 const MOODS: { value: JournalMood; label: string; emoji: string }[] = [

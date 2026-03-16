@@ -48,9 +48,6 @@ export default function TiltDetection({ trades }: Props) {
       allPnls.filter((p) => p > 0).length / allPnls.length;
     const overallAvgPnl =
       allPnls.reduce((s, p) => s + p, 0) / allPnls.length;
-    const overallAvgSize =
-      trades.reduce((s, t) => s + t.shares * t.entry_price, 0) / trades.length;
-
     // Most common setups (top 3)
     const setupCounts = new Map<string, number>();
     for (const t of trades) {

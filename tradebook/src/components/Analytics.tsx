@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { supabase } from "../lib/supabase";
 import type { Trade, CatalystType } from "../types/trade";
-import { calcPnl, calcRR } from "../lib/calc";
+import { calcPnl } from "../lib/calc";
 import { useToast } from "./Toast";
 import DashboardFilters, {
   FilterSummary,
