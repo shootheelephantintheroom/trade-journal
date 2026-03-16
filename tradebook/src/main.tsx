@@ -10,6 +10,7 @@ import PrivacyPage from "./components/PrivacyPage";
 import TermsPage from "./components/TermsPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { AuthProvider } from "./contexts/AuthContext";
+import { SubscriptionProvider } from "./contexts/SubscriptionContext";
 import { ToastProvider } from "./components/Toast";
 
 function NotFoundPage() {
@@ -38,7 +39,9 @@ createRoot(document.getElementById("root")!).render(
               element={
                 <ProtectedRoute>
                   <ErrorBoundary>
-                    <App />
+                    <SubscriptionProvider>
+                      <App />
+                    </SubscriptionProvider>
                   </ErrorBoundary>
                 </ProtectedRoute>
               }
