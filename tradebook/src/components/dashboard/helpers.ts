@@ -109,3 +109,50 @@ export function buildEmotionStats(trades: Trade[]): EmotionStats[] {
   stats.sort((a, b) => b.totalTrades - a.totalTrades);
   return stats;
 }
+
+export interface DrawdownInfo {
+  maxDrawdown: number;
+  maxDrawdownPct: number;
+  currentDrawdown: number;
+  maxDdPeakIdx: number;
+  maxDdTroughIdx: number;
+}
+
+export function calcDrawdownInfo(
+  equityPoints: { value: number }[],
+): DrawdownInfo {
+  let peak = 0;
+  let maxDd = 0;
+  let maxDdPct = 0;
+  let maxDdPeakIdx = 0;
+  let maxDdTroughIdx = 0;
+  let currentPeakIdx = 0;
+
+  for (let i = 0; i < equityPoints.length; i++) {
+    const val = equityPoints[i].value;
+    if (val >= peak) {
+      peak = val;
+      currentPeakIdx = i;
+    }
+    const dd = peak - val;
+    if (dd > maxDd) {
+      maxDd = dd;
+      maxDdPct = peak > 0 ? (dd / peak) * 100 : 0;
+      maxDdPeakIdx = currentPeakIdx;
+      maxDdTroughIdx = i;
+    }
+  }
+
+  const lastVal =
+    equityPoints.length > 0
+      ? equityPoints[equityPoints.length - 1].value
+      : 0;
+
+  return {
+    maxDrawdown: maxDd,
+    maxDrawdownPct: maxDdPct,
+    currentDrawdown: Math.max(0, peak - lastVal),
+    maxDdPeakIdx,
+    maxDdTroughIdx,
+  };
+}

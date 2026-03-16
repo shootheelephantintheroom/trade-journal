@@ -12,7 +12,8 @@ import DailyBreakdown from "./dashboard/DailyBreakdown";
 import SetupPerformance from "./dashboard/SetupPerformance";
 import EmotionPerformance from "./dashboard/EmotionPerformance";
 import RecentTrades from "./dashboard/RecentTrades";
-import { buildDailyStats, buildTagStats, buildEmotionStats } from "./dashboard/helpers";
+import { buildDailyStats, buildTagStats, buildEmotionStats, calcDrawdownInfo } from "./dashboard/helpers";
+import PaywallGate from "./PaywallGate";
 import DashboardFilters, { FilterSummary, useDashboardFilters, applyFilters } from "./dashboard/DashboardFilters";
 
 function TodaySummary({ trades }: { trades: Trade[] }) {
@@ -188,6 +189,60 @@ export default function Dashboard({
     }),
   ];
 
+  // Drawdown
+  const drawdownInfo = calcDrawdownInfo(equityPoints);
+
+  // Expectancy: (win_rate × avg_win) + (loss_rate × avg_loss)
+  // avgLoss is already negative so this naturally subtracts
+  const expectancy = hasTrades
+    ? (wins.length / filteredTrades.length) * avgWin +
+      (losses.length / filteredTrades.length) * avgLoss
+    : 0;
+
+  // Expectancy per R (only if ≥50% of trades have stop losses)
+  const tradesWithStops = filteredTrades.filter((t) => t.stop_loss_price).length;
+  const hasEnoughStops = hasTrades && tradesWithStops >= filteredTrades.length * 0.5;
+  let expectancyR: number | null = null;
+  if (hasEnoughStops) {
+    const rrAll = filteredTrades
+      .filter((t) => t.stop_loss_price)
+      .map((t) => ({ rr: calcRR(t), win: calcPnl(t) > 0 }))
+      .filter((x): x is { rr: number; win: boolean } => x.rr !== null);
+    if (rrAll.length > 0) {
+      const rrWins = rrAll.filter((x) => x.win);
+      const rrLosses = rrAll.filter((x) => !x.win);
+      const avgWinR =
+        rrWins.length > 0
+          ? rrWins.reduce((a, x) => a + x.rr, 0) / rrWins.length
+          : 0;
+      const avgLossR =
+        rrLosses.length > 0
+          ? Math.abs(rrLosses.reduce((a, x) => a + x.rr, 0) / rrLosses.length)
+          : 0;
+      const winRateR = rrWins.length / rrAll.length;
+      const lossRateR = rrLosses.length / rrAll.length;
+      expectancyR = winRateR * avgWinR - lossRateR * avgLossR;
+    }
+  }
+
+  // Recovery factor
+  const recoveryFactor =
+    drawdownInfo.maxDrawdown > 0 ? totalPnl / drawdownInfo.maxDrawdown : null;
+
+  // Sharpe-like ratio (annualized)
+  const dailyPnls = dailyStats.map((d) => d.pnl);
+  let sharpe: number | null = null;
+  if (dailyPnls.length > 1) {
+    const mean = dailyPnls.reduce((a, b) => a + b, 0) / dailyPnls.length;
+    const variance =
+      dailyPnls.reduce((sum, p) => sum + (p - mean) ** 2, 0) /
+      (dailyPnls.length - 1);
+    const std = Math.sqrt(variance);
+    if (std > 0) {
+      sharpe = (mean / std) * Math.sqrt(252);
+    }
+  }
+
   // Recent trades (5 most recent by date + time)
   const recentTrades = [...filteredTrades]
     .sort((a, b) => {
@@ -306,6 +361,76 @@ export default function Dashboard({
               accent={worstPnl < 0 ? "red" : "neutral"}
             />
           </div>
+
+          {/* Risk Metrics (Pro only) */}
+          <PaywallGate feature="Risk Metrics">
+            <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
+              Risk Metrics
+            </h3>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+              <StatCard
+                label="Expectancy"
+                value={`${expectancy >= 0 ? "+" : "-"}$${Math.abs(expectancy).toFixed(2)}`}
+                color={expectancy >= 0 ? "text-accent-400" : "text-red-400"}
+                sub="per trade"
+                accent={expectancy >= 0 ? "green" : "red"}
+              />
+              {expectancyR !== null && (
+                <StatCard
+                  label="Expectancy / R"
+                  value={`${expectancyR >= 0 ? "+" : ""}${expectancyR.toFixed(2)}R`}
+                  color={expectancyR >= 0 ? "text-accent-400" : "text-red-400"}
+                  accent={expectancyR >= 0 ? "green" : "red"}
+                />
+              )}
+              <StatCard
+                label="Max Drawdown"
+                value={
+                  drawdownInfo.maxDrawdown > 0
+                    ? `-$${drawdownInfo.maxDrawdown.toFixed(2)}`
+                    : "—"
+                }
+                color={drawdownInfo.maxDrawdown > 0 ? "text-red-400" : "text-gray-500"}
+                sub={
+                  drawdownInfo.maxDrawdownPct > 0
+                    ? `${drawdownInfo.maxDrawdownPct.toFixed(1)}% of peak`
+                    : undefined
+                }
+                accent={drawdownInfo.maxDrawdown > 0 ? "red" : "neutral"}
+              />
+              <StatCard
+                label="Current Drawdown"
+                value={
+                  drawdownInfo.currentDrawdown > 0
+                    ? `-$${drawdownInfo.currentDrawdown.toFixed(2)}`
+                    : "$0.00"
+                }
+                color={
+                  drawdownInfo.currentDrawdown > 0
+                    ? "text-red-400"
+                    : "text-accent-400"
+                }
+                accent={drawdownInfo.currentDrawdown > 0 ? "red" : "green"}
+              />
+              {recoveryFactor !== null && (
+                <StatCard
+                  label="Recovery Factor"
+                  value={recoveryFactor.toFixed(2)}
+                  color={recoveryFactor >= 1 ? "text-accent-400" : "text-red-400"}
+                  accent={recoveryFactor >= 1 ? "green" : "red"}
+                />
+              )}
+              {sharpe !== null && (
+                <StatCard
+                  label="Sharpe Ratio"
+                  value={sharpe.toFixed(2)}
+                  color={sharpe >= 0 ? "text-accent-400" : "text-red-400"}
+                  sub="annualized"
+                  accent={sharpe >= 0 ? "green" : "red"}
+                />
+              )}
+            </div>
+          </PaywallGate>
         </>
       )}
 
@@ -419,7 +544,17 @@ export default function Dashboard({
                   {totalPnl >= 0 ? "+" : ""}${totalPnl.toFixed(2)}
                 </span>
               </div>
-              <EquityCurve points={equityPoints} />
+              <EquityCurve
+                points={equityPoints}
+                drawdownRegion={
+                  drawdownInfo.maxDrawdown > 0
+                    ? {
+                        peakIdx: drawdownInfo.maxDdPeakIdx,
+                        troughIdx: drawdownInfo.maxDdTroughIdx,
+                      }
+                    : undefined
+                }
+              />
             </div>
           )}
 

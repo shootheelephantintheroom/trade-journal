@@ -1,7 +1,9 @@
 export default function EquityCurve({
   points,
+  drawdownRegion,
 }: {
   points: { date: string; value: number }[];
+  drawdownRegion?: { peakIdx: number; troughIdx: number };
 }) {
   if (points.length < 2) return null;
 
@@ -110,6 +112,22 @@ export default function EquityCurve({
         $0
       </text>
       <path d={areaPath} fill="url(#eqGrad)" className="equity-area" />
+      {drawdownRegion &&
+        drawdownRegion.peakIdx < drawdownRegion.troughIdx &&
+        (() => {
+          const { peakIdx, troughIdx } = drawdownRegion;
+          const peakY = coords[peakIdx].y;
+          const region = coords.slice(peakIdx, troughIdx + 1);
+          const ddPath =
+            `M${region[0].x},${peakY} ` +
+            `L${region[region.length - 1].x},${peakY} ` +
+            [...region]
+              .reverse()
+              .map((c) => `L${c.x},${c.y}`)
+              .join(" ") +
+            " Z";
+          return <path d={ddPath} fill="rgba(239, 68, 68, 0.12)" />;
+        })()}
       <polyline
         points={polyline}
         fill="none"
