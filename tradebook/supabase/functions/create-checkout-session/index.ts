@@ -10,7 +10,8 @@ const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY")!, {
 const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
 const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 const siteUrl = Deno.env.get("SITE_URL")!;
-const priceId = Deno.env.get("STRIPE_PRICE_ID")!;
+const priceMonthly = Deno.env.get("STRIPE_PRICE_MONTHLY")!;
+const priceYearly = Deno.env.get("STRIPE_PRICE_YEARLY")!;
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -46,6 +47,17 @@ serve(async (req) => {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
+
+    // Parse plan from request body
+    let plan = "monthly";
+    try {
+      const body = await req.json();
+      if (body.plan === "yearly") plan = "yearly";
+    } catch {
+      // No body or invalid JSON — default to monthly
+    }
+
+    const priceId = plan === "yearly" ? priceYearly : priceMonthly;
 
     // Get or create Stripe customer
     const { data: profile } = await supabaseAdmin

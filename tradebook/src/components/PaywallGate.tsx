@@ -19,6 +19,7 @@ const PRO_FEATURES = [
 export default function PaywallGate({ feature, children }: PaywallGateProps) {
   const { isPro, isTrialing } = useSubscription();
   const [loading, setLoading] = useState(false);
+  const [plan, setPlan] = useState<"monthly" | "yearly">("monthly");
 
   if (isPro || isTrialing) return <>{children}</>;
 
@@ -38,6 +39,7 @@ export default function PaywallGate({ feature, children }: PaywallGateProps) {
             Authorization: `Bearer ${session.access_token}`,
             "Content-Type": "application/json",
           },
+          body: JSON.stringify({ plan }),
         }
       );
 
@@ -105,13 +107,49 @@ export default function PaywallGate({ feature, children }: PaywallGateProps) {
           ))}
         </ul>
 
+        {/* Plan toggle */}
+        <div className="mb-4 flex items-center justify-center gap-1 rounded-lg bg-gray-800/60 p-1">
+          <button
+            type="button"
+            onClick={() => setPlan("monthly")}
+            className={`flex-1 rounded-md px-4 py-2 text-sm font-medium transition-colors ${
+              plan === "monthly"
+                ? "bg-gray-700 text-white shadow-sm"
+                : "text-gray-400 hover:text-gray-300"
+            }`}
+          >
+            Monthly
+          </button>
+          <button
+            type="button"
+            onClick={() => setPlan("yearly")}
+            className={`flex-1 rounded-md px-4 py-2 text-sm font-medium transition-colors ${
+              plan === "yearly"
+                ? "bg-gray-700 text-white shadow-sm"
+                : "text-gray-400 hover:text-gray-300"
+            }`}
+          >
+            Yearly
+          </button>
+        </div>
+
+        {plan === "yearly" && (
+          <p className="mb-3 text-xs font-medium text-accent-400">
+            Save 17% with annual billing
+          </p>
+        )}
+
         {/* CTA */}
         <button
           onClick={handleUpgrade}
           disabled={loading}
           className="w-full rounded-xl bg-accent-500 px-6 py-3 text-sm font-semibold text-gray-950 transition-all hover:bg-accent-400 hover:shadow-[0_0_24px_rgba(0,200,83,0.25)] active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed"
         >
-          {loading ? "Redirecting..." : "Upgrade to Pro — $29/mo"}
+          {loading
+            ? "Redirecting..."
+            : plan === "monthly"
+              ? "Upgrade to Pro — $29/mo"
+              : "Upgrade to Pro — $290/yr"}
         </button>
 
         <p className="mt-3 text-[11px] text-gray-600">
