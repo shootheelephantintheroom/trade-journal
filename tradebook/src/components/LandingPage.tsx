@@ -11,6 +11,7 @@ const FREE_FEATURES = [
   "Trade grading (A–D)",
   "Emotional tagging",
   "CSV export",
+  "Missed trade tracking",
 ];
 
 const PRO_FEATURES = [
@@ -23,7 +24,6 @@ const PRO_FEATURES = [
   "Float & small-cap fields",
   "Screenshot attachments",
   "Advanced filters & search",
-  "Missed trade tracking",
 ];
 
 const MOMENTUM_CALLOUTS = [
