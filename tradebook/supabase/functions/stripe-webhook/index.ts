@@ -117,12 +117,48 @@ serve(async (req) => {
         const isActive =
           subscription.status === "active" ||
           subscription.status === "trialing";
+        const isPastDue = subscription.status === "past_due";
         await supabaseAdmin
           .from("profiles")
           .update({
-            plan: isActive ? "pro" : "free",
-            subscription_status: isActive ? "active" : "canceled",
+            plan: isActive || isPastDue ? "pro" : "free",
+            subscription_status: isActive
+              ? "active"
+              : isPastDue
+                ? "past_due"
+                : "canceled",
           })
+          .eq("id", userId);
+      }
+      break;
+    }
+
+    case "invoice.payment_failed": {
+      const invoice = event.data.object as Stripe.Invoice;
+      const subscriptionId =
+        typeof invoice.subscription === "string"
+          ? invoice.subscription
+          : invoice.subscription?.id;
+
+      if (!subscriptionId) break;
+
+      const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+      const userId = subscription.metadata?.supabase_user_id ?? null;
+
+      // Mark subscription as past_due in our subscriptions table
+      await supabaseAdmin
+        .from("subscriptions")
+        .update({
+          status: "past_due",
+          updated_at: new Date().toISOString(),
+        })
+        .eq("stripe_subscription_id", subscriptionId);
+
+      // Update profile — keep plan as "pro" so they still have access
+      if (userId) {
+        await supabaseAdmin
+          .from("profiles")
+          .update({ subscription_status: "past_due" })
           .eq("id", userId);
       }
       break;

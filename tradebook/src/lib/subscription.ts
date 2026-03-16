@@ -31,7 +31,7 @@ export async function getProfile(userId: string): Promise<Profile | null> {
 
 export function isPro(profile: Profile | null): boolean {
   if (!profile) return false;
-  if (profile.plan === "pro" && profile.subscription_status === "active") return true;
+  if (profile.plan === "pro" && (profile.subscription_status === "active" || profile.subscription_status === "past_due")) return true;
   if (new Date(profile.trial_ends_at) > new Date()) return true;
   return false;
 }

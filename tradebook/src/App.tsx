@@ -41,7 +41,7 @@ function navClassName({ isActive }: { isActive: boolean }) {
 
 export default function App() {
   const { signOut, displayName } = useAuth();
-  const { isPro, profile, loading: profileLoading } = useSubscription();
+  const { isPro, isPastDue, profile, loading: profileLoading } = useSubscription();
   const { showToast } = useToast();
   const navigate = useNavigate();
   const location = useLocation();
@@ -169,6 +169,13 @@ export default function App() {
           </nav>
         </div>
       </header>
+
+      {/* Past-due payment warning */}
+      {isPastDue && (
+        <div className="bg-amber-900/60 border-b border-amber-700/50 px-4 py-2.5 text-center text-sm text-amber-200">
+          Your payment failed. Please update your payment method to keep Pro access.
+        </div>
+      )}
 
       {/* Main */}
       <main className="max-w-5xl mx-auto px-4 py-8">

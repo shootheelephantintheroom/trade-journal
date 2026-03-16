@@ -19,6 +19,7 @@ interface SubscriptionContextType {
   profile: Profile | null;
   loading: boolean;
   isPro: boolean;
+  isPastDue: boolean;
   isTrialing: boolean;
   daysLeftInTrial: number;
   refetchProfile: () => Promise<void>;
@@ -65,6 +66,7 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
         profile,
         loading,
         isPro: checkIsPro(profile),
+        isPastDue: profile?.subscription_status === "past_due",
         isTrialing: checkIsTrialing(profile),
         daysLeftInTrial: calcDaysLeft(profile),
         refetchProfile: fetchProfile,
