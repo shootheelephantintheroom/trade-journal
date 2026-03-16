@@ -16,6 +16,7 @@ import MissedTrades from "./components/MissedTrades";
 import Journal from "./components/Journal";
 import Analytics from "./components/Analytics";
 import PaywallGate from "./components/PaywallGate";
+import Onboarding from "./components/Onboarding";
 import { useAuth } from "./contexts/AuthContext";
 import { useSubscription } from "./contexts/SubscriptionContext";
 import { useToast } from "./components/Toast";
@@ -40,12 +41,17 @@ function navClassName({ isActive }: { isActive: boolean }) {
 
 export default function App() {
   const { signOut, displayName } = useAuth();
-  const { isPro } = useSubscription();
+  const { isPro, profile, loading: profileLoading } = useSubscription();
   const { showToast } = useToast();
   const navigate = useNavigate();
   const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+
+  // Show onboarding for users who haven't completed it
+  if (!profileLoading && profile && !profile.onboarded) {
+    return <Onboarding />;
+  }
 
   // Close dropdown on outside click
   useEffect(() => {

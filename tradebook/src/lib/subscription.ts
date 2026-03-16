@@ -11,6 +11,11 @@ export interface Profile {
   trial_ends_at: string;
   created_at: string;
   updated_at: string;
+  onboarded: boolean;
+  trading_styles: string[];
+  default_shares: number | null;
+  default_commission: number | null;
+  timezone: string | null;
 }
 
 export async function getProfile(userId: string): Promise<Profile | null> {
