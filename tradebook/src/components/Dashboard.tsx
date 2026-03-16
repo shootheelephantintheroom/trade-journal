@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { supabase } from "../lib/supabase";
 import type { Trade, MissedTrade } from "../types/trade";
 import { calcPnl, calcRR, calcStreak } from "../lib/calc";
@@ -13,6 +13,7 @@ import SetupPerformance from "./dashboard/SetupPerformance";
 import EmotionPerformance from "./dashboard/EmotionPerformance";
 import RecentTrades from "./dashboard/RecentTrades";
 import { buildDailyStats, buildTagStats, buildEmotionStats } from "./dashboard/helpers";
+import DashboardFilters, { FilterSummary, useDashboardFilters, applyFilters } from "./dashboard/DashboardFilters";
 
 function TodaySummary({ trades }: { trades: Trade[] }) {
   const today = todayLocal();
@@ -88,6 +89,9 @@ export default function Dashboard({
     fetchAllTrades();
   }, [showToast]);
 
+  const [filters, updateFilters] = useDashboardFilters();
+  const filteredTrades = useMemo(() => applyFilters(trades, filters), [trades, filters]);
+
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center py-20 gap-3">
@@ -122,37 +126,37 @@ export default function Dashboard({
     );
   }
 
-  const hasTrades = trades.length > 0;
+  const hasTrades = filteredTrades.length > 0;
 
-  const pnls = trades.map(calcPnl);
+  const pnls = filteredTrades.map(calcPnl);
   const wins = pnls.filter((p) => p > 0);
   const losses = pnls.filter((p) => p < 0);
 
   const totalPnl = pnls.reduce((a, b) => a + b, 0);
-  const winRate = hasTrades ? (wins.length / trades.length) * 100 : 0;
+  const winRate = hasTrades ? (wins.length / filteredTrades.length) * 100 : 0;
   const avgWin =
     wins.length > 0 ? wins.reduce((a, b) => a + b, 0) / wins.length : 0;
   const avgLoss =
     losses.length > 0 ? losses.reduce((a, b) => a + b, 0) / losses.length : 0;
 
   // Best / worst trade
-  let bestTrade = trades[0] ?? null;
-  let worstTrade = trades[0] ?? null;
+  let bestTrade = filteredTrades[0] ?? null;
+  let worstTrade = filteredTrades[0] ?? null;
   let bestPnl = pnls[0] ?? 0;
   let worstPnl = pnls[0] ?? 0;
-  for (let i = 1; i < trades.length; i++) {
+  for (let i = 1; i < filteredTrades.length; i++) {
     if (pnls[i] > bestPnl) {
       bestPnl = pnls[i];
-      bestTrade = trades[i];
+      bestTrade = filteredTrades[i];
     }
     if (pnls[i] < worstPnl) {
       worstPnl = pnls[i];
-      worstTrade = trades[i];
+      worstTrade = filteredTrades[i];
     }
   }
 
   // Avg R:R (only for trades with stop loss)
-  const rrValues = trades.map(calcRR).filter((r): r is number => r !== null);
+  const rrValues = filteredTrades.map(calcRR).filter((r): r is number => r !== null);
   const avgRR =
     rrValues.length > 0
       ? rrValues.reduce((a, b) => a + b, 0) / rrValues.length
@@ -164,14 +168,14 @@ export default function Dashboard({
   const profitFactor = grossLosses > 0 ? grossWins / grossLosses : null;
 
   // Streak
-  const streak = calcStreak(trades);
+  const streak = calcStreak(filteredTrades);
 
   // Daily stats
-  const dailyStats = buildDailyStats(trades);
+  const dailyStats = buildDailyStats(filteredTrades);
 
   // Tag & emotion stats
-  const tagStats = buildTagStats(trades);
-  const emotionStats = buildEmotionStats(trades);
+  const tagStats = buildTagStats(filteredTrades);
+  const emotionStats = buildEmotionStats(filteredTrades);
 
   // Equity curve data (cumulative P&L, chronological)
   const equityDays = [...dailyStats].reverse();
@@ -185,7 +189,7 @@ export default function Dashboard({
   ];
 
   // Recent trades (5 most recent by date + time)
-  const recentTrades = [...trades]
+  const recentTrades = [...filteredTrades]
     .sort((a, b) => {
       if (a.trade_date !== b.trade_date)
         return b.trade_date.localeCompare(a.trade_date);
@@ -199,8 +203,17 @@ export default function Dashboard({
         Dashboard
       </h2>
 
+      {/* Filters (Pro-only) */}
+      <DashboardFilters trades={trades} filters={filters} onUpdate={updateFilters} />
+      <FilterSummary
+        filtered={filteredTrades.length}
+        total={trades.length}
+        from={filters.from}
+        to={filters.to}
+      />
+
       {/* Today's Summary */}
-      {hasTrades && <TodaySummary trades={trades} />}
+      {hasTrades && <TodaySummary trades={filteredTrades} />}
 
       {hasTrades && (
         <>
@@ -214,7 +227,7 @@ export default function Dashboard({
             />
             <StatCard
               label="Total Trades"
-              value={String(trades.length)}
+              value={String(filteredTrades.length)}
               accent="neutral"
             />
             <StatCard
