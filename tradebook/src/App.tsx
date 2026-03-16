@@ -14,6 +14,7 @@ import TradeList from "./components/TradeList";
 import Dashboard from "./components/Dashboard";
 import MissedTrades from "./components/MissedTrades";
 import Journal from "./components/Journal";
+import Analytics from "./components/Analytics";
 import PaywallGate from "./components/PaywallGate";
 import { useAuth } from "./contexts/AuthContext";
 import { useSubscription } from "./contexts/SubscriptionContext";
@@ -236,12 +237,7 @@ export default function App() {
                 path="analytics"
                 element={
                   <PaywallGate feature="Analytics">
-                    <div className="text-center py-20">
-                      <h2 className="text-xl font-bold font-display text-white mb-2">
-                        Analytics
-                      </h2>
-                      <p className="text-sm text-gray-400">Coming soon.</p>
-                    </div>
+                    <Analytics />
                   </PaywallGate>
                 }
               />
