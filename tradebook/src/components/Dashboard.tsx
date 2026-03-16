@@ -13,7 +13,7 @@ import SetupPerformance from "./dashboard/SetupPerformance";
 import EmotionPerformance from "./dashboard/EmotionPerformance";
 import RecentTrades from "./dashboard/RecentTrades";
 import { buildDailyStats, buildTagStats, buildEmotionStats, calcDrawdownInfo } from "./dashboard/helpers";
-import PaywallGate from "./PaywallGate";
+import { useSubscription } from "../contexts/SubscriptionContext";
 import DashboardFilters, { FilterSummary, useDashboardFilters, applyFilters } from "./dashboard/DashboardFilters";
 
 function TodaySummary({ trades }: { trades: Trade[] }) {
@@ -70,6 +70,8 @@ export default function Dashboard({
   onLogTrade?: () => void;
 }) {
   const { showToast } = useToast();
+  const { isPro, isTrialing } = useSubscription();
+  const proUser = isPro || isTrialing;
   const [trades, setTrades] = useState<Trade[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -91,7 +93,10 @@ export default function Dashboard({
   }, [showToast]);
 
   const [filters, updateFilters] = useDashboardFilters();
-  const filteredTrades = useMemo(() => applyFilters(trades, filters), [trades, filters]);
+  const filteredTrades = useMemo(
+    () => proUser ? applyFilters(trades, filters) : trades,
+    [trades, filters, proUser]
+  );
 
   if (loading) {
     return (
@@ -259,16 +264,20 @@ export default function Dashboard({
       </h2>
 
       {/* Filters (Pro-only) */}
-      <DashboardFilters trades={trades} filters={filters} onUpdate={updateFilters} />
-      <FilterSummary
-        filtered={filteredTrades.length}
-        total={trades.length}
-        from={filters.from}
-        to={filters.to}
-      />
+      {proUser && (
+        <>
+          <DashboardFilters trades={trades} filters={filters} onUpdate={updateFilters} />
+          <FilterSummary
+            filtered={filteredTrades.length}
+            total={trades.length}
+            from={filters.from}
+            to={filters.to}
+          />
+        </>
+      )}
 
       {/* Today's Summary */}
-      {hasTrades && <TodaySummary trades={filteredTrades} />}
+      {proUser && hasTrades && <TodaySummary trades={filteredTrades} />}
 
       {hasTrades && (
         <>
@@ -316,126 +325,130 @@ export default function Dashboard({
             />
           </div>
 
-          {/* Performance */}
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-            <StatCard
-              label="Avg Win"
-              value={`+$${avgWin.toFixed(2)}`}
-              color="text-accent-400"
-              accent="green"
-            />
-            <StatCard
-              label="Avg Loss"
-              value={`-$${Math.abs(avgLoss).toFixed(2)}`}
-              color="text-red-400"
-              accent="red"
-            />
-            {avgRR !== null && (
-              <StatCard
-                label="Avg R:R"
-                value={`${avgRR.toFixed(2)}R`}
-                color={avgRR >= 1 ? "text-accent-400" : "text-red-400"}
-                accent={avgRR >= 1 ? "green" : "red"}
-              />
-            )}
-            {profitFactor !== null && (
-              <StatCard
-                label="Profit Factor"
-                value={profitFactor.toFixed(2)}
-                color={profitFactor >= 1 ? "text-accent-400" : "text-red-400"}
-                accent={profitFactor >= 1 ? "green" : "red"}
-              />
-            )}
-            <StatCard
-              label="Best Trade"
-              value={bestPnl > 0 ? `+$${bestPnl.toFixed(2)}` : "—"}
-              color={bestPnl > 0 ? "text-accent-400" : "text-gray-500"}
-              sub={bestPnl > 0 && bestTrade ? bestTrade.ticker : undefined}
-              accent={bestPnl > 0 ? "green" : "neutral"}
-            />
-            <StatCard
-              label="Worst Trade"
-              value={worstPnl < 0 ? `-$${Math.abs(worstPnl).toFixed(2)}` : "—"}
-              color={worstPnl < 0 ? "text-red-400" : "text-gray-500"}
-              sub={worstPnl < 0 && worstTrade ? worstTrade.ticker : undefined}
-              accent={worstPnl < 0 ? "red" : "neutral"}
-            />
-          </div>
-
-          {/* Risk Metrics (Pro only) */}
-          <PaywallGate feature="Risk Metrics">
-            <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
-              Risk Metrics
-            </h3>
+          {/* Performance (Pro only) */}
+          {proUser && (
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
               <StatCard
-                label="Expectancy"
-                value={`${expectancy >= 0 ? "+" : "-"}$${Math.abs(expectancy).toFixed(2)}`}
-                color={expectancy >= 0 ? "text-accent-400" : "text-red-400"}
-                sub="per trade"
-                accent={expectancy >= 0 ? "green" : "red"}
+                label="Avg Win"
+                value={`+$${avgWin.toFixed(2)}`}
+                color="text-accent-400"
+                accent="green"
               />
-              {expectancyR !== null && (
+              <StatCard
+                label="Avg Loss"
+                value={`-$${Math.abs(avgLoss).toFixed(2)}`}
+                color="text-red-400"
+                accent="red"
+              />
+              {avgRR !== null && (
                 <StatCard
-                  label="Expectancy / R"
-                  value={`${expectancyR >= 0 ? "+" : ""}${expectancyR.toFixed(2)}R`}
-                  color={expectancyR >= 0 ? "text-accent-400" : "text-red-400"}
-                  accent={expectancyR >= 0 ? "green" : "red"}
+                  label="Avg R:R"
+                  value={`${avgRR.toFixed(2)}R`}
+                  color={avgRR >= 1 ? "text-accent-400" : "text-red-400"}
+                  accent={avgRR >= 1 ? "green" : "red"}
+                />
+              )}
+              {profitFactor !== null && (
+                <StatCard
+                  label="Profit Factor"
+                  value={profitFactor.toFixed(2)}
+                  color={profitFactor >= 1 ? "text-accent-400" : "text-red-400"}
+                  accent={profitFactor >= 1 ? "green" : "red"}
                 />
               )}
               <StatCard
-                label="Max Drawdown"
-                value={
-                  drawdownInfo.maxDrawdown > 0
-                    ? `-$${drawdownInfo.maxDrawdown.toFixed(2)}`
-                    : "—"
-                }
-                color={drawdownInfo.maxDrawdown > 0 ? "text-red-400" : "text-gray-500"}
-                sub={
-                  drawdownInfo.maxDrawdownPct > 0
-                    ? `${drawdownInfo.maxDrawdownPct.toFixed(1)}% of peak`
-                    : undefined
-                }
-                accent={drawdownInfo.maxDrawdown > 0 ? "red" : "neutral"}
+                label="Best Trade"
+                value={bestPnl > 0 ? `+$${bestPnl.toFixed(2)}` : "—"}
+                color={bestPnl > 0 ? "text-accent-400" : "text-gray-500"}
+                sub={bestPnl > 0 && bestTrade ? bestTrade.ticker : undefined}
+                accent={bestPnl > 0 ? "green" : "neutral"}
               />
               <StatCard
-                label="Current Drawdown"
-                value={
-                  drawdownInfo.currentDrawdown > 0
-                    ? `-$${drawdownInfo.currentDrawdown.toFixed(2)}`
-                    : "$0.00"
-                }
-                color={
-                  drawdownInfo.currentDrawdown > 0
-                    ? "text-red-400"
-                    : "text-accent-400"
-                }
-                accent={drawdownInfo.currentDrawdown > 0 ? "red" : "green"}
+                label="Worst Trade"
+                value={worstPnl < 0 ? `-$${Math.abs(worstPnl).toFixed(2)}` : "—"}
+                color={worstPnl < 0 ? "text-red-400" : "text-gray-500"}
+                sub={worstPnl < 0 && worstTrade ? worstTrade.ticker : undefined}
+                accent={worstPnl < 0 ? "red" : "neutral"}
               />
-              {recoveryFactor !== null && (
-                <StatCard
-                  label="Recovery Factor"
-                  value={recoveryFactor.toFixed(2)}
-                  color={recoveryFactor >= 1 ? "text-accent-400" : "text-red-400"}
-                  accent={recoveryFactor >= 1 ? "green" : "red"}
-                />
-              )}
-              {sharpe !== null && (
-                <StatCard
-                  label="Sharpe Ratio"
-                  value={sharpe.toFixed(2)}
-                  color={sharpe >= 0 ? "text-accent-400" : "text-red-400"}
-                  sub="annualized"
-                  accent={sharpe >= 0 ? "green" : "red"}
-                />
-              )}
             </div>
-          </PaywallGate>
+          )}
+
+          {/* Risk Metrics (Pro only) */}
+          {proUser && (
+            <>
+              <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                Risk Metrics
+              </h3>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                <StatCard
+                  label="Expectancy"
+                  value={`${expectancy >= 0 ? "+" : "-"}$${Math.abs(expectancy).toFixed(2)}`}
+                  color={expectancy >= 0 ? "text-accent-400" : "text-red-400"}
+                  sub="per trade"
+                  accent={expectancy >= 0 ? "green" : "red"}
+                />
+                {expectancyR !== null && (
+                  <StatCard
+                    label="Expectancy / R"
+                    value={`${expectancyR >= 0 ? "+" : ""}${expectancyR.toFixed(2)}R`}
+                    color={expectancyR >= 0 ? "text-accent-400" : "text-red-400"}
+                    accent={expectancyR >= 0 ? "green" : "red"}
+                  />
+                )}
+                <StatCard
+                  label="Max Drawdown"
+                  value={
+                    drawdownInfo.maxDrawdown > 0
+                      ? `-$${drawdownInfo.maxDrawdown.toFixed(2)}`
+                      : "—"
+                  }
+                  color={drawdownInfo.maxDrawdown > 0 ? "text-red-400" : "text-gray-500"}
+                  sub={
+                    drawdownInfo.maxDrawdownPct > 0
+                      ? `${drawdownInfo.maxDrawdownPct.toFixed(1)}% of peak`
+                      : undefined
+                  }
+                  accent={drawdownInfo.maxDrawdown > 0 ? "red" : "neutral"}
+                />
+                <StatCard
+                  label="Current Drawdown"
+                  value={
+                    drawdownInfo.currentDrawdown > 0
+                      ? `-$${drawdownInfo.currentDrawdown.toFixed(2)}`
+                      : "$0.00"
+                  }
+                  color={
+                    drawdownInfo.currentDrawdown > 0
+                      ? "text-red-400"
+                      : "text-accent-400"
+                  }
+                  accent={drawdownInfo.currentDrawdown > 0 ? "red" : "green"}
+                />
+                {recoveryFactor !== null && (
+                  <StatCard
+                    label="Recovery Factor"
+                    value={recoveryFactor.toFixed(2)}
+                    color={recoveryFactor >= 1 ? "text-accent-400" : "text-red-400"}
+                    accent={recoveryFactor >= 1 ? "green" : "red"}
+                  />
+                )}
+                {sharpe !== null && (
+                  <StatCard
+                    label="Sharpe Ratio"
+                    value={sharpe.toFixed(2)}
+                    color={sharpe >= 0 ? "text-accent-400" : "text-red-400"}
+                    sub="annualized"
+                    accent={sharpe >= 0 ? "green" : "red"}
+                  />
+                )}
+              </div>
+            </>
+          )}
         </>
       )}
 
-      {/* Missed Opportunities */}
-      {missedTrades.length > 0 && (
+      {/* Missed Opportunities (Pro only) */}
+      {proUser && missedTrades.length > 0 && (
         <>
           <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
             Missed Opportunities
@@ -526,7 +539,7 @@ export default function Dashboard({
 
       {/* Equity Curve & Daily Breakdown */}
       {hasTrades && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className={`grid grid-cols-1 ${proUser ? "md:grid-cols-2" : ""} gap-4`}>
           {/* Equity Curve */}
           {equityPoints.length >= 2 && (
             <div className="card-panel p-5">
@@ -558,8 +571,8 @@ export default function Dashboard({
             </div>
           )}
 
-          {/* Daily Breakdown */}
-          <DailyBreakdown dailyStats={dailyStats} />
+          {/* Daily Breakdown (Pro only) */}
+          {proUser && <DailyBreakdown dailyStats={dailyStats} />}
         </div>
       )}
 

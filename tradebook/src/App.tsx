@@ -250,12 +250,10 @@ export default function App() {
               <Route
                 path="dashboard"
                 element={
-                  <PaywallGate feature="Dashboard">
-                    <Dashboard
-                      missedTrades={missedTrades}
-                      onLogTrade={() => navigate("log")}
-                    />
-                  </PaywallGate>
+                  <Dashboard
+                    missedTrades={missedTrades}
+                    onLogTrade={() => navigate("log")}
+                  />
                 }
               />
             </Routes>
