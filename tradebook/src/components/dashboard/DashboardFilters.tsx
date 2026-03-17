@@ -15,7 +15,15 @@ const CATALYST_OPTIONS: { value: CatalystType; label: string }[] = [
   { value: "other", label: "Other" },
 ];
 
-type QuickRange = "1W" | "1M" | "3M" | "YTD" | "All";
+type QuickRange = "30d" | "90d" | "6mo" | "1yr" | "All";
+
+const QUICK_LABELS: Record<QuickRange, string> = {
+  "30d": "30 days",
+  "90d": "90 days",
+  "6mo": "6 months",
+  "1yr": "1 year",
+  "All": "All time",
+};
 
 function toDateStr(d: Date): string {
   return d.toISOString().slice(0, 10);
@@ -25,8 +33,7 @@ function getQuickRange(key: QuickRange): { from: string; to: string } {
   const now = new Date();
   const to = toDateStr(now);
   if (key === "All") return { from: "", to: "" };
-  if (key === "YTD") return { from: `${now.getFullYear()}-01-01`, to };
-  const days = key === "1W" ? 7 : key === "1M" ? 30 : 90;
+  const days = key === "30d" ? 30 : key === "90d" ? 90 : key === "6mo" ? 180 : 365;
   const from = new Date(now);
   from.setDate(from.getDate() - days);
   return { from: toDateStr(from), to };
@@ -34,7 +41,7 @@ function getQuickRange(key: QuickRange): { from: string; to: string } {
 
 function defaultFrom(): string {
   const d = new Date();
-  d.setDate(d.getDate() - 30);
+  d.setDate(d.getDate() - 90);
   return toDateStr(d);
 }
 
@@ -54,7 +61,7 @@ export interface DashboardFilterState {
 function activeQuickRange(from: string, to: string): QuickRange | null {
   const today = toDateStr(new Date());
   if (!from && !to) return "All";
-  for (const key of ["1W", "1M", "3M", "YTD"] as QuickRange[]) {
+  for (const key of ["30d", "90d", "6mo", "1yr"] as QuickRange[]) {
     const r = getQuickRange(key);
     if (r.from === from && (to === today || to === r.to)) return key;
   }
@@ -127,7 +134,7 @@ export function applyFilters(trades: Trade[], f: DashboardFilterState): Trade[] 
   });
 }
 
-const QUICK_KEYS: QuickRange[] = ["1W", "1M", "3M", "YTD", "All"];
+const QUICK_KEYS: QuickRange[] = ["30d", "90d", "6mo", "1yr", "All"];
 const SIDES = ["all", "long", "short"] as const;
 
 const pillBase =
@@ -157,13 +164,6 @@ export default function DashboardFilters({
     return Array.from(set).sort();
   }, [trades]);
 
-  const activeQuick = activeQuickRange(filters.from, filters.to);
-
-  function handleQuick(key: QuickRange) {
-    const range = getQuickRange(key);
-    onUpdate({ from: range.from, to: range.to });
-  }
-
   function toggleCatalyst(c: CatalystType) {
     const next = filters.catalysts.includes(c)
       ? filters.catalysts.filter((x) => x !== c)
@@ -192,18 +192,6 @@ export default function DashboardFilters({
                 onChange={(e) => onUpdate({ to: e.target.value })}
                 className={inputClass + " w-[140px]"}
               />
-            </div>
-            <div className="flex gap-1 mt-0.5">
-              {QUICK_KEYS.map((k) => (
-                <button
-                  key={k}
-                  type="button"
-                  onClick={() => handleQuick(k)}
-                  className={`${pillBase} ${activeQuick === k ? pillActive : pillInactive}`}
-                >
-                  {k}
-                </button>
-              ))}
             </div>
           </div>
 
@@ -281,6 +269,33 @@ export default function DashboardFilters({
         </div>
       </div>
     </PaywallGate>
+  );
+}
+
+export function QuickDatePills({
+  filters,
+  onUpdate,
+}: {
+  filters: DashboardFilterState;
+  onUpdate: (patch: Partial<DashboardFilterState>) => void;
+}) {
+  const active = activeQuickRange(filters.from, filters.to);
+  return (
+    <div className="flex gap-1.5 flex-wrap">
+      {QUICK_KEYS.map((k) => (
+        <button
+          key={k}
+          type="button"
+          onClick={() => {
+            const range = getQuickRange(k);
+            onUpdate({ from: range.from, to: range.to });
+          }}
+          className={`${pillBase} ${active === k ? pillActive : pillInactive}`}
+        >
+          {QUICK_LABELS[k]}
+        </button>
+      ))}
+    </div>
   );
 }
 

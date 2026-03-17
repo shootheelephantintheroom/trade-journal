@@ -14,7 +14,7 @@ import EmotionPerformance from "./dashboard/EmotionPerformance";
 import RecentTrades from "./dashboard/RecentTrades";
 import { buildDailyStats, buildTagStats, buildEmotionStats, calcDrawdownInfo } from "./dashboard/helpers";
 import { useSubscription } from "../contexts/SubscriptionContext";
-import DashboardFilters, { FilterSummary, useDashboardFilters, applyFilters } from "./dashboard/DashboardFilters";
+import DashboardFilters, { FilterSummary, QuickDatePills, useDashboardFilters, applyFilters } from "./dashboard/DashboardFilters";
 
 function TodaySummary({ trades }: { trades: Trade[] }) {
   const today = todayLocal();
@@ -74,14 +74,19 @@ export default function Dashboard({
   const proUser = isPro || isTrialing;
   const [trades, setTrades] = useState<Trade[]>([]);
   const [loading, setLoading] = useState(true);
+  const [filters, updateFilters] = useDashboardFilters();
 
   useEffect(() => {
-    async function fetchAllTrades() {
-      const { data, error } = await supabase
+    async function fetchTrades() {
+      setLoading(true);
+      let query = supabase
         .from("trades")
         .select("*")
         .order("trade_date", { ascending: false })
         .order("entry_time", { ascending: false });
+      if (filters.from) query = query.gte("trade_date", filters.from);
+      if (filters.to) query = query.lte("trade_date", filters.to);
+      const { data, error } = await query;
       if (error) {
         showToast("Failed to load trades", "error");
       } else {
@@ -89,10 +94,8 @@ export default function Dashboard({
       }
       setLoading(false);
     }
-    fetchAllTrades();
-  }, [showToast]);
-
-  const [filters, updateFilters] = useDashboardFilters();
+    fetchTrades();
+  }, [filters.from, filters.to, showToast]);
   const filteredTrades = useMemo(
     () => proUser ? applyFilters(trades, filters) : trades,
     [trades, filters, proUser]
@@ -262,6 +265,9 @@ export default function Dashboard({
       <h2 className="text-xl font-bold text-white font-display tracking-tight">
         Dashboard
       </h2>
+
+      {/* Quick date range */}
+      <QuickDatePills filters={filters} onUpdate={updateFilters} />
 
       {/* Filters (Pro-only) */}
       {proUser && (
