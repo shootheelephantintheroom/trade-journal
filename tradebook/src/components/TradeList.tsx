@@ -179,6 +179,19 @@ export default function TradeList({
   async function handleDelete(tradeId: string) {
     if (!confirm("Delete this trade? This can't be undone.")) return;
     setDeleting(tradeId);
+
+    // Clean up screenshot from storage if present
+    const trade = trades.find((t) => t.id === tradeId);
+    if (trade?.screenshot_url) {
+      const match = trade.screenshot_url.match(/\/screenshots\/(.+)$/);
+      if (match) {
+        const { error: storageErr } = await supabase.storage
+          .from("screenshots")
+          .remove([match[1]]);
+        if (storageErr) console.warn("Failed to delete screenshot:", storageErr.message);
+      }
+    }
+
     const { error } = await supabase.from("trades").delete().eq("id", tradeId);
     setDeleting(null);
     if (error) {
