@@ -42,6 +42,7 @@ export default function Journal() {
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const entryRef = useRef(entry);
   entryRef.current = entry;
+  const isLocalOnly = useRef(false);
 
   // Fetch all dates that have journal entries (for dot indicators)
   const fetchEntryDates = useCallback(async () => {
@@ -82,21 +83,23 @@ export default function Journal() {
 
     if (data) {
       setEntry(data as JournalEntry);
+      isLocalOnly.current = false;
     } else {
-      // Auto-create entry for this date
-      const { data: newEntry, error: insertError } = await supabase
-        .from("journal_entries")
-        .insert({ entry_date: date })
-        .select()
-        .single();
-
-      if (insertError) {
-        showToast("Failed to create journal entry", "error");
-        setEntry(null);
-      } else {
-        setEntry(newEntry as JournalEntry);
-        setDatesWithEntries((prev) => new Set([...prev, date]));
-      }
+      // Set local empty state — only INSERT on first actual edit
+      setEntry({
+        id: "",
+        user_id: "",
+        entry_date: date,
+        premarket_plan: "",
+        postmarket_review: "",
+        lessons: "",
+        mood: null,
+        grade: null,
+        goals_for_tomorrow: "",
+        created_at: "",
+        updated_at: "",
+      });
+      isLocalOnly.current = true;
     }
     setLoading(false);
   }, [showToast]);
@@ -112,17 +115,37 @@ export default function Journal() {
     if (!entryRef.current) return;
     setSaveStatus("saving");
 
-    const { error } = await supabase
-      .from("journal_entries")
-      .update(updates)
-      .eq("id", entryRef.current.id);
+    if (isLocalOnly.current) {
+      // First edit — INSERT into supabase
+      const { data: newEntry, error } = await supabase
+        .from("journal_entries")
+        .insert({ entry_date: entryRef.current.entry_date, ...updates })
+        .select()
+        .single();
 
-    if (error) {
-      showToast("Failed to save", "error");
-      setSaveStatus("idle");
+      if (error) {
+        showToast("Failed to save", "error");
+        setSaveStatus("idle");
+      } else {
+        isLocalOnly.current = false;
+        setEntry(newEntry as JournalEntry);
+        setDatesWithEntries((prev) => new Set([...prev, entryRef.current!.entry_date]));
+        setSaveStatus("saved");
+        setTimeout(() => setSaveStatus((s) => (s === "saved" ? "idle" : s)), 2000);
+      }
     } else {
-      setSaveStatus("saved");
-      setTimeout(() => setSaveStatus((s) => (s === "saved" ? "idle" : s)), 2000);
+      const { error } = await supabase
+        .from("journal_entries")
+        .update(updates)
+        .eq("id", entryRef.current.id);
+
+      if (error) {
+        showToast("Failed to save", "error");
+        setSaveStatus("idle");
+      } else {
+        setSaveStatus("saved");
+        setTimeout(() => setSaveStatus((s) => (s === "saved" ? "idle" : s)), 2000);
+      }
     }
   }, [showToast]);
 
