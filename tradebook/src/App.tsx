@@ -17,6 +17,7 @@ import Journal from "./components/Journal";
 import Analytics from "./components/Analytics";
 import PaywallGate from "./components/PaywallGate";
 import Onboarding from "./components/Onboarding";
+import Settings from "./components/Settings";
 import { useAuth } from "./contexts/AuthContext";
 import { useSubscription } from "./contexts/SubscriptionContext";
 import { useToast } from "./components/Toast";
@@ -158,6 +159,12 @@ export default function App() {
                     </button>
                   )}
                   <button
+                    onClick={() => { setMenuOpen(false); navigate("/app/settings"); }}
+                    className="w-full text-left px-3 py-2 text-xs text-gray-300 hover:bg-gray-800 hover:text-white transition-colors"
+                  >
+                    Settings
+                  </button>
+                  <button
                     onClick={() => { setMenuOpen(false); signOut(); }}
                     className="w-full text-left px-3 py-2 text-xs text-gray-400 hover:bg-gray-800 hover:text-red-400 transition-colors"
                   >
@@ -263,6 +270,7 @@ export default function App() {
                   />
                 }
               />
+              <Route path="settings" element={<Settings />} />
             </Routes>
           </div>
         )}
