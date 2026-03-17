@@ -65,6 +65,18 @@ const GRADES = [
   { value: "D", label: "D", desc: "Broke rules", bg: "bg-red-500/15", border: "border-red-500", text: "text-red-400", activeBg: "bg-red-500/25" },
 ] as const;
 
+const chevronSvg = (open: boolean) => (
+  <svg
+    className={`h-4 w-4 text-gray-500 transition-transform ${open ? "rotate-180" : ""}`}
+    fill="none"
+    viewBox="0 0 24 24"
+    stroke="currentColor"
+    strokeWidth={2}
+  >
+    <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+  </svg>
+);
+
 export default function TradeForm({
   onSaved,
   editTrade,
@@ -82,10 +94,14 @@ export default function TradeForm({
   const [screenshotFile, setScreenshotFile] = useState<File | null>(null);
   const [screenshotPreview, setScreenshotPreview] = useState<string | null>(null);
   const [removeExisting, setRemoveExisting] = useState(false);
-  const [marketContextOpen, setMarketContextOpen] = useState(false);
+  const [openSections, setOpenSections] = useState({ notes: false, market: false, tags: false });
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // When editTrade changes, populate form
+  function toggleSection(section: keyof typeof openSections) {
+    setOpenSections((prev) => ({ ...prev, [section]: !prev[section] }));
+  }
+
+  // When editTrade changes, populate form and auto-expand sections with data
   useEffect(() => {
     if (editTrade) {
       const { id, created_at, ...rest } = editTrade;
@@ -94,12 +110,18 @@ export default function TradeForm({
       setScreenshotFile(null);
       setScreenshotPreview(null);
       setRemoveExisting(false);
+      setOpenSections({
+        notes: !!(editTrade.premarket_plan || editTrade.setup || editTrade.notes || editTrade.emotions),
+        market: !!(editTrade.catalyst || editTrade.catalyst_type || editTrade.float_shares || editTrade.market_cap || editTrade.rvol || editTrade.commission),
+        tags: !!((editTrade.tags && editTrade.tags.length > 0) || editTrade.screenshot_url),
+      });
     } else {
       setForm({ ...empty, trade_date: todayLocal() });
       setEmotionInput("");
       setScreenshotFile(null);
       setScreenshotPreview(null);
       setRemoveExisting(false);
+      setOpenSections({ notes: false, market: false, tags: false });
     }
   }, [editTrade]);
 
@@ -228,7 +250,7 @@ export default function TradeForm({
     "block text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-1.5";
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5">
+    <form onSubmit={handleSubmit} className="space-y-4">
       <h2 className="text-xl font-bold text-white font-display tracking-tight">
         {editTrade ? "Edit Trade" : "Log a Trade"}
       </h2>
@@ -242,8 +264,13 @@ export default function TradeForm({
         </button>
       )}
 
-      {/* Ticker & Side */}
-      <div className="form-section">
+      {/* ── Section 1: Trade Details (always open) ── */}
+      <div className="card-panel p-5 space-y-4">
+        <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
+          Trade Details
+        </h3>
+
+        {/* Ticker & Side */}
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className={labelClass}>Ticker</label>
@@ -283,157 +310,123 @@ export default function TradeForm({
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Entry / Exit / Shares */}
-      <div className="form-section">
-        <p className="text-[10px] font-semibold text-gray-600 uppercase tracking-widest mb-3">
-          Position
-        </p>
-        <div className="grid grid-cols-3 gap-3">
-          <div>
-            <label className={labelClass}>Entry</label>
+        {/* Entry / Exit / Shares */}
+        <div>
+          <div className="grid grid-cols-3 gap-3">
+            <div>
+              <label className={labelClass}>Entry</label>
+              <input
+                type="number"
+                step="any"
+                min="0"
+                className={inputClass}
+                value={form.entry_price || ""}
+                onChange={(e) =>
+                  set("entry_price", parseFloat(e.target.value) || 0)
+                }
+                required
+              />
+            </div>
+            <div>
+              <label className={labelClass}>Exit</label>
+              <input
+                type="number"
+                step="any"
+                min="0"
+                className={inputClass}
+                value={form.exit_price || ""}
+                onChange={(e) =>
+                  set("exit_price", parseFloat(e.target.value) || 0)
+                }
+                required
+              />
+            </div>
+            <div>
+              <label className={labelClass}>Shares</label>
+              <input
+                type="number"
+                min="1"
+                className={inputClass}
+                value={form.shares || ""}
+                onChange={(e) => set("shares", parseInt(e.target.value) || 0)}
+                required
+              />
+            </div>
+          </div>
+
+          {/* Stop Loss */}
+          <div className="mt-3">
+            <label className={labelClass}>Stop Loss</label>
             <input
               type="number"
               step="any"
               min="0"
-              className={inputClass}
-              value={form.entry_price || ""}
+              className={inputClass + " max-w-[200px]"}
+              placeholder="Optional"
+              value={form.stop_loss_price ?? ""}
               onChange={(e) =>
-                set("entry_price", parseFloat(e.target.value) || 0)
+                set(
+                  "stop_loss_price",
+                  e.target.value ? parseFloat(e.target.value) : null
+                )
               }
-              required
-            />
-          </div>
-          <div>
-            <label className={labelClass}>Exit</label>
-            <input
-              type="number"
-              step="any"
-              min="0"
-              className={inputClass}
-              value={form.exit_price || ""}
-              onChange={(e) =>
-                set("exit_price", parseFloat(e.target.value) || 0)
-              }
-              required
-            />
-          </div>
-          <div>
-            <label className={labelClass}>Shares</label>
-            <input
-              type="number"
-              min="1"
-              className={inputClass}
-              value={form.shares || ""}
-              onChange={(e) => set("shares", parseInt(e.target.value) || 0)}
-              required
             />
           </div>
         </div>
 
-        {/* Stop Loss */}
-        <div className="mt-3">
-          <label className={labelClass}>Stop Loss</label>
-          <input
-            type="number"
-            step="any"
-            min="0"
-            className={inputClass + " max-w-[200px]"}
-            placeholder="Optional"
-            value={form.stop_loss_price ?? ""}
-            onChange={(e) =>
-              set(
-                "stop_loss_price",
-                e.target.value ? parseFloat(e.target.value) : null
-              )
-            }
-          />
-        </div>
-      </div>
-
-      {/* P&L Preview */}
-      {pnl !== null && (
-        <div className="card-panel px-4 py-3 flex flex-wrap gap-x-6 gap-y-1.5">
-          <span className="text-xs text-gray-500 uppercase tracking-wider">
-            {netPnl !== null ? "Gross " : ""}P&L{" "}
-            <span
-              className={
-                "text-sm font-bold ml-1 " +
-                (pnl >= 0 ? "text-accent-400" : "text-red-400")
-              }
-            >
-              {pnl >= 0 ? "+" : ""}${pnl.toFixed(2)}
-            </span>
-          </span>
-          {netPnl !== null && (
+        {/* P&L Preview */}
+        {pnl !== null && (
+          <div className="rounded-lg border border-gray-700/60 bg-gray-800/40 px-4 py-3 flex flex-wrap gap-x-6 gap-y-1.5">
             <span className="text-xs text-gray-500 uppercase tracking-wider">
-              Net P&L{" "}
+              {netPnl !== null ? "Gross " : ""}P&L{" "}
               <span
                 className={
                   "text-sm font-bold ml-1 " +
-                  (netPnl >= 0 ? "text-accent-400" : "text-red-400")
+                  (pnl >= 0 ? "text-accent-400" : "text-red-400")
                 }
               >
-                {netPnl >= 0 ? "+" : ""}${netPnl.toFixed(2)}
+                {pnl >= 0 ? "+" : ""}${pnl.toFixed(2)}
               </span>
             </span>
-          )}
-          {rr !== null && (
-            <span className="text-xs text-gray-500 uppercase tracking-wider">
-              R:R{" "}
-              <span
-                className={
-                  "text-sm font-bold ml-1 " +
-                  (rr >= 0 ? "text-accent-400" : "text-red-400")
-                }
-              >
-                {rr.toFixed(2)}
+            {netPnl !== null && (
+              <span className="text-xs text-gray-500 uppercase tracking-wider">
+                Net P&L{" "}
+                <span
+                  className={
+                    "text-sm font-bold ml-1 " +
+                    (netPnl >= 0 ? "text-accent-400" : "text-red-400")
+                  }
+                >
+                  {netPnl >= 0 ? "+" : ""}${netPnl.toFixed(2)}
+                </span>
               </span>
-            </span>
-          )}
-          {maxRisk !== null && (
-            <span className="text-xs text-gray-500 uppercase tracking-wider">
-              Risk{" "}
-              <span className="text-sm font-bold text-yellow-400 ml-1">
-                ${maxRisk.toFixed(2)}
+            )}
+            {rr !== null && (
+              <span className="text-xs text-gray-500 uppercase tracking-wider">
+                R:R{" "}
+                <span
+                  className={
+                    "text-sm font-bold ml-1 " +
+                    (rr >= 0 ? "text-accent-400" : "text-red-400")
+                  }
+                >
+                  {rr.toFixed(2)}
+                </span>
               </span>
-            </span>
-          )}
-        </div>
-      )}
+            )}
+            {maxRisk !== null && (
+              <span className="text-xs text-gray-500 uppercase tracking-wider">
+                Risk{" "}
+                <span className="text-sm font-bold text-yellow-400 ml-1">
+                  ${maxRisk.toFixed(2)}
+                </span>
+              </span>
+            )}
+          </div>
+        )}
 
-      {/* Trade Grade — Buttons */}
-      <div>
-        <label className={labelClass}>Trade Grade</label>
-        <div className="flex gap-2">
-          {GRADES.map((g) => (
-            <button
-              key={g.value}
-              type="button"
-              onClick={() =>
-                set("grade", form.grade === g.value ? "" : g.value)
-              }
-              className={`grade-btn flex-1 py-2 rounded-lg text-center border font-bold text-sm ${
-                form.grade === g.value
-                  ? `${g.activeBg} ${g.border} ${g.text}`
-                  : "bg-gray-800/80 border-gray-700/80 text-gray-500 hover:border-gray-600"
-              }`}
-            >
-              <span className="text-base">{g.label}</span>
-              <span className="block text-[10px] font-medium opacity-70 mt-0.5">
-                {g.desc}
-              </span>
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Date / Times */}
-      <div className="form-section">
-        <p className="text-[10px] font-semibold text-gray-600 uppercase tracking-widest mb-3">
-          Timing
-        </p>
+        {/* Date / Times */}
         <div className="grid grid-cols-3 gap-3">
           <div>
             <label className={labelClass}>Date</label>
@@ -464,37 +457,152 @@ export default function TradeForm({
             />
           </div>
         </div>
+
+        {/* Trade Grade */}
+        <div>
+          <label className={labelClass}>Trade Grade</label>
+          <div className="flex gap-2">
+            {GRADES.map((g) => (
+              <button
+                key={g.value}
+                type="button"
+                onClick={() =>
+                  set("grade", form.grade === g.value ? "" : g.value)
+                }
+                className={`grade-btn flex-1 py-2 rounded-lg text-center border font-bold text-sm ${
+                  form.grade === g.value
+                    ? `${g.activeBg} ${g.border} ${g.text}`
+                    : "bg-gray-800/80 border-gray-700/80 text-gray-500 hover:border-gray-600"
+                }`}
+              >
+                <span className="text-base">{g.label}</span>
+                <span className="block text-[10px] font-medium opacity-70 mt-0.5">
+                  {g.desc}
+                </span>
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
 
-      {/* Market Context — Pro only, collapsible */}
-      <div className="form-section">
+      {/* ── Section 2: Notes & Reflection (collapsed by default) ── */}
+      <div className="card-panel p-5">
         <button
           type="button"
-          onClick={() => setMarketContextOpen((o) => !o)}
-          className="w-full flex items-center justify-between"
+          onClick={() => toggleSection("notes")}
+          className="w-full flex items-center justify-between group"
+        >
+          <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
+            Notes & Reflection
+          </h3>
+          {chevronSvg(openSections.notes)}
+        </button>
+
+        {openSections.notes && (
+          <div className="mt-4 space-y-4">
+            {/* Pre-market Plan */}
+            <div>
+              <label className={labelClass}>Pre-market Plan / Thesis</label>
+              <textarea
+                className={inputClass + " resize-none"}
+                rows={2}
+                placeholder="What's your thesis before entering?"
+                value={form.premarket_plan}
+                onChange={(e) => set("premarket_plan", e.target.value)}
+              />
+            </div>
+
+            {/* Setup */}
+            <div>
+              <label className={labelClass}>Setup</label>
+              <input
+                className={inputClass}
+                placeholder="e.g. breakout above VWAP with volume"
+                value={form.setup}
+                onChange={(e) => set("setup", e.target.value)}
+              />
+            </div>
+
+            {/* Notes */}
+            <div>
+              <label className={labelClass}>Notes</label>
+              <textarea
+                className={inputClass + " resize-none"}
+                rows={3}
+                placeholder="What happened during this trade?"
+                value={form.notes}
+                onChange={(e) => set("notes", e.target.value)}
+              />
+            </div>
+
+            {/* Emotions */}
+            <div>
+              <label className={labelClass}>Emotions</label>
+              {emotionPills.length > 0 && (
+                <div className="flex flex-wrap gap-1.5 mb-2">
+                  {emotionPills.map((emotion) => (
+                    <span key={emotion} className="emotion-pill">
+                      {emotion}
+                      <button
+                        type="button"
+                        onClick={() => removeEmotion(emotion)}
+                        className="text-accent-400/50 hover:text-accent-400 ml-0.5 text-sm leading-none"
+                      >
+                        &times;
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              )}
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={emotionInput}
+                  onChange={(e) => setEmotionInput(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      addEmotion();
+                    }
+                  }}
+                  placeholder="e.g. FOMO, confident, anxious"
+                  className="flex-1 rounded-lg border border-gray-700/80 bg-gray-800/80 px-3 py-2 text-sm text-white placeholder-gray-500 focus:border-accent-500 focus:outline-none transition-colors"
+                />
+                <button
+                  type="button"
+                  onClick={addEmotion}
+                  className="px-3 py-2 rounded-lg text-xs font-medium bg-gray-800/80 border border-gray-700/80 text-gray-400 hover:text-white hover:border-gray-600 transition-colors"
+                >
+                  Add
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* ── Section 3: Market Context (collapsed by default) ── */}
+      <div className="card-panel p-5">
+        <button
+          type="button"
+          onClick={() => toggleSection("market")}
+          className="w-full flex items-center justify-between group"
         >
           <div className="flex items-center gap-2">
-            <p className="text-[10px] font-semibold text-gray-600 uppercase tracking-widest">
+            <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
               Market Context
-            </p>
+            </h3>
             {!isPro && (
               <span className="text-[9px] font-bold uppercase tracking-wider bg-accent-500/15 text-accent-400 border border-accent-500/30 rounded px-1.5 py-0.5">
                 Pro
               </span>
             )}
           </div>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 20 20"
-            fill="currentColor"
-            className={`w-4 h-4 text-gray-600 transition-transform ${marketContextOpen ? "rotate-180" : ""}`}
-          >
-            <path fillRule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clipRule="evenodd" />
-          </svg>
+          {chevronSvg(openSections.market)}
         </button>
 
-        {marketContextOpen && (
-          <div className={`mt-3 space-y-3 ${!isPro ? "opacity-50 pointer-events-none select-none" : ""}`}>
+        {openSections.market && (
+          <div className={`mt-4 space-y-3 ${!isPro ? "opacity-50 pointer-events-none select-none" : ""}`}>
             {/* Catalyst */}
             <div>
               <label className={labelClass}>Catalyst</label>
@@ -604,162 +712,102 @@ export default function TradeForm({
         )}
       </div>
 
-      {/* Playbook Tags */}
-      <div>
-        <label className={labelClass}>Playbook Tags</label>
-        <TagSelect
-          selected={form.tags}
-          onChange={(tags) => set("tags", tags)}
-        />
-      </div>
+      {/* ── Section 4: Tags & Screenshot (collapsed by default) ── */}
+      <div className="card-panel p-5">
+        <button
+          type="button"
+          onClick={() => toggleSection("tags")}
+          className="w-full flex items-center justify-between group"
+        >
+          <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
+            Tags & Screenshot
+          </h3>
+          {chevronSvg(openSections.tags)}
+        </button>
 
-      {/* Pre-market Plan */}
-      <div>
-        <label className={labelClass}>Pre-market Plan / Thesis</label>
-        <textarea
-          className={inputClass + " resize-none"}
-          rows={2}
-          placeholder="What's your thesis before entering?"
-          value={form.premarket_plan}
-          onChange={(e) => set("premarket_plan", e.target.value)}
-        />
-      </div>
+        {openSections.tags && (
+          <div className="mt-4 space-y-4">
+            {/* Playbook Tags */}
+            <div>
+              <label className={labelClass}>Playbook Tags</label>
+              <TagSelect
+                selected={form.tags}
+                onChange={(tags) => set("tags", tags)}
+              />
+            </div>
 
-      {/* Setup */}
-      <div>
-        <label className={labelClass}>Setup</label>
-        <input
-          className={inputClass}
-          placeholder="e.g. breakout above VWAP with volume"
-          value={form.setup}
-          onChange={(e) => set("setup", e.target.value)}
-        />
-      </div>
+            {/* Chart Screenshot */}
+            <div>
+              <label className={labelClass}>Chart Screenshot</label>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/png,image/jpeg,image/webp"
+                className="hidden"
+                onChange={(e) => handleScreenshotSelect(e.target.files?.[0])}
+              />
 
-      {/* Notes */}
-      <div>
-        <label className={labelClass}>Notes</label>
-        <textarea
-          className={inputClass + " resize-none"}
-          rows={3}
-          placeholder="What happened during this trade?"
-          value={form.notes}
-          onChange={(e) => set("notes", e.target.value)}
-        />
-      </div>
+              {/* Show existing screenshot in edit mode */}
+              {editTrade?.screenshot_url && !removeExisting && !screenshotFile && (
+                <div className="mb-2">
+                  <div className="relative inline-block">
+                    <img
+                      src={editTrade.screenshot_url}
+                      alt="Current screenshot"
+                      className="max-h-[150px] rounded-lg border border-gray-700/80"
+                    />
+                    <button
+                      type="button"
+                      onClick={clearScreenshot}
+                      className="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center hover:bg-red-400 transition-colors"
+                    >
+                      &times;
+                    </button>
+                  </div>
+                  <p className="text-[10px] text-gray-500 mt-1">Upload a new image to replace</p>
+                </div>
+              )}
 
-      {/* Emotions — Pill selector */}
-      <div>
-        <label className={labelClass}>Emotions</label>
-        {emotionPills.length > 0 && (
-          <div className="flex flex-wrap gap-1.5 mb-2">
-            {emotionPills.map((emotion) => (
-              <span key={emotion} className="emotion-pill">
-                {emotion}
-                <button
-                  type="button"
-                  onClick={() => removeEmotion(emotion)}
-                  className="text-accent-400/50 hover:text-accent-400 ml-0.5 text-sm leading-none"
+              {/* Preview of newly selected file */}
+              {screenshotPreview && (
+                <div className="mb-2">
+                  <div className="relative inline-block">
+                    <img
+                      src={screenshotPreview}
+                      alt="Screenshot preview"
+                      className="max-h-[150px] rounded-lg border border-gray-700/80"
+                    />
+                    <button
+                      type="button"
+                      onClick={clearScreenshot}
+                      className="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center hover:bg-red-400 transition-colors"
+                    >
+                      &times;
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Dropzone — show when no preview */}
+              {!screenshotPreview && !(editTrade?.screenshot_url && !removeExisting) && (
+                <div
+                  onClick={() => fileInputRef.current?.click()}
+                  onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); }}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    handleScreenshotSelect(e.dataTransfer.files[0]);
+                  }}
+                  className="flex flex-col items-center justify-center gap-1.5 py-6 rounded-lg border-2 border-dashed border-gray-700/80 bg-gray-800/80 cursor-pointer hover:border-gray-600 transition-colors"
                 >
-                  ×
-                </button>
-              </span>
-            ))}
-          </div>
-        )}
-        <div className="flex gap-2">
-          <input
-            type="text"
-            value={emotionInput}
-            onChange={(e) => setEmotionInput(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                e.preventDefault();
-                addEmotion();
-              }
-            }}
-            placeholder="e.g. FOMO, confident, anxious"
-            className="flex-1 rounded-lg border border-gray-700/80 bg-gray-800/80 px-3 py-2 text-sm text-white placeholder-gray-500 focus:border-accent-500 focus:outline-none transition-colors"
-          />
-          <button
-            type="button"
-            onClick={addEmotion}
-            className="px-3 py-2 rounded-lg text-xs font-medium bg-gray-800/80 border border-gray-700/80 text-gray-400 hover:text-white hover:border-gray-600 transition-colors"
-          >
-            Add
-          </button>
-        </div>
-      </div>
-
-      {/* Chart Screenshot */}
-      <div>
-        <label className={labelClass}>Chart Screenshot</label>
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept="image/png,image/jpeg,image/webp"
-          className="hidden"
-          onChange={(e) => handleScreenshotSelect(e.target.files?.[0])}
-        />
-
-        {/* Show existing screenshot in edit mode */}
-        {editTrade?.screenshot_url && !removeExisting && !screenshotFile && (
-          <div className="mb-2">
-            <div className="relative inline-block">
-              <img
-                src={editTrade.screenshot_url}
-                alt="Current screenshot"
-                className="max-h-[150px] rounded-lg border border-gray-700/80"
-              />
-              <button
-                type="button"
-                onClick={clearScreenshot}
-                className="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center hover:bg-red-400 transition-colors"
-              >
-                &times;
-              </button>
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5 text-gray-600">
+                    <path fillRule="evenodd" d="M1 5.25A2.25 2.25 0 0 1 3.25 3h13.5A2.25 2.25 0 0 1 19 5.25v9.5A2.25 2.25 0 0 1 16.75 17H3.25A2.25 2.25 0 0 1 1 14.75v-9.5Zm1.5 5.81v3.69c0 .414.336.75.75.75h13.5a.75.75 0 0 0 .75-.75v-2.69l-2.22-2.219a.75.75 0 0 0-1.06 0l-1.91 1.909-4.97-4.969a.75.75 0 0 0-1.06 0L2.5 11.06Zm12.22-4.81a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0Z" clipRule="evenodd" />
+                  </svg>
+                  <span className="text-xs text-gray-500">Drop chart screenshot or click to upload</span>
+                  <span className="text-[10px] text-gray-600">PNG, JPG, WebP — max 5MB</span>
+                </div>
+              )}
             </div>
-            <p className="text-[10px] text-gray-500 mt-1">Upload a new image to replace</p>
-          </div>
-        )}
-
-        {/* Preview of newly selected file */}
-        {screenshotPreview && (
-          <div className="mb-2">
-            <div className="relative inline-block">
-              <img
-                src={screenshotPreview}
-                alt="Screenshot preview"
-                className="max-h-[150px] rounded-lg border border-gray-700/80"
-              />
-              <button
-                type="button"
-                onClick={clearScreenshot}
-                className="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center hover:bg-red-400 transition-colors"
-              >
-                &times;
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* Dropzone — show when no preview */}
-        {!screenshotPreview && !(editTrade?.screenshot_url && !removeExisting) && (
-          <div
-            onClick={() => fileInputRef.current?.click()}
-            onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); }}
-            onDrop={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              handleScreenshotSelect(e.dataTransfer.files[0]);
-            }}
-            className="flex flex-col items-center justify-center gap-1.5 py-6 rounded-lg border-2 border-dashed border-gray-700/80 bg-gray-800/80 cursor-pointer hover:border-gray-600 transition-colors"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5 text-gray-600">
-              <path fillRule="evenodd" d="M1 5.25A2.25 2.25 0 0 1 3.25 3h13.5A2.25 2.25 0 0 1 19 5.25v9.5A2.25 2.25 0 0 1 16.75 17H3.25A2.25 2.25 0 0 1 1 14.75v-9.5Zm1.5 5.81v3.69c0 .414.336.75.75.75h13.5a.75.75 0 0 0 .75-.75v-2.69l-2.22-2.219a.75.75 0 0 0-1.06 0l-1.91 1.909-4.97-4.969a.75.75 0 0 0-1.06 0L2.5 11.06Zm12.22-4.81a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0Z" clipRule="evenodd" />
-            </svg>
-            <span className="text-xs text-gray-500">Drop chart screenshot or click to upload</span>
-            <span className="text-[10px] text-gray-600">PNG, JPG, WebP — max 5MB</span>
           </div>
         )}
       </div>
