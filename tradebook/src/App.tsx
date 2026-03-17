@@ -42,7 +42,7 @@ function navClassName({ isActive }: { isActive: boolean }) {
 
 export default function App() {
   const { signOut, displayName } = useAuth();
-  const { isPro, isPastDue, profile, loading: profileLoading } = useSubscription();
+  const { isPastDue, profile, loading: profileLoading } = useSubscription();
   const { showToast } = useToast();
   const navigate = useNavigate();
   const location = useLocation();
