@@ -130,7 +130,7 @@ export default function App() {
               </button>
               {menuOpen && (
                 <div className="absolute right-0 top-full mt-1 w-48 rounded-lg border border-gray-800 bg-gray-900 py-1 shadow-xl z-50">
-                  {isPro && (
+                  {profile?.stripe_customer_id && (
                     <button
                       onClick={async () => {
                         setMenuOpen(false);
@@ -148,6 +148,10 @@ export default function App() {
                             }
                           );
                           const data = await res.json();
+                          if (!res.ok || data.error) {
+                            showToast(data.error || "Failed to open billing portal", "error");
+                            return;
+                          }
                           if (data.url) window.location.href = data.url;
                         } catch {
                           showToast("Failed to open billing portal", "error");
