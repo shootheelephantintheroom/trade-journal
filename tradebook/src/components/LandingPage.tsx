@@ -73,28 +73,6 @@ const MOMENTUM_CALLOUTS = [
   },
 ];
 
-/* TODO: Replace these placeholder testimonials with real user quotes before launch */
-const TESTIMONIALS = [
-  {
-    quote: "finally stopped using google sheets lol",
-    name: "Dan",
-  },
-  {
-    quote:
-      "went back through my trades from last month and realized I was giving back like $200-300 every afternoon on low floaters after 2pm. would have never caught that without the time of day breakdown",
-    name: "Sarah",
-  },
-  {
-    quote:
-      "took me about a week to actually use it every day but once I got in the habit it was kinda eye opening. found out my win rate on stuff like BBAI and MULN was way higher than I thought but I kept sizing too small. sized up in feb and had my best month",
-    name: "Jess",
-  },
-  {
-    quote:
-      "wish it had broker import but for manual logging its solid. the emotional tagging thing caught me revenge trading way more than I realized",
-    name: "Ray",
-  },
-];
 
 const FAQS = [
   {
@@ -494,38 +472,6 @@ export default function LandingPage() {
                   No credit card required to start
                 </p>
               </div>
-            </div>
-          </div>
-        </section>
-
-        {/* ───── Social Proof ───── */}
-        <section className="px-4 py-20 sm:py-28 reveal">
-          <div className="max-w-3xl mx-auto text-center">
-            <div className="inline-flex items-center gap-2 bg-accent-600/10 border border-accent-500/20 rounded-full px-5 py-2 mb-12">
-              <span className="relative flex h-2.5 w-2.5">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent-400 opacity-75" />
-                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-accent-500" />
-              </span>
-              <span className="text-sm text-accent-400 font-medium">
-                Built for momentum day traders
-              </span>
-            </div>
-
-            {/* TODO: Replace with real user testimonials before launch */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              {TESTIMONIALS.map((t, i) => (
-                <div
-                  key={i}
-                  className="bg-gray-900/40 border border-gray-800/50 rounded-xl p-6 text-left"
-                >
-                  <p className="text-sm text-gray-300 leading-relaxed mb-4">
-                    "{t.quote}"
-                  </p>
-                  <div className="text-xs text-gray-500">
-                    — {t.name}
-                  </div>
-                </div>
-              ))}
             </div>
           </div>
         </section>
