@@ -162,14 +162,14 @@ export default function Settings() {
   }
 
   function planLabel() {
+    if (isTrialing) return "Free Trial";
     if (isPro) return "Pro";
-    if (isTrialing) return "Trial";
     return "Free";
   }
 
   function planBadgeClass() {
-    if (isPro) return "bg-accent-500/15 text-accent-400 border-accent-500/30";
     if (isTrialing) return "bg-amber-500/15 text-amber-400 border-amber-500/30";
+    if (isPro) return "bg-accent-500/15 text-accent-400 border-accent-500/30";
     return "bg-gray-700/40 text-gray-400 border-gray-600/30";
   }
 
@@ -195,7 +195,7 @@ export default function Settings() {
           </span>
           {isTrialing && (
             <span className="text-xs text-gray-500">
-              {daysLeftInTrial} day{daysLeftInTrial !== 1 ? "s" : ""} remaining
+              Free trial · {daysLeftInTrial} day{daysLeftInTrial !== 1 ? "s" : ""} remaining
             </span>
           )}
           {isPro && !isTrialing && (
