@@ -53,13 +53,27 @@ export function canStartTrial(profile: Profile | null): boolean {
   return profile.plan === "free" && profile.trial_ends_at === null && profile.subscription_status === "none";
 }
 
-/** Starts a 14-day Pro trial for the user */
-export async function startProTrial(userId: string): Promise<boolean> {
-  const trialEnd = new Date();
-  trialEnd.setDate(trialEnd.getDate() + 14);
-  const { error } = await supabase
-    .from("profiles")
-    .update({ trial_ends_at: trialEnd.toISOString() })
-    .eq("id", userId);
-  return !error;
+/** Starts a 14-day Pro trial for the user via Edge Function */
+export async function startProTrial(): Promise<{ success: boolean; error?: string }> {
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+  if (!session) return { success: false, error: "Not authenticated" };
+
+  const res = await fetch(
+    `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/start-trial`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${session.access_token}`,
+        "Content-Type": "application/json",
+      },
+    }
+  );
+
+  const data = await res.json();
+  if (!res.ok) {
+    return { success: false, error: data?.error ?? "Failed to start trial" };
+  }
+  return { success: true };
 }

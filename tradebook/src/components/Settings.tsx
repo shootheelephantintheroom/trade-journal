@@ -168,11 +168,15 @@ export default function Settings() {
   async function handleStartTrial() {
     if (!user) return;
     setStartingTrial(true);
-    const success = await startProTrial(user.id);
-    if (success) {
-      await refetchProfile();
-      showToast("Your 14-day Pro trial is now active!", "success");
-    } else {
+    try {
+      const result = await startProTrial();
+      if (result.success) {
+        await refetchProfile();
+        showToast("Your 14-day Pro trial is now active!", "success");
+      } else {
+        showToast(result.error ?? "Failed to start trial. Please try again.", "error");
+      }
+    } catch {
       showToast("Failed to start trial. Please try again.", "error");
     }
     setStartingTrial(false);
