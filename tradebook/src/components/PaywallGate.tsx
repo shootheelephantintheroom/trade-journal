@@ -26,10 +26,13 @@ export default function PaywallGate({ feature, children }: PaywallGateProps) {
   const hadPaidSubscription =
     profile?.subscription_status === "canceled" ||
     (profile?.stripe_subscription_id != null && profile?.plan === "free");
+  const hadTrial = profile?.trial_ends_at !== null;
 
   const statusMessage = hadPaidSubscription
     ? "Your Pro subscription has ended."
-    : "Your free trial has ended.";
+    : hadTrial
+      ? "Your free trial has ended."
+      : "This is a Pro feature.";
 
   async function handleUpgrade() {
     setLoading(true);

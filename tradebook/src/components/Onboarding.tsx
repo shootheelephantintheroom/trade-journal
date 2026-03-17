@@ -133,7 +133,7 @@ export default function Onboarding() {
 
     await refetchProfile();
     showToast(
-      "Welcome to MyTradeBook! Your 14-day Pro trial is active.",
+      "Welcome to MyTradeBook! You're on the Free plan.",
       "success"
     );
     navigate("/app/log", { replace: true });

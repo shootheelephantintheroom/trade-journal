@@ -8,7 +8,7 @@ export interface Profile {
   stripe_customer_id: string | null;
   stripe_subscription_id: string | null;
   subscription_status: "active" | "canceled" | "past_due" | "none";
-  trial_ends_at: string;
+  trial_ends_at: string | null;
   created_at: string;
   updated_at: string;
   onboarded: boolean;
@@ -32,17 +32,34 @@ export async function getProfile(userId: string): Promise<Profile | null> {
 export function isPro(profile: Profile | null): boolean {
   if (!profile) return false;
   if (profile.plan === "pro" && (profile.subscription_status === "active" || profile.subscription_status === "past_due")) return true;
-  if (new Date(profile.trial_ends_at) > new Date()) return true;
+  if (profile.trial_ends_at && new Date(profile.trial_ends_at) > new Date()) return true;
   return false;
 }
 
 export function isTrialing(profile: Profile | null): boolean {
   if (!profile) return false;
-  return profile.plan === "free" && new Date(profile.trial_ends_at) > new Date();
+  return profile.plan === "free" && !!profile.trial_ends_at && new Date(profile.trial_ends_at) > new Date();
 }
 
 export function daysLeftInTrial(profile: Profile | null): number {
-  if (!profile) return 0;
+  if (!profile || !profile.trial_ends_at) return 0;
   const ms = new Date(profile.trial_ends_at).getTime() - Date.now();
   return Math.max(0, Math.ceil(ms / (1000 * 60 * 60 * 24)));
+}
+
+/** Returns true if the user has never started a Pro trial */
+export function canStartTrial(profile: Profile | null): boolean {
+  if (!profile) return false;
+  return profile.plan === "free" && profile.trial_ends_at === null && profile.subscription_status === "none";
+}
+
+/** Starts a 14-day Pro trial for the user */
+export async function startProTrial(userId: string): Promise<boolean> {
+  const trialEnd = new Date();
+  trialEnd.setDate(trialEnd.getDate() + 14);
+  const { error } = await supabase
+    .from("profiles")
+    .update({ trial_ends_at: trialEnd.toISOString() })
+    .eq("id", userId);
+  return !error;
 }

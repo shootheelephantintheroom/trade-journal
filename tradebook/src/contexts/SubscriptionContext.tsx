@@ -12,6 +12,7 @@ import {
   isPro as checkIsPro,
   isTrialing as checkIsTrialing,
   daysLeftInTrial as calcDaysLeft,
+  canStartTrial as checkCanStartTrial,
   type Profile,
 } from "../lib/subscription";
 
@@ -21,6 +22,7 @@ interface SubscriptionContextType {
   isPro: boolean;
   isPastDue: boolean;
   isTrialing: boolean;
+  canStartTrial: boolean;
   daysLeftInTrial: number;
   refetchProfile: () => Promise<void>;
 }
@@ -68,6 +70,7 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
         isPro: checkIsPro(profile),
         isPastDue: profile?.subscription_status === "past_due",
         isTrialing: checkIsTrialing(profile),
+        canStartTrial: checkCanStartTrial(profile),
         daysLeftInTrial: calcDaysLeft(profile),
         refetchProfile: fetchProfile,
       }}

@@ -14,7 +14,7 @@ create table if not exists public.profiles (
   subscription_status    text not null default 'none'
     check (subscription_status in ('active', 'canceled', 'past_due', 'none')),
 
-  trial_ends_at timestamptz not null default (now() + interval '14 days'),
+  trial_ends_at timestamptz default null,
   created_at    timestamptz not null default now(),
   updated_at    timestamptz not null default now()
 );

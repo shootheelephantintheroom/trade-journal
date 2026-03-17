@@ -81,7 +81,7 @@ const FAQS = [
   },
   {
     q: "What does Pro include?",
-    a: "Pro unlocks the full analytics suite: time-of-day analysis, tilt detection, hold-time breakdowns, catalyst performance, float tracking, screenshot attachments, and advanced filters. It's $29/mo after a 14-day free trial.",
+    a: "Pro unlocks the full analytics suite: time-of-day analysis, tilt detection, hold-time breakdowns, catalyst performance, float tracking, screenshot attachments, and advanced filters. It's $29/mo or $249/yr. You can start a free 14-day trial from your Account Settings.",
   },
   {
     q: "Can I cancel anytime?",
@@ -438,7 +438,7 @@ export default function LandingPage() {
                       $29<span className="text-lg font-normal text-gray-400">/mo</span>
                     </div>
                     <div className="text-xs text-gray-500 mb-8">
-                      14-day free trial included
+                      14-day free trial available
                     </div>
                   </>
                 ) : (
@@ -450,7 +450,7 @@ export default function LandingPage() {
                       <span className="text-base text-gray-500 line-through">$348</span>
                     </div>
                     <div className="text-xs text-gray-500 mb-8">
-                      ~$20.75/mo · 14-day free trial included
+                      ~$20.75/mo · 14-day free trial available
                     </div>
                   </>
                 )}
@@ -466,10 +466,10 @@ export default function LandingPage() {
                   to="/login?mode=signup"
                   className="cta-btn mt-8 block w-full text-center rounded-xl bg-accent-600 hover:bg-accent-500 px-6 py-3.5 text-sm font-semibold text-white transition-all"
                 >
-                  Start 14-Day Free Trial
+                  Get Started Free
                 </Link>
                 <p className="text-[11px] text-gray-500 text-center mt-3">
-                  No credit card required to start
+                  Start a 14-day Pro trial anytime from Account Settings
                 </p>
               </div>
             </div>
@@ -556,7 +556,7 @@ export default function LandingPage() {
               Start Free — No Credit Card
             </Link>
             <p className="text-gray-500 text-xs mt-4">
-              Free tier forever. Pro is $29/mo with a 14-day trial.
+              Free tier forever. Upgrade to Pro anytime — 14-day trial available.
             </p>
           </div>
         </section>

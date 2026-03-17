@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "../lib/supabase";
 import { useAuth } from "../contexts/AuthContext";
 import { useSubscription } from "../contexts/SubscriptionContext";
+import { startProTrial } from "../lib/subscription";
 import { useToast } from "./Toast";
 
 const TIMEZONES = [
@@ -25,7 +26,7 @@ const labelClass =
 
 export default function Settings() {
   const { user, signOut } = useAuth();
-  const { profile, isPro, isTrialing, daysLeftInTrial, refetchProfile } =
+  const { profile, isPro, isTrialing, canStartTrial, daysLeftInTrial, refetchProfile } =
     useSubscription();
   const { showToast } = useToast();
   const navigate = useNavigate();
@@ -48,6 +49,9 @@ export default function Settings() {
   // Timezone
   const [timezone, setTimezone] = useState(profile?.timezone ?? "America/New_York");
   const [savingTimezone, setSavingTimezone] = useState(false);
+
+  // Start trial
+  const [startingTrial, setStartingTrial] = useState(false);
 
   // Delete account
   const [deleteConfirm, setDeleteConfirm] = useState("");
@@ -161,6 +165,19 @@ export default function Settings() {
     }
   }
 
+  async function handleStartTrial() {
+    if (!user) return;
+    setStartingTrial(true);
+    const success = await startProTrial(user.id);
+    if (success) {
+      await refetchProfile();
+      showToast("Your 14-day Pro trial is now active!", "success");
+    } else {
+      showToast("Failed to start trial. Please try again.", "error");
+    }
+    setStartingTrial(false);
+  }
+
   function planLabel() {
     if (isTrialing) return "Free Trial";
     if (isPro) return "Pro";
@@ -207,6 +224,15 @@ export default function Settings() {
             </span>
           )}
         </div>
+        {canStartTrial && (
+          <button
+            onClick={handleStartTrial}
+            disabled={startingTrial}
+            className="bg-accent-600 hover:bg-accent-500 disabled:opacity-40 text-white font-medium text-sm px-4 py-2 rounded-lg transition-colors"
+          >
+            {startingTrial ? "Starting..." : "Start 14-Day Pro Trial"}
+          </button>
+        )}
       </div>
 
       {/* Display Name */}
