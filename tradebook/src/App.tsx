@@ -102,18 +102,19 @@ export default function App() {
             MyTradeBook
           </h1>
           <nav className="flex gap-0.5 items-center">
-            {tabs.map((t) => (
-              <NavLink
-                key={t.to}
-                to={t.to}
-                end
-                className={navClassName}
-              >
-                <span className="hidden sm:inline">{t.label}</span>
-                <span className="sm:hidden text-base">{t.icon}</span>
-              </NavLink>
-            ))}
-            <div className="w-px h-5 bg-gray-800 mx-2" />
+            <div className="hidden sm:contents">
+              {tabs.map((t) => (
+                <NavLink
+                  key={t.to}
+                  to={t.to}
+                  end
+                  className={navClassName}
+                >
+                  {t.label}
+                </NavLink>
+              ))}
+              <div className="w-px h-5 bg-gray-800 mx-2" />
+            </div>
             <div className="relative" ref={menuRef}>
               <button
                 onClick={() => setMenuOpen((o) => !o)}
@@ -177,7 +178,7 @@ export default function App() {
       )}
 
       {/* Main */}
-      <main className="max-w-5xl mx-auto px-4 py-8">
+      <main className="max-w-5xl mx-auto px-4 py-8 pb-20 sm:pb-8">
         {loading ? (
           <div className="flex flex-col items-center justify-center py-20 gap-3">
             <div className="h-6 w-6 border-2 border-gray-600 border-t-accent-500 rounded-full animate-spin" />
@@ -266,6 +267,26 @@ export default function App() {
           </div>
         )}
       </main>
+
+      {/* Mobile bottom tab bar */}
+      <nav className="fixed bottom-0 left-0 right-0 z-40 bg-gray-950/80 backdrop-blur-xl border-t border-gray-800/80 sm:hidden">
+        <div className="flex justify-around items-center py-1.5">
+          {tabs.map((t) => (
+            <NavLink
+              key={t.to}
+              to={t.to}
+              end
+              className={({ isActive }) =>
+                "flex flex-col items-center gap-0.5 px-2 py-1 transition-colors " +
+                (isActive ? "text-white" : "text-gray-500")
+              }
+            >
+              <span className="text-base leading-none">{t.icon}</span>
+              <span className="text-[10px] leading-tight">{t.label}</span>
+            </NavLink>
+          ))}
+        </div>
+      </nav>
     </div>
   );
 }
