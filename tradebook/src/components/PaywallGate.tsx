@@ -1,5 +1,6 @@
 import { useState, type ReactNode } from "react";
 import { useSubscription } from "../contexts/SubscriptionContext";
+import { startProTrial } from "../lib/subscription";
 import { supabase } from "../lib/supabase";
 
 interface PaywallGateProps {
@@ -17,8 +18,9 @@ const PRO_FEATURES = [
 ];
 
 export default function PaywallGate({ feature, children }: PaywallGateProps) {
-  const { isPro, isTrialing, profile } = useSubscription();
+  const { isPro, isTrialing, canStartTrial, profile, refetchProfile } = useSubscription();
   const [loading, setLoading] = useState(false);
+  const [trialLoading, setTrialLoading] = useState(false);
   const [plan, setPlan] = useState<"monthly" | "yearly">("monthly");
 
   if (isPro || isTrialing) return <>{children}</>;
@@ -120,6 +122,31 @@ export default function PaywallGate({ feature, children }: PaywallGateProps) {
             </li>
           ))}
         </ul>
+
+        {/* Free trial CTA */}
+        {canStartTrial && (
+          <button
+            onClick={async () => {
+              setTrialLoading(true);
+              try {
+                const result = await startProTrial();
+                if (result.success) {
+                  await refetchProfile();
+                } else {
+                  alert(result.error || "Could not start trial. Please try again.");
+                }
+              } catch {
+                alert("Something went wrong. Please try again.");
+              } finally {
+                setTrialLoading(false);
+              }
+            }}
+            disabled={trialLoading}
+            className="mb-4 w-full rounded-xl border border-accent-500/30 bg-accent-500/10 px-6 py-3 text-sm font-semibold text-accent-400 transition-all hover:bg-accent-500/20 hover:shadow-[0_0_24px_rgba(0,200,83,0.15)] active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed"
+          >
+            {trialLoading ? "Starting trial..." : "Start 14-day free trial"}
+          </button>
+        )}
 
         {/* Plan toggle */}
         <div className="mb-4 flex items-center justify-center gap-1 rounded-lg bg-gray-800/60 p-1">
