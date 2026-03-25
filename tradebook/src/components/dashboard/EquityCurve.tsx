@@ -47,12 +47,11 @@ export default function EquityCurve({
       : `$${v.toFixed(0)}`;
 
   const lineColor =
-    points[points.length - 1].value >= 0 ? "#00C853" : "#ef4444";
+    points[points.length - 1].value >= 0 ? "#22c55e" : "#ef4444";
 
   const firstDateIdx = points.findIndex((p) => p.date);
   const lastDateIdx = points.length - 1;
 
-  // Estimate line length for draw animation
   let lineLength = 0;
   for (let i = 1; i < coords.length; i++) {
     const dx = coords[i].x - coords[i - 1].x;
@@ -68,7 +67,7 @@ export default function EquityCurve({
     >
       <defs>
         <linearGradient id="eqGrad" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor={lineColor} stopOpacity={0.3} />
+          <stop offset="0%" stopColor={lineColor} stopOpacity={0.25} />
           <stop offset="100%" stopColor={lineColor} stopOpacity={0.02} />
         </linearGradient>
       </defs>
@@ -79,13 +78,13 @@ export default function EquityCurve({
             y1={g.y}
             x2={W - pad.r}
             y2={g.y}
-            stroke="rgba(55,65,81,0.3)"
+            stroke="rgba(255,255,255,0.04)"
             strokeWidth="1"
           />
           <text
             x={pad.l - 4}
             y={g.y + 3}
-            fill="#6b7280"
+            fill="#52525b"
             fontSize="9"
             textAnchor="end"
           >
@@ -98,14 +97,14 @@ export default function EquityCurve({
         y1={zeroY}
         x2={W - pad.r}
         y2={zeroY}
-        stroke="rgba(107,114,128,0.3)"
+        stroke="rgba(255,255,255,0.06)"
         strokeWidth="1"
         strokeDasharray="4,4"
       />
       <text
         x={pad.l - 4}
         y={zeroY + 3}
-        fill="#6b7280"
+        fill="#52525b"
         fontSize="9"
         textAnchor="end"
       >
@@ -126,7 +125,7 @@ export default function EquityCurve({
               .map((c) => `L${c.x},${c.y}`)
               .join(" ") +
             " Z";
-          return <path d={ddPath} fill="rgba(239, 68, 68, 0.12)" />;
+          return <path d={ddPath} fill="rgba(239, 68, 68, 0.1)" />;
         })()}
       <polyline
         points={polyline}
@@ -145,13 +144,13 @@ export default function EquityCurve({
         fill="none"
         stroke={lineColor}
         strokeWidth="1.5"
-        opacity="0.4"
+        opacity="0.35"
       />
       {firstDateIdx >= 0 && (
         <text
           x={coords[firstDateIdx].x}
           y={H - 4}
-          fill="#6b7280"
+          fill="#52525b"
           fontSize="9"
           textAnchor="start"
         >
@@ -162,7 +161,7 @@ export default function EquityCurve({
         <text
           x={last.x}
           y={H - 4}
-          fill="#6b7280"
+          fill="#52525b"
           fontSize="9"
           textAnchor="end"
         >

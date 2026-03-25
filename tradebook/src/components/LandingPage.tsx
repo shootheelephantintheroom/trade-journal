@@ -1,6 +1,7 @@
 import { useState, useEffect, Fragment } from "react";
 import { Navigate, Link } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
+import { cn } from "../lib/utils";
 
 /* ── Data ── */
 
@@ -117,7 +118,7 @@ const STEPS = [
 
 /* ── Helpers ── */
 
-function CheckIcon({ className = "mt-0.5 h-4 w-4 shrink-0 text-accent-500" }) {
+function CheckIcon({ className = "mt-0.5 h-4 w-4 shrink-0 text-brand" }: { className?: string }) {
   return (
     <svg
       className={className}
@@ -163,8 +164,8 @@ export default function LandingPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-950 flex items-center justify-center">
-        <div className="h-6 w-6 border-2 border-gray-600 border-t-accent-500 rounded-full animate-spin" />
+      <div className="min-h-screen bg-surface-0 flex items-center justify-center">
+        <div className="h-6 w-6 border-2 border-tertiary border-t-brand rounded-full animate-spin" />
       </div>
     );
   }
@@ -172,39 +173,41 @@ export default function LandingPage() {
   if (user) return <Navigate to="/app" replace />;
 
   return (
-    <div className="min-h-screen bg-gray-950 text-gray-100 flex flex-col">
+    <div className="min-h-screen bg-surface-0 text-primary flex flex-col">
       {/* ───── Header ───── */}
       <header
-        className={`sticky top-0 z-50 border-b transition-all duration-300 ${
+        className={cn(
+          "sticky top-0 z-50 border-b transition-all duration-300",
           scrolled
-            ? "bg-gray-950/90 backdrop-blur-md border-gray-800"
-            : "bg-gray-950 border-transparent"
-        }`}
+            ? "bg-surface-0/90 backdrop-blur-md border-border"
+            : "bg-surface-0 border-transparent"
+        )}
       >
         <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
-          <h1 className="text-lg font-display font-bold tracking-tight text-white">
+          <h1 className="text-lg font-semibold tracking-tight text-primary">
             MyTradeBook
           </h1>
           <div className="flex items-center gap-3">
             <a
               href="#pricing"
-              className="px-4 py-1.5 rounded-lg text-sm font-medium text-gray-400 hover:text-white transition-colors hidden sm:inline-block"
+              className="px-4 py-1.5 rounded-lg text-sm font-medium text-secondary hover:text-brand/80 transition-colors hidden sm:inline-block"
             >
               Pricing
             </a>
             <Link
               to="/login"
-              className="px-4 py-1.5 rounded-lg text-sm font-medium text-gray-400 hover:text-white transition-colors"
+              className="px-4 py-1.5 rounded-lg text-sm font-medium text-secondary hover:text-brand/80 transition-colors"
             >
               Sign In
             </Link>
             <Link
               to="/login?mode=signup"
-              className={`px-4 py-1.5 rounded-lg text-sm font-semibold bg-accent-600 hover:bg-accent-500 text-white transition-all duration-300 ${
+              className={cn(
+                "px-4 py-1.5 rounded-lg text-sm font-semibold bg-brand hover:bg-brand/90 text-primary transition-all duration-300",
                 scrolled
                   ? "opacity-100 translate-y-0"
                   : "opacity-0 -translate-y-2 pointer-events-none"
-              }`}
+              )}
             >
               Start Free
             </Link>
@@ -216,37 +219,37 @@ export default function LandingPage() {
         {/* ───── Hero ───── */}
         <section className="relative flex flex-col items-center justify-center px-4 pt-24 pb-8 sm:pt-36 sm:pb-12 overflow-hidden">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none">
-            <div className="hero-glow w-[500px] h-[350px] sm:w-[700px] sm:h-[450px] rounded-full bg-accent-500/20 blur-[120px]" />
+            <div className="hero-glow w-[500px] h-[350px] sm:w-[700px] sm:h-[450px] rounded-full bg-brand/20 blur-[120px]" />
           </div>
           {/* Floating orbs */}
           <div className="absolute inset-0 pointer-events-none overflow-hidden">
-            <div className="hero-orb-1 absolute top-[20%] left-[15%] w-[180px] h-[180px] rounded-full bg-accent-500/8 blur-[80px]" />
+            <div className="hero-orb-1 absolute top-[20%] left-[15%] w-[180px] h-[180px] rounded-full bg-brand/8 blur-[80px]" />
             <div className="hero-orb-2 absolute top-[60%] right-[10%] w-[140px] h-[140px] rounded-full bg-emerald-400/6 blur-[70px]" />
-            <div className="hero-orb-3 absolute top-[30%] right-[25%] w-[120px] h-[120px] rounded-full bg-accent-400/5 blur-[60px]" />
+            <div className="hero-orb-3 absolute top-[30%] right-[25%] w-[120px] h-[120px] rounded-full bg-brand/5 blur-[60px]" />
           </div>
 
           <div className="relative text-center max-w-2xl z-10">
-            <h2 className="hero-enter font-display text-4xl sm:text-5xl md:text-6xl font-bold text-white leading-[1.08] tracking-tight mb-6">
+            <h2 className="hero-enter text-4xl sm:text-5xl md:text-6xl font-semibold text-primary leading-[1.08] tracking-tight mb-6">
               Stop guessing.
               <br />
-              <span className="text-accent-400">Start knowing.</span>
+              <span className="text-brand">Start knowing.</span>
             </h2>
-            <p className="hero-enter-d1 text-gray-300 text-base sm:text-lg max-w-xl mx-auto leading-relaxed mb-2">
+            <p className="hero-enter-d1 text-secondary text-base sm:text-lg max-w-xl mx-auto leading-relaxed mb-2">
               The trade journal built for intraday momentum traders. Log trades
               in seconds, then let the analytics show you exactly where you're
               leaking money.
             </p>
-            <p className="hero-enter-d1 text-gray-500 text-sm max-w-md mx-auto mb-10">
+            <p className="hero-enter-d1 text-tertiary text-sm max-w-md mx-auto mb-10">
               Used by small-cap day traders who are done losing to themselves.
             </p>
             <div className="hero-enter-d2">
               <Link
                 to="/login?mode=signup"
-                className="cta-btn inline-block bg-accent-600 hover:bg-accent-500 text-white font-display font-semibold text-base sm:text-lg px-10 py-4 rounded-xl"
+                className="cta-btn inline-block bg-brand hover:bg-brand/90 text-primary font-semibold text-base sm:text-lg px-10 py-4 rounded-xl"
               >
                 Start Free — No Credit Card
               </Link>
-              <p className="text-gray-500 text-xs mt-3 tracking-wide">
+              <p className="text-tertiary text-xs mt-3 tracking-wide">
                 Free forever. Upgrade to Pro when you're ready.
               </p>
             </div>
@@ -256,30 +259,30 @@ export default function LandingPage() {
         {/* ───── How It Works ───── */}
         <section className="px-4 py-20 sm:py-28 reveal">
           <div className="max-w-3xl mx-auto">
-            <h2 className="font-display text-2xl sm:text-3xl font-bold text-white text-center mb-16">
+            <h2 className="text-2xl sm:text-3xl font-semibold text-primary text-center mb-16">
               How It Works
             </h2>
             <div className="flex flex-col sm:flex-row sm:items-start gap-10 sm:gap-0">
               {STEPS.map((item, i) => (
                 <Fragment key={item.step}>
                   <div className="flex-1 text-center">
-                    <div className="w-12 h-12 rounded-full bg-gray-950 border-2 border-accent-500/40 flex items-center justify-center mx-auto mb-5 relative z-10">
-                      <span className="text-accent-400 font-display font-bold">
+                    <div className="w-12 h-12 rounded-full bg-surface-0 border-2 border-brand/40 flex items-center justify-center mx-auto mb-5 relative z-10">
+                      <span className="text-brand font-semibold">
                         {item.step}
                       </span>
                     </div>
-                    <h3 className="font-display text-base font-semibold text-white mb-2">
+                    <h3 className="text-base font-semibold text-primary mb-2">
                       {item.title}
                     </h3>
-                    <p className="text-sm text-gray-400 leading-relaxed max-w-[240px] mx-auto">
+                    <p className="text-sm text-secondary leading-relaxed max-w-[240px] mx-auto">
                       {item.desc}
                     </p>
                   </div>
                   {i < STEPS.length - 1 && (
-                    <div className={`hidden sm:flex items-center shrink-0 mt-[18px] step-connector${i === 1 ? " step-connector-2" : ""}`}>
-                      <div className="w-8 h-px bg-accent-500/25" />
+                    <div className={cn("hidden sm:flex items-center shrink-0 mt-[18px]", `step-connector${i === 1 ? " step-connector-2" : ""}`)}>
+                      <div className="w-8 h-px bg-brand/25" />
                       <svg
-                        className="w-3 h-3 text-accent-500/40 shrink-0 -mx-0.5"
+                        className="w-3 h-3 text-brand/40 shrink-0 -mx-0.5"
                         fill="none"
                         viewBox="0 0 12 12"
                       >
@@ -291,7 +294,7 @@ export default function LandingPage() {
                           strokeLinejoin="round"
                         />
                       </svg>
-                      <div className="w-8 h-px bg-accent-500/25" />
+                      <div className="w-8 h-px bg-brand/25" />
                     </div>
                   )}
                 </Fragment>
@@ -306,10 +309,10 @@ export default function LandingPage() {
         {/* ───── Built for Momentum Traders ───── */}
         <section className="px-4 py-20 sm:py-28 reveal">
           <div className="max-w-4xl mx-auto">
-            <h2 className="font-display text-2xl sm:text-3xl font-bold text-white text-center mb-4">
+            <h2 className="text-2xl sm:text-3xl font-semibold text-primary text-center mb-4">
               Built for Momentum Traders
             </h2>
-            <p className="text-gray-500 text-sm text-center mb-14 max-w-lg mx-auto">
+            <p className="text-tertiary text-sm text-center mb-14 max-w-lg mx-auto">
               Not a generic journal. Every feature is designed for intraday small-cap traders.
             </p>
 
@@ -317,11 +320,11 @@ export default function LandingPage() {
               {MOMENTUM_CALLOUTS.map((item) => (
                 <div
                   key={item.title}
-                  className="feature-card bg-gray-900/40 border border-gray-800 rounded-2xl p-7"
+                  className="feature-card bg-surface-1/40 border border-border rounded-2xl p-7"
                 >
-                  <div className="w-10 h-10 rounded-lg bg-accent-500/10 border border-accent-500/20 flex items-center justify-center mb-5">
+                  <div className="w-10 h-10 rounded-lg bg-brand/10 border border-brand/20 flex items-center justify-center mb-5">
                     <svg
-                      className="w-5 h-5 text-accent-400"
+                      className="w-5 h-5 text-brand"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
@@ -330,10 +333,10 @@ export default function LandingPage() {
                       {item.icon}
                     </svg>
                   </div>
-                  <h3 className="font-display text-base font-semibold text-white mb-2">
+                  <h3 className="text-base font-semibold text-primary mb-2">
                     {item.title}
                   </h3>
-                  <p className="text-sm text-gray-400 leading-relaxed">
+                  <p className="text-sm text-secondary leading-relaxed">
                     {item.desc}
                   </p>
                 </div>
@@ -349,9 +352,9 @@ export default function LandingPage() {
               <img
                 src="/dashboard-preview.png"
                 alt="MyTradeBook dashboard showing P&L, win rate, equity curve, and trade history"
-                className="w-full rounded-xl border border-gray-800 relative z-10"
+                className="w-full rounded-xl border border-border relative z-10"
               />
-              <div className="absolute -bottom-8 left-[10%] right-[10%] h-24 bg-accent-500/10 rounded-full blur-[60px]" />
+              <div className="absolute -bottom-8 left-[10%] right-[10%] h-24 bg-brand/10 rounded-full blur-[60px]" />
             </div>
           </div>
         </section>
@@ -362,41 +365,43 @@ export default function LandingPage() {
         {/* ───── Pricing ───── */}
         <section id="pricing" className="px-4 py-20 sm:py-28 reveal scroll-mt-20">
           <div className="max-w-3xl mx-auto">
-            <h2 className="font-display text-2xl sm:text-3xl font-bold text-white text-center mb-4">
+            <h2 className="text-2xl sm:text-3xl font-semibold text-primary text-center mb-4">
               Simple Pricing
             </h2>
-            <p className="text-gray-500 text-sm text-center mb-14 max-w-md mx-auto">
+            <p className="text-tertiary text-sm text-center mb-14 max-w-md mx-auto">
               Start free. Upgrade when the analytics pay for themselves.
             </p>
 
             {/* Monthly/Yearly toggle */}
             <div className="flex items-center justify-center gap-3 mb-12">
-              <div className="flex items-center gap-1 rounded-full bg-gray-800/70 border border-gray-700/50 p-1.5">
+              <div className="flex items-center gap-1 rounded-full bg-surface-2/70 border border-border/50 p-1.5">
                 <button
                   type="button"
                   onClick={() => setPricingPlan("monthly")}
-                  className={`rounded-full px-6 py-2.5 text-sm font-semibold transition-all duration-200 ${
+                  className={cn(
+                    "rounded-full px-6 py-2.5 text-sm font-semibold transition-all duration-200",
                     pricingPlan === "monthly"
-                      ? "bg-white text-gray-900 shadow-md"
-                      : "text-gray-400 hover:text-gray-200"
-                  }`}
+                      ? "bg-white text-surface-1 shadow-md"
+                      : "text-secondary hover:text-primary"
+                  )}
                 >
                   Monthly
                 </button>
                 <button
                   type="button"
                   onClick={() => setPricingPlan("yearly")}
-                  className={`rounded-full px-6 py-2.5 text-sm font-semibold transition-all duration-200 ${
+                  className={cn(
+                    "rounded-full px-6 py-2.5 text-sm font-semibold transition-all duration-200",
                     pricingPlan === "yearly"
-                      ? "bg-white text-gray-900 shadow-md"
-                      : "text-gray-400 hover:text-gray-200"
-                  }`}
+                      ? "bg-white text-surface-1 shadow-md"
+                      : "text-secondary hover:text-primary"
+                  )}
                 >
                   Yearly
                 </button>
               </div>
               {pricingPlan === "yearly" && (
-                <span className="inline-flex items-center rounded-full bg-emerald-500/15 border border-emerald-500/30 px-3 py-1.5 text-xs font-bold text-emerald-400 tracking-wide">
+                <span className="inline-flex items-center rounded-full bg-emerald-500/15 border border-emerald-500/30 px-3 py-1.5 text-xs font-semibold text-emerald-400 tracking-wide">
                   Save 28%
                 </span>
               )}
@@ -404,15 +409,15 @@ export default function LandingPage() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               {/* Free */}
-              <div className="bg-gray-900/40 border border-gray-800 rounded-2xl p-8 flex flex-col">
-                <div className="text-sm font-medium text-gray-400 mb-1">Free</div>
-                <div className="font-display text-4xl font-bold text-white mb-1">
+              <div className="bg-surface-1/40 border border-border rounded-2xl p-8 flex flex-col">
+                <div className="text-sm font-medium text-secondary mb-1">Free</div>
+                <div className="text-4xl font-semibold text-primary mb-1">
                   $0
                 </div>
-                <div className="text-xs text-gray-500 mb-8">Free forever</div>
+                <div className="text-xs text-tertiary mb-8">Free forever</div>
                 <ul className="space-y-3 flex-1">
                   {FREE_FEATURES.map((f) => (
-                    <li key={f} className="flex items-start gap-2.5 text-sm text-gray-300">
+                    <li key={f} className="flex items-start gap-2.5 text-sm text-secondary">
                       <CheckIcon />
                       {f}
                     </li>
@@ -420,55 +425,55 @@ export default function LandingPage() {
                 </ul>
                 <Link
                   to="/login?mode=signup"
-                  className="mt-8 block w-full text-center rounded-xl border border-gray-700 bg-gray-800/50 px-6 py-3.5 text-sm font-semibold text-white transition-all hover:border-gray-600 hover:bg-gray-800"
+                  className="mt-8 block w-full text-center rounded-xl border border-border bg-surface-2/50 px-6 py-3.5 text-sm font-semibold text-primary transition-all hover:border-surface-3 hover:bg-surface-2"
                 >
                   Get Started Free
                 </Link>
               </div>
 
               {/* Pro */}
-              <div className="relative bg-gray-900/60 border-2 border-accent-500/40 rounded-2xl p-8 flex flex-col">
-                <div className="absolute -top-3 left-6 bg-accent-600 text-white text-[11px] font-bold uppercase tracking-wider px-3 py-1 rounded-full">
+              <div className="relative bg-surface-1/60 border-2 border-brand/40 rounded-2xl p-8 flex flex-col">
+                <div className="absolute -top-3 left-6 bg-brand text-primary text-[11px] font-semibold uppercase tracking-wider px-3 py-1 rounded-full">
                   Recommended
                 </div>
-                <div className="text-sm font-medium text-accent-400 mb-1">Pro</div>
+                <div className="text-sm font-medium text-brand mb-1">Pro</div>
                 {pricingPlan === "monthly" ? (
                   <>
-                    <div className="font-display text-4xl font-bold text-white mb-1">
-                      $29<span className="text-lg font-normal text-gray-400">/mo</span>
+                    <div className="text-4xl font-semibold text-primary mb-1">
+                      $29<span className="text-lg font-normal text-secondary">/mo</span>
                     </div>
-                    <div className="text-xs text-gray-500 mb-8">
+                    <div className="text-xs text-tertiary mb-8">
                       14-day free trial available
                     </div>
                   </>
                 ) : (
                   <>
                     <div className="flex items-baseline gap-2 mb-1">
-                      <span className="font-display text-4xl font-bold text-white">
-                        $249<span className="text-lg font-normal text-gray-400">/yr</span>
+                      <span className="text-4xl font-semibold text-primary">
+                        $249<span className="text-lg font-normal text-secondary">/yr</span>
                       </span>
-                      <span className="text-base text-gray-500 line-through">$348</span>
+                      <span className="text-base text-tertiary line-through">$348</span>
                     </div>
-                    <div className="text-xs text-gray-500 mb-8">
+                    <div className="text-xs text-tertiary mb-8">
                       ~$20.75/mo · 14-day free trial available
                     </div>
                   </>
                 )}
                 <ul className="space-y-3 flex-1">
                   {PRO_FEATURES.map((f) => (
-                    <li key={f} className="flex items-start gap-2.5 text-sm text-gray-300">
-                      <CheckIcon className="mt-0.5 h-4 w-4 shrink-0 text-accent-400" />
+                    <li key={f} className="flex items-start gap-2.5 text-sm text-secondary">
+                      <CheckIcon className="mt-0.5 h-4 w-4 shrink-0 text-brand" />
                       {f}
                     </li>
                   ))}
                 </ul>
                 <Link
                   to="/login?mode=signup"
-                  className="cta-btn mt-8 block w-full text-center rounded-xl bg-accent-600 hover:bg-accent-500 px-6 py-3.5 text-sm font-semibold text-white transition-all"
+                  className="cta-btn mt-8 block w-full text-center rounded-xl bg-brand hover:bg-brand/90 px-6 py-3.5 text-sm font-semibold text-primary transition-all"
                 >
                   Get Started Free
                 </Link>
-                <p className="text-[11px] text-gray-500 text-center mt-3">
+                <p className="text-[11px] text-tertiary text-center mt-3">
                   Start a 14-day Pro trial anytime from Account Settings
                 </p>
               </div>
@@ -479,37 +484,38 @@ export default function LandingPage() {
         {/* ───── Bold Quote ───── */}
         <section className="px-4 py-20 sm:py-32 reveal">
           <div className="max-w-3xl mx-auto text-center">
-            <div className="w-12 h-px bg-accent-500 mx-auto mb-10" />
-            <p className="text-2xl sm:text-3xl md:text-4xl font-light italic text-gray-200 leading-relaxed tracking-tight">
+            <div className="w-12 h-px bg-brand mx-auto mb-10" />
+            <p className="text-2xl sm:text-3xl md:text-4xl font-light italic text-primary/90 leading-relaxed tracking-tight">
               "Every trade you don't journal is a lesson you'll pay for twice."
             </p>
-            <div className="w-12 h-px bg-accent-500 mx-auto mt-10" />
+            <div className="w-12 h-px bg-brand mx-auto mt-10" />
           </div>
         </section>
 
         {/* ───── FAQ ───── */}
         <section className="px-4 py-20 sm:py-28 reveal">
           <div className="max-w-2xl mx-auto">
-            <h2 className="font-display text-2xl sm:text-3xl font-bold text-white text-center mb-14">
+            <h2 className="text-2xl sm:text-3xl font-semibold text-primary text-center mb-14">
               Frequently Asked Questions
             </h2>
             <div className="space-y-2">
               {FAQS.map((faq, i) => (
                 <div
                   key={i}
-                  className="border border-gray-800/60 rounded-lg overflow-hidden"
+                  className="border border-border/60 rounded-lg overflow-hidden"
                 >
                   <button
                     onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                    className="w-full text-left px-5 py-4 flex items-center justify-between gap-4 hover:bg-gray-900/40 transition-colors cursor-pointer"
+                    className="w-full text-left px-5 py-4 flex items-center justify-between gap-4 hover:bg-surface-1/40 transition-colors cursor-pointer"
                   >
-                    <span className="text-sm font-medium text-white">
+                    <span className="text-sm font-medium text-primary">
                       {faq.q}
                     </span>
                     <svg
-                      className={`w-4 h-4 text-gray-500 shrink-0 transition-transform duration-200 ${
+                      className={cn(
+                        "w-4 h-4 text-tertiary shrink-0 transition-transform duration-200",
                         openFaq === i ? "rotate-180" : ""
-                      }`}
+                      )}
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
@@ -523,12 +529,13 @@ export default function LandingPage() {
                     </svg>
                   </button>
                   <div
-                    className={`grid transition-all duration-200 ${
+                    className={cn(
+                      "grid transition-all duration-200",
                       openFaq === i ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
-                    }`}
+                    )}
                   >
                     <div className="overflow-hidden">
-                      <p className="px-5 pb-4 text-sm text-gray-400 leading-relaxed">
+                      <p className="px-5 pb-4 text-sm text-secondary leading-relaxed">
                         {faq.a}
                       </p>
                     </div>
@@ -542,20 +549,20 @@ export default function LandingPage() {
         {/* ───── Final CTA ───── */}
         <section className="px-4 py-20 sm:py-28 reveal">
           <div className="max-w-lg mx-auto text-center">
-            <h2 className="font-display text-2xl sm:text-3xl font-bold text-white mb-3">
+            <h2 className="text-2xl sm:text-3xl font-semibold text-primary mb-3">
               Ready to Find Your Edge?
             </h2>
-            <p className="text-gray-400 text-sm mb-8">
+            <p className="text-secondary text-sm mb-8">
               The trade journal built for momentum day traders. Free to start,
               takes 30 seconds to sign up.
             </p>
             <Link
               to="/login?mode=signup"
-              className="cta-btn inline-block bg-accent-600 hover:bg-accent-500 text-white font-display font-semibold text-base px-10 py-4 rounded-xl"
+              className="cta-btn inline-block bg-brand hover:bg-brand/90 text-primary font-semibold text-base px-10 py-4 rounded-xl"
             >
               Start Free — No Credit Card
             </Link>
-            <p className="text-gray-500 text-xs mt-4">
+            <p className="text-tertiary text-xs mt-4">
               Free tier forever. Upgrade to Pro anytime — 14-day trial available.
             </p>
           </div>
@@ -563,28 +570,28 @@ export default function LandingPage() {
       </main>
 
       {/* ───── Footer ───── */}
-      <footer className="bg-gray-900/50 border-t border-gray-800/50">
+      <footer className="bg-surface-1/50 border-t border-border/50">
         <div className="max-w-5xl mx-auto px-4 py-10 flex flex-col sm:flex-row items-center justify-between gap-6">
           <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-5">
-            <span className="font-display text-sm font-bold text-white">
+            <span className="text-sm font-semibold text-primary">
               MyTradeBook
             </span>
-            <span className="text-xs text-gray-500">
+            <span className="text-xs text-tertiary">
               Made by ohjudo
             </span>
           </div>
-          <div className="flex items-center gap-6 text-xs text-gray-500">
-            <Link to="/privacy" className="hover:text-gray-300 transition-colors">
+          <div className="flex items-center gap-6 text-xs text-tertiary">
+            <Link to="/privacy" className="hover:text-brand/80 transition-colors">
               Privacy
             </Link>
-            <Link to="/terms" className="hover:text-gray-300 transition-colors">
+            <Link to="/terms" className="hover:text-brand/80 transition-colors">
               Terms
             </Link>
             <a
               href="https://instagram.com/ohjudo"
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:text-gray-300 transition-colors"
+              className="hover:text-brand/80 transition-colors"
             >
               Contact
             </a>

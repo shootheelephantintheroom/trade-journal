@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { cn } from "../lib/utils";
 import { supabase } from "../lib/supabase";
 import { useAuth } from "../contexts/AuthContext";
 import { useSubscription } from "../contexts/SubscriptionContext";
@@ -28,9 +29,9 @@ const TIMEZONES = [
 ];
 
 const inputClass =
-  "w-full rounded-lg border border-gray-700/80 bg-gray-800/80 px-3 py-2.5 text-sm text-white placeholder-gray-500 focus:border-accent-500 focus:outline-none transition-colors";
+  "w-full rounded-lg border border-transparent bg-surface-2 px-3 py-2.5 text-sm text-primary placeholder-tertiary hover:border-border-hover focus:border-brand focus:outline-none transition-colors";
 const labelClass =
-  "block text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-1.5";
+  "block text-[11px] font-semibold text-tertiary uppercase tracking-wider mb-1.5";
 
 export default function Onboarding() {
   const { user } = useAuth();
@@ -41,17 +42,17 @@ export default function Onboarding() {
   const [step, setStep] = useState(0);
   const [saving, setSaving] = useState(false);
 
-  // Step 1 — trading styles
+  // Step 1 -- trading styles
   const [styles, setStyles] = useState<string[]>([]);
 
-  // Step 2 — defaults
+  // Step 2 -- defaults
   const [defaultShares, setDefaultShares] = useState("");
   const [defaultCommission, setDefaultCommission] = useState("");
   const [timezone, setTimezone] = useState(
     Intl.DateTimeFormat().resolvedOptions().timeZone
   );
 
-  // Step 3 — example trade
+  // Step 3 -- example trade
   const [exampleTrade, setExampleTrade] = useState({
     ticker: "AAPL",
     side: "long" as "long" | "short",
@@ -128,7 +129,7 @@ export default function Onboarding() {
         avg_exit_price: null,
         total_shares: null,
       });
-      if (error) showToast("Trade didn't save — you can log it later", "error");
+      if (error) showToast("Trade didn't save -- you can log it later", "error");
     }
 
     await refetchProfile();
@@ -147,13 +148,13 @@ export default function Onboarding() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-950 flex items-center justify-center px-4 py-12">
+    <div className="min-h-screen bg-surface-0 flex items-center justify-center px-4 py-12">
       <div className="w-full max-w-md">
         {/* Logo */}
-        <h1 className="text-2xl font-bold text-white text-center mb-1">
+        <h1 className="text-2xl font-semibold text-primary text-center mb-1">
           MyTradeBook
         </h1>
-        <p className="text-gray-500 text-center text-sm mb-8">
+        <p className="text-tertiary text-center text-sm mb-8">
           Let's set up your journal
         </p>
 
@@ -162,26 +163,27 @@ export default function Onboarding() {
           {[0, 1, 2].map((i) => (
             <div
               key={i}
-              className={`h-2 w-2 rounded-full transition-all duration-300 ${
+              className={cn(
+                "h-2 w-2 rounded-full transition-all duration-300",
                 i === step
-                  ? "bg-accent-500 scale-125"
+                  ? "bg-brand scale-125"
                   : i < step
-                    ? "bg-accent-500/40"
-                    : "bg-gray-700"
-              }`}
+                    ? "bg-brand/40"
+                    : "bg-surface-3",
+              )}
             />
           ))}
         </div>
 
         {/* Step cards */}
-        <div className="form-section animate-fade-in" key={step}>
+        <div className="rounded-xl bg-surface-1 p-5 animate-fade-in" key={step}>
           {step === 0 && (
             <div className="space-y-5">
               <div>
-                <h2 className="text-lg font-bold text-white">
+                <h2 className="text-lg font-semibold text-primary">
                   What do you trade?
                 </h2>
-                <p className="text-sm text-gray-500 mt-1">
+                <p className="text-sm text-tertiary mt-1">
                   Select all that apply
                 </p>
               </div>
@@ -192,11 +194,12 @@ export default function Onboarding() {
                     key={s}
                     type="button"
                     onClick={() => toggleStyle(s)}
-                    className={`grade-btn py-3 rounded-lg text-sm font-medium border transition-all ${
+                    className={cn(
+                      "py-3 rounded-lg text-sm font-medium border transition-all",
                       styles.includes(s)
-                        ? "bg-accent-500/15 border-accent-500 text-accent-400"
-                        : "bg-gray-800/80 border-gray-700/80 text-gray-400 hover:border-gray-600"
-                    }`}
+                        ? "bg-brand-muted border-brand text-brand"
+                        : "bg-surface-2 border-transparent text-secondary hover:border-border",
+                    )}
                   >
                     {s}
                   </button>
@@ -206,7 +209,7 @@ export default function Onboarding() {
               <button
                 onClick={() => setStep(1)}
                 disabled={styles.length === 0}
-                className="w-full bg-accent-600 hover:bg-accent-500 disabled:opacity-30 disabled:hover:bg-accent-600 text-white font-medium text-sm py-2.5 rounded-lg transition-colors"
+                className="w-full bg-brand hover:bg-brand/90 disabled:opacity-30 disabled:hover:bg-brand text-primary font-medium text-sm py-2.5 rounded-lg transition-colors"
               >
                 Continue
               </button>
@@ -216,10 +219,10 @@ export default function Onboarding() {
           {step === 1 && (
             <div className="space-y-5">
               <div>
-                <h2 className="text-lg font-bold text-white">
+                <h2 className="text-lg font-semibold text-primary">
                   Set your defaults
                 </h2>
-                <p className="text-sm text-gray-500 mt-1">
+                <p className="text-sm text-tertiary mt-1">
                   These pre-fill when you log trades
                 </p>
               </div>
@@ -271,13 +274,13 @@ export default function Onboarding() {
               <div className="flex gap-3">
                 <button
                   onClick={() => setStep(0)}
-                  className="px-4 py-2.5 rounded-lg text-sm font-medium text-gray-400 hover:text-white border border-gray-700/80 hover:border-gray-600 transition-colors"
+                  className="px-4 py-2.5 rounded-lg text-sm font-medium text-secondary hover:text-primary border border-border hover:border-border-hover transition-colors"
                 >
                   Back
                 </button>
                 <button
                   onClick={() => setStep(2)}
-                  className="flex-1 bg-accent-600 hover:bg-accent-500 text-white font-medium text-sm py-2.5 rounded-lg transition-colors"
+                  className="flex-1 bg-brand hover:bg-brand/90 text-primary font-medium text-sm py-2.5 rounded-lg transition-colors"
                 >
                   Continue
                 </button>
@@ -288,10 +291,10 @@ export default function Onboarding() {
           {step === 2 && (
             <div className="space-y-5">
               <div>
-                <h2 className="text-lg font-bold text-white">
+                <h2 className="text-lg font-semibold text-primary">
                   Log your first trade
                 </h2>
-                <p className="text-sm text-gray-500 mt-1">
+                <p className="text-sm text-tertiary mt-1">
                   Edit the example below or skip for now
                 </p>
               </div>
@@ -311,22 +314,24 @@ export default function Onboarding() {
                     <button
                       type="button"
                       onClick={() => setTrade("side", "long")}
-                      className={`flex-1 py-2.5 rounded-lg text-sm font-semibold transition-all ${
+                      className={cn(
+                        "flex-1 py-2.5 rounded-lg text-sm font-semibold transition-all",
                         exampleTrade.side === "long"
-                          ? "bg-accent-500/15 border border-accent-500 text-accent-400"
-                          : "bg-gray-800/80 border border-gray-700/80 text-gray-400 hover:border-gray-600"
-                      }`}
+                          ? "bg-brand-muted border border-brand text-brand"
+                          : "bg-surface-2 border border-transparent text-secondary hover:border-border",
+                      )}
                     >
                       Long
                     </button>
                     <button
                       type="button"
                       onClick={() => setTrade("side", "short")}
-                      className={`flex-1 py-2.5 rounded-lg text-sm font-semibold transition-all ${
+                      className={cn(
+                        "flex-1 py-2.5 rounded-lg text-sm font-semibold transition-all",
                         exampleTrade.side === "short"
-                          ? "bg-red-500/15 border border-red-500 text-red-400"
-                          : "bg-gray-800/80 border border-gray-700/80 text-gray-400 hover:border-gray-600"
-                      }`}
+                          ? "bg-loss-muted border border-loss text-loss"
+                          : "bg-surface-2 border border-transparent text-secondary hover:border-border",
+                      )}
                     >
                       Short
                     </button>
@@ -390,19 +395,20 @@ export default function Onboarding() {
               {parseFloat(exampleTrade.entry_price) > 0 &&
                 parseFloat(exampleTrade.exit_price) > 0 &&
                 parseInt(exampleTrade.shares) > 0 && (
-                  <div className="card-panel px-4 py-3">
-                    <span className="text-xs text-gray-500 uppercase tracking-wider">
+                  <div className="rounded-xl bg-surface-1 px-4 py-3">
+                    <span className="text-xs text-tertiary uppercase tracking-wider">
                       P&L{" "}
                       <span
-                        className={`text-sm font-bold ml-1 ${
+                        className={cn(
+                          "text-sm font-semibold font-mono ml-1",
                           (parseFloat(exampleTrade.exit_price) -
                             parseFloat(exampleTrade.entry_price)) *
                             (exampleTrade.side === "long" ? 1 : -1) *
                             parseInt(exampleTrade.shares) >=
                           0
-                            ? "text-accent-400"
-                            : "text-red-400"
-                        }`}
+                            ? "text-profit"
+                            : "text-loss",
+                        )}
                       >
                         {(() => {
                           const pnl =
@@ -420,21 +426,21 @@ export default function Onboarding() {
               <div className="flex gap-3">
                 <button
                   onClick={() => setStep(1)}
-                  className="px-4 py-2.5 rounded-lg text-sm font-medium text-gray-400 hover:text-white border border-gray-700/80 hover:border-gray-600 transition-colors"
+                  className="px-4 py-2.5 rounded-lg text-sm font-medium text-secondary hover:text-primary border border-border hover:border-border-hover transition-colors"
                 >
                   Back
                 </button>
                 <button
                   onClick={() => handleFinish(false)}
                   disabled={saving}
-                  className="px-4 py-2.5 rounded-lg text-sm font-medium text-gray-400 hover:text-white border border-gray-700/80 hover:border-gray-600 transition-colors disabled:opacity-50"
+                  className="px-4 py-2.5 rounded-lg text-sm font-medium text-secondary hover:text-primary border border-border hover:border-border-hover transition-colors disabled:opacity-50"
                 >
                   Skip
                 </button>
                 <button
                   onClick={() => handleFinish(true)}
                   disabled={saving}
-                  className="flex-1 bg-accent-600 hover:bg-accent-500 disabled:opacity-50 text-white font-medium text-sm py-2.5 rounded-lg transition-colors"
+                  className="flex-1 bg-brand hover:bg-brand/90 disabled:opacity-50 text-primary font-medium text-sm py-2.5 rounded-lg transition-colors"
                 >
                   {saving ? "Saving..." : "Save & Start"}
                 </button>

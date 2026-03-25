@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { cn } from "../lib/utils";
 
 const PRESET_TAGS = [
   "VWAP Reclaim",
@@ -48,12 +49,12 @@ export default function TagSelect({
               key={tag}
               type="button"
               onClick={() => toggle(tag)}
-              className={
-                "pill-tag px-3 py-1.5 rounded-full text-xs font-medium transition-all border " +
-                (active
-                  ? "bg-accent-500/20 border-accent-500 text-accent-400 shadow-[0_0_8px_rgba(0,200,83,0.15)]"
-                  : "bg-gray-800/80 border-gray-700/80 text-gray-400 hover:border-gray-500 hover:text-gray-300")
-              }
+              className={cn(
+                "px-3 py-1.5 rounded-full text-xs font-medium transition-all border",
+                active
+                  ? "bg-brand-muted border-brand/30 text-brand"
+                  : "bg-surface-2 border-transparent text-tertiary hover:border-border-hover hover:text-secondary"
+              )}
             >
               {tag}
             </button>
@@ -66,13 +67,13 @@ export default function TagSelect({
           {customTags.map((tag) => (
             <span
               key={tag}
-              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium bg-accent-500/20 border border-accent-500 text-accent-400"
+              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium bg-brand-muted border border-brand/30 text-brand"
             >
               {tag}
               <button
                 type="button"
                 onClick={() => toggle(tag)}
-                className="text-accent-400/50 hover:text-accent-400 text-sm leading-none"
+                className="text-brand/50 hover:text-brand text-sm leading-none"
               >
                 ×
               </button>
@@ -93,12 +94,12 @@ export default function TagSelect({
             }
           }}
           placeholder="Add custom tag..."
-          className="flex-1 rounded-lg border border-gray-700/80 bg-gray-800/80 px-3 py-1.5 text-xs text-white placeholder-gray-500 focus:border-accent-500 focus:outline-none transition-colors"
+          className="flex-1 rounded-lg border border-transparent bg-surface-2 px-3 py-1.5 text-xs text-primary placeholder-tertiary hover:border-border-hover focus:border-brand focus:outline-none transition-colors"
         />
         <button
           type="button"
           onClick={addCustom}
-          className="px-3 py-1.5 rounded-lg text-xs font-medium bg-gray-800/80 border border-gray-700/80 text-gray-400 hover:text-white hover:border-gray-500 transition-colors"
+          className="px-3 py-1.5 rounded-lg text-xs font-medium bg-surface-2 border border-transparent text-tertiary hover:text-primary hover:border-border-hover transition-colors"
         >
           Add
         </button>

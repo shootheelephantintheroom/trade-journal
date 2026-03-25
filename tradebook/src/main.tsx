@@ -15,9 +15,9 @@ import { ToastProvider } from "./components/Toast";
 
 function NotFoundPage() {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-950 text-white">
-      <h1 className="text-4xl font-bold font-display mb-4">Page not found</h1>
-      <Link to="/" className="text-accent-400 hover:underline">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-surface-0 text-primary">
+      <h1 className="text-4xl font-semibold mb-4">Page not found</h1>
+      <Link to="/" className="text-brand hover:text-brand/80 transition-colors">
         Go back home
       </Link>
     </div>

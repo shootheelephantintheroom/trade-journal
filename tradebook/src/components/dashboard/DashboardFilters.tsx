@@ -3,6 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import type { Trade, CatalystType } from "../../types/trade";
 import TagSelect from "../TagSelect";
 import PaywallGate from "../PaywallGate";
+import { cn } from "../../lib/utils";
 
 const CATALYST_OPTIONS: { value: CatalystType; label: string }[] = [
   { value: "earnings", label: "Earnings" },
@@ -87,7 +88,6 @@ export function useDashboardFilters(): [DashboardFilterState, (patch: Partial<Da
       const next = new URLSearchParams(prev);
       const merged = { ...state, ...patch };
 
-      // from / to
       if (merged.from && merged.from !== defaultFrom()) {
         next.set("from", merged.from);
       } else {
@@ -99,19 +99,15 @@ export function useDashboardFilters(): [DashboardFilterState, (patch: Partial<Da
         next.delete("to");
       }
 
-      // ticker
       if (merged.ticker) next.set("ticker", merged.ticker);
       else next.delete("ticker");
 
-      // side
       if (merged.side !== "all") next.set("side", merged.side);
       else next.delete("side");
 
-      // catalysts
       if (merged.catalysts.length > 0) next.set("catalyst", merged.catalysts.join(","));
       else next.delete("catalyst");
 
-      // tags
       if (merged.tags.length > 0) next.set("tags", merged.tags.join(","));
       else next.delete("tags");
 
@@ -140,14 +136,14 @@ const SIDES = ["all", "long", "short"] as const;
 const pillBase =
   "px-2.5 py-1 rounded-md text-[11px] font-medium transition-all border cursor-pointer";
 const pillActive =
-  "bg-accent-500/15 text-accent-400 border-accent-500/40";
+  "bg-brand-muted text-brand border-brand/30";
 const pillInactive =
-  "text-gray-500 border-transparent hover:text-gray-300 hover:border-gray-600";
+  "text-tertiary border-transparent hover:text-secondary hover:border-border-hover";
 
 const inputClass =
-  "w-full rounded-lg border border-gray-700/80 bg-gray-800/80 px-3 py-2 text-sm text-white placeholder-gray-500 focus:border-accent-500 focus:outline-none transition-colors";
+  "w-full rounded-lg border border-transparent bg-surface-2 px-3 py-2 text-sm text-primary placeholder-tertiary hover:border-border-hover focus:border-brand focus:outline-none transition-colors";
 const labelClass =
-  "block text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-1.5";
+  "block text-[11px] font-medium text-tertiary uppercase tracking-wider mb-1.5";
 
 export default function DashboardFilters({
   trades,
@@ -173,7 +169,7 @@ export default function DashboardFilters({
 
   return (
     <PaywallGate feature="Advanced Filters">
-      <div className="card-panel p-4 mb-6">
+      <div className="rounded-xl bg-surface-1 p-4 mb-6">
         <div className="flex flex-wrap gap-x-6 gap-y-4 items-end">
           {/* Date range */}
           <div className="flex flex-col gap-1.5">
@@ -185,7 +181,7 @@ export default function DashboardFilters({
                 onChange={(e) => onUpdate({ from: e.target.value })}
                 className={inputClass + " w-[140px]"}
               />
-              <span className="text-gray-600 text-xs">to</span>
+              <span className="text-tertiary text-xs">to</span>
               <input
                 type="date"
                 value={filters.to}
@@ -222,15 +218,16 @@ export default function DashboardFilters({
                   key={s}
                   type="button"
                   onClick={() => onUpdate({ side: s })}
-                  className={`${pillBase} ${
+                  className={cn(
+                    pillBase,
                     filters.side === s
                       ? s === "long"
-                        ? "bg-accent-500/15 text-accent-400 border-accent-500/40"
+                        ? "bg-profit-muted text-profit border-profit/30"
                         : s === "short"
-                          ? "bg-red-500/15 text-red-400 border-red-500/40"
+                          ? "bg-loss-muted text-loss border-loss/30"
                           : pillActive
                       : pillInactive
-                  }`}
+                  )}
                 >
                   {s === "all" ? "All" : s === "long" ? "Long" : "Short"}
                 </button>
@@ -249,7 +246,7 @@ export default function DashboardFilters({
                     key={c.value}
                     type="button"
                     onClick={() => toggleCatalyst(c.value)}
-                    className={`${pillBase} ${active ? pillActive : pillInactive}`}
+                    className={cn(pillBase, active ? pillActive : pillInactive)}
                   >
                     {c.label}
                   </button>
@@ -290,7 +287,7 @@ export function QuickDatePills({
             const range = getQuickRange(k);
             onUpdate({ from: range.from, to: range.to });
           }}
-          className={`${pillBase} ${active === k ? pillActive : pillInactive}`}
+          className={cn(pillBase, active === k ? pillActive : pillInactive)}
         >
           {QUICK_LABELS[k]}
         </button>
@@ -328,7 +325,7 @@ export function FilterSummary({
           : "";
 
   return (
-    <p className="text-xs text-gray-500 mb-4">
+    <p className="text-xs text-tertiary mb-4">
       Showing {filtered} of {total} trades{range}
     </p>
   );

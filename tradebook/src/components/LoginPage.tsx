@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { setRememberMe, supabase } from "../lib/supabase";
+import { cn } from "../lib/utils";
 
 export default function LoginPage() {
   const { signIn, signUp } = useAuth();
@@ -72,27 +73,27 @@ export default function LoginPage() {
 
   if (signupSuccess) {
     return (
-      <div className="min-h-screen bg-gray-950 flex items-center justify-center px-4">
+      <div className="min-h-screen bg-surface-0 flex items-center justify-center px-4">
         <div className="w-full max-w-sm text-center space-y-4">
-          <h1 className="text-2xl font-bold text-white mb-1">MyTradeBook</h1>
-          <div className="bg-green-500/10 border border-green-500/30 rounded-lg px-4 py-3">
-            <p className="text-green-400 text-sm">
+          <h1 className="text-2xl font-semibold text-primary mb-1">MyTradeBook</h1>
+          <div className="bg-profit-muted border border-profit/30 rounded-lg px-4 py-3">
+            <p className="text-profit text-sm">
               Check your email to verify your account. You can close this page.
             </p>
           </div>
           {error && (
-            <div className="bg-red-500/10 border border-red-500/30 rounded-lg px-3 py-2">
-              <p className="text-red-400 text-sm">{error}</p>
+            <div className="bg-loss-muted border border-loss/30 rounded-lg px-3 py-2">
+              <p className="text-loss text-sm">{error}</p>
             </div>
           )}
           <button
             onClick={handleResendVerification}
             disabled={resending}
-            className="text-sm text-accent-400 hover:underline disabled:opacity-50"
+            className="text-sm text-brand hover:text-brand/80 transition-colors disabled:opacity-50"
           >
             {resending ? "Sending..." : "Resend verification email"}
           </button>
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-tertiary">
             <button
               type="button"
               onClick={() => {
@@ -100,7 +101,7 @@ export default function LoginPage() {
                 setMode("login");
                 setError(null);
               }}
-              className="text-accent-400 hover:underline"
+              className="text-brand hover:text-brand/80 transition-colors"
             >
               Back to sign in
             </button>
@@ -111,12 +112,12 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-950 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-surface-0 flex items-center justify-center px-4">
       <div className="w-full max-w-sm">
-        <h1 className="text-2xl font-bold text-white text-center mb-1">
+        <h1 className="text-2xl font-semibold text-primary text-center mb-1">
           MyTradeBook
         </h1>
-        <p className="text-gray-500 text-center text-sm mb-8">
+        <p className="text-tertiary text-center text-sm mb-8">
           {mode === "login"
             ? "Sign in to your journal"
             : mode === "signup"
@@ -126,41 +127,41 @@ export default function LoginPage() {
 
         <form onSubmit={handleSubmit} className="space-y-4">
             {error && (
-              <div className="bg-red-500/10 border border-red-500/30 rounded-lg px-3 py-2">
-                <p className="text-red-400 text-sm">{error}</p>
+              <div className="bg-loss-muted border border-loss/30 rounded-lg px-3 py-2">
+                <p className="text-loss text-sm">{error}</p>
               </div>
             )}
 
             {mode === "signup" && (
               <div>
-                <label className="block text-xs text-gray-400 mb-1">
+                <label className="block text-xs text-secondary mb-1">
                   Display Name
                 </label>
                 <input
                   type="text"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  className="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-accent-500"
+                  className="w-full border border-transparent bg-surface-2 hover:border-border-hover focus:border-brand focus:outline-none rounded-lg px-3 py-2 text-sm text-primary placeholder-tertiary"
                   placeholder="Your name"
                 />
               </div>
             )}
 
             <div>
-              <label className="block text-xs text-gray-400 mb-1">Email</label>
+              <label className="block text-xs text-secondary mb-1">Email</label>
               <input
                 type="email"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-accent-500"
+                className="w-full border border-transparent bg-surface-2 hover:border-border-hover focus:border-brand focus:outline-none rounded-lg px-3 py-2 text-sm text-primary placeholder-tertiary"
                 placeholder="you@example.com"
               />
             </div>
 
             {mode !== "reset" && (
               <div>
-                <label className="block text-xs text-gray-400 mb-1">
+                <label className="block text-xs text-secondary mb-1">
                   Password
                 </label>
                 <input
@@ -169,7 +170,7 @@ export default function LoginPage() {
                   minLength={6}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-accent-500"
+                  className="w-full border border-transparent bg-surface-2 hover:border-border-hover focus:border-brand focus:outline-none rounded-lg px-3 py-2 text-sm text-primary placeholder-tertiary"
                   placeholder="••••••••"
                 />
               </div>
@@ -182,9 +183,9 @@ export default function LoginPage() {
                     type="checkbox"
                     checked={rememberMe}
                     onChange={(e) => setRememberMeState(e.target.checked)}
-                    className="w-3.5 h-3.5 rounded border-gray-600 bg-gray-900 text-accent-600 focus:ring-accent-500 focus:ring-offset-0 cursor-pointer"
+                    className="w-3.5 h-3.5 rounded border-tertiary bg-surface-1 text-brand focus:ring-brand focus:ring-offset-0 cursor-pointer"
                   />
-                  <span className="text-sm text-gray-400">Remember me</span>
+                  <span className="text-sm text-secondary">Remember me</span>
                 </label>
                 <button
                   type="button"
@@ -193,7 +194,7 @@ export default function LoginPage() {
                     setError(null);
                     setResetSent(false);
                   }}
-                  className="text-sm text-accent-400 hover:underline"
+                  className="text-sm text-brand hover:text-brand/80 transition-colors"
                 >
                   Forgot password?
                 </button>
@@ -201,15 +202,15 @@ export default function LoginPage() {
             )}
 
             {mode === "reset" && resetSent && (
-              <div className="bg-green-500/10 border border-green-500/30 rounded-lg px-3 py-2">
-                <p className="text-green-400 text-sm">Check your email for a reset link</p>
+              <div className="bg-profit-muted border border-profit/30 rounded-lg px-3 py-2">
+                <p className="text-profit text-sm">Check your email for a reset link</p>
               </div>
             )}
 
             <button
               type="submit"
               disabled={loading || (mode === "reset" && resetSent)}
-              className="w-full bg-accent-600 hover:bg-accent-500 disabled:opacity-50 text-white font-medium text-sm py-2 rounded-lg transition-colors"
+              className="w-full bg-brand hover:bg-brand/90 disabled:opacity-50 text-primary font-medium text-sm py-2 rounded-lg transition-colors"
             >
               {loading
                 ? "..."
@@ -220,7 +221,7 @@ export default function LoginPage() {
                     : "Send Reset Link"}
             </button>
 
-            <p className="text-center text-sm text-gray-500">
+            <p className="text-center text-sm text-tertiary">
               {mode === "login" ? (
                 <>
                   No account?{" "}
@@ -230,7 +231,7 @@ export default function LoginPage() {
                       setMode("signup");
                       setError(null);
                     }}
-                    className="text-accent-400 hover:underline"
+                    className="text-brand hover:text-brand/80 transition-colors"
                   >
                     Sign up
                   </button>
@@ -245,7 +246,7 @@ export default function LoginPage() {
                       setError(null);
                       setResetSent(false);
                     }}
-                    className="text-accent-400 hover:underline"
+                    className="text-brand hover:text-brand/80 transition-colors"
                   >
                     {mode === "reset" ? "Back to sign in" : "Sign in"}
                   </button>

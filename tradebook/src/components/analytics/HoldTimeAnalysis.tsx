@@ -1,4 +1,5 @@
 import { useMemo, useRef, useState } from "react";
+import { cn } from "../../lib/utils";
 import type { Trade } from "../../types/trade";
 import { calcNetPnl } from "../../lib/calc";
 
@@ -130,7 +131,7 @@ export default function HoldTimeAnalysis({ trades }: Props) {
       };
     });
 
-    // Sweet spot: highest avg P&L with ≥5 trades
+    // Sweet spot: highest avg P&L with >=5 trades
     const eligible = buckets.filter((b) => b.count >= 5);
     const sweetSpot = eligible.length
       ? eligible.reduce((a, b) => (b.avgPnl > a.avgPnl ? b : a))
@@ -176,7 +177,7 @@ export default function HoldTimeAnalysis({ trades }: Props) {
 
   if (trades.length === 0) {
     return (
-      <div className="card-panel p-5 text-center text-sm text-gray-500">
+      <div className="rounded-xl bg-surface-1 p-5 text-center text-sm text-tertiary">
         No trades to analyze.
       </div>
     );
@@ -184,7 +185,7 @@ export default function HoldTimeAnalysis({ trades }: Props) {
 
   if (points.length === 0) {
     return (
-      <div className="card-panel p-5 text-center text-sm text-gray-500">
+      <div className="rounded-xl bg-surface-1 p-5 text-center text-sm text-tertiary">
         No trades with valid entry &amp; exit times.
       </div>
     );
@@ -237,8 +238,8 @@ export default function HoldTimeAnalysis({ trades }: Props) {
   return (
     <div className="space-y-4">
       {/* ── Scatter plot ──────────────────────────────────────── */}
-      <div className="card-panel p-5">
-        <h3 className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider mb-4">
+      <div className="rounded-xl bg-surface-1 p-5">
+        <h3 className="text-[11px] font-semibold text-secondary uppercase tracking-wider mb-4">
           Hold Time vs P&L
         </h3>
 
@@ -254,7 +255,7 @@ export default function HoldTimeAnalysis({ trades }: Props) {
               y1={zeroY}
               x2={W - PAD.r}
               y2={zeroY}
-              stroke="rgba(107,114,128,0.2)"
+              stroke="rgba(255,255,255,0.04)"
               strokeWidth="1"
               strokeDasharray="4,4"
             />
@@ -265,7 +266,7 @@ export default function HoldTimeAnalysis({ trades }: Props) {
               y1={H - PAD.b}
               x2={W - PAD.r}
               y2={H - PAD.b}
-              stroke="rgba(107,114,128,0.3)"
+              stroke="rgba(255,255,255,0.04)"
               strokeWidth="1"
             />
 
@@ -275,7 +276,7 @@ export default function HoldTimeAnalysis({ trades }: Props) {
               y1={PAD.t}
               x2={PAD.l}
               y2={H - PAD.b}
-              stroke="rgba(107,114,128,0.3)"
+              stroke="rgba(255,255,255,0.04)"
               strokeWidth="1"
             />
 
@@ -287,13 +288,13 @@ export default function HoldTimeAnalysis({ trades }: Props) {
                   y1={H - PAD.b}
                   x2={toX(v)}
                   y2={H - PAD.b + 4}
-                  stroke="rgba(107,114,128,0.3)"
+                  stroke="rgba(255,255,255,0.04)"
                   strokeWidth="1"
                 />
                 <text
                   x={toX(v)}
                   y={H - PAD.b + 16}
-                  fill="#6b7280"
+                  fill="#52525b"
                   fontSize="9"
                   textAnchor="middle"
                   fontFamily="Inter, sans-serif"
@@ -311,13 +312,13 @@ export default function HoldTimeAnalysis({ trades }: Props) {
                   y1={toY(v)}
                   x2={PAD.l}
                   y2={toY(v)}
-                  stroke="rgba(107,114,128,0.3)"
+                  stroke="rgba(255,255,255,0.04)"
                   strokeWidth="1"
                 />
                 <text
                   x={PAD.l - 7}
                   y={toY(v) + 3}
-                  fill="#6b7280"
+                  fill="#52525b"
                   fontSize="9"
                   textAnchor="end"
                   fontFamily="Inter, sans-serif"
@@ -339,9 +340,9 @@ export default function HoldTimeAnalysis({ trades }: Props) {
                     cx={toX(p.holdMin)}
                     cy={toY(p.pnl)}
                     r={toR(p.positionSize)}
-                    fill={win ? "#00C853" : "#ef4444"}
+                    fill={win ? "#22c55e" : "#ef4444"}
                     fillOpacity={0.55}
-                    stroke={win ? "#00C853" : "#ef4444"}
+                    stroke={win ? "#22c55e" : "#ef4444"}
                     strokeWidth="1"
                     strokeOpacity={0.8}
                     className="cursor-pointer"
@@ -356,7 +357,7 @@ export default function HoldTimeAnalysis({ trades }: Props) {
           {/* Tooltip */}
           {tooltip && (
             <div
-              className="absolute z-50 pointer-events-none rounded-lg border border-gray-700 bg-gray-900/95 px-3 py-2.5 shadow-xl backdrop-blur-sm"
+              className="absolute z-50 pointer-events-none rounded-lg border border-border bg-surface-1/95 px-3 py-2.5 shadow-xl backdrop-blur-sm"
               style={{
                 left: tooltip.flipX
                   ? tooltip.x - 12
@@ -368,36 +369,37 @@ export default function HoldTimeAnalysis({ trades }: Props) {
               }}
             >
               <div className="flex items-baseline gap-2">
-                <span className="text-xs font-bold font-display text-white">
+                <span className="text-xs font-semibold text-primary">
                   {tooltip.point.trade.ticker}
                 </span>
-                <span className="text-[10px] text-gray-500">
+                <span className="text-[10px] text-tertiary">
                   {tooltip.point.trade.trade_date}
                 </span>
               </div>
               <div className="mt-1 space-y-0.5 text-[11px]">
-                <p className="text-gray-400">
+                <p className="text-secondary">
                   Hold:{" "}
-                  <span className="text-gray-200">
+                  <span className="text-primary">
                     {fmtHoldTime(tooltip.point.holdMin)}
                   </span>
                 </p>
-                <p className="text-gray-400">
+                <p className="text-secondary">
                   P&L:{" "}
                   <span
-                    className={
+                    className={cn(
+                      "font-mono",
                       tooltip.point.pnl >= 0
-                        ? "text-accent-400"
-                        : "text-red-400"
-                    }
+                        ? "text-profit"
+                        : "text-loss",
+                    )}
                   >
                     {fmtDollar(tooltip.point.pnl)}
                   </span>
                 </p>
                 {tooltip.point.trade.setup && (
-                  <p className="text-gray-400">
+                  <p className="text-secondary">
                     Setup:{" "}
-                    <span className="text-gray-200">
+                    <span className="text-primary">
                       {tooltip.point.trade.setup}
                     </span>
                   </p>
@@ -409,22 +411,23 @@ export default function HoldTimeAnalysis({ trades }: Props) {
       </div>
 
       {/* ── Bucketed stats ────────────────────────────────────── */}
-      <div className="card-panel p-5">
-        <h3 className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider mb-4">
+      <div className="rounded-xl bg-surface-1 p-5">
+        <h3 className="text-[11px] font-semibold text-secondary uppercase tracking-wider mb-4">
           Hold Time Breakdown
         </h3>
 
         <div className="overflow-x-auto">
-          <table className="trade-table w-full text-sm text-left">
+          <table className="w-full text-sm text-left">
             <thead>
-              <tr className="border-b border-gray-800">
+              <tr className="border-b border-border">
                 {["Duration", "Trades", "Win Rate", "Avg P&L", "Total P&L"].map(
                   (h, i) => (
                     <th
                       key={h}
-                      className={`text-[10px] text-gray-500 uppercase font-semibold tracking-wider pb-2 ${
-                        i > 0 ? "text-right" : ""
-                      }`}
+                      className={cn(
+                        "text-[10px] text-tertiary uppercase font-semibold tracking-wider pb-2",
+                        i > 0 && "text-right",
+                      )}
                     >
                       {h}
                     </th>
@@ -439,51 +442,55 @@ export default function HoldTimeAnalysis({ trades }: Props) {
                 return (
                   <tr
                     key={b.label}
-                    className={`border-b border-gray-800/50 ${
-                      isSweetSpot ? "bg-accent-500/5" : ""
-                    }`}
+                    className={cn(
+                      "border-b border-border hover:bg-surface-2 transition-colors",
+                      isSweetSpot && "bg-brand-muted",
+                    )}
                   >
-                    <td className="py-2.5 text-xs text-gray-300">
+                    <td className="py-2.5 text-xs text-secondary">
                       {b.label}
                       {isSweetSpot && (
-                        <span className="ml-2 px-1.5 py-0.5 rounded-full text-[10px] font-medium bg-accent-500/10 text-accent-400/80 border border-accent-500/20">
+                        <span className="ml-2 px-1.5 py-0.5 rounded-full text-[10px] font-medium bg-brand-muted text-profit border border-brand/20">
                           Sweet Spot
                         </span>
                       )}
                     </td>
-                    <td className="py-2.5 text-xs text-gray-400 text-right">
+                    <td className="py-2.5 text-xs text-secondary text-right">
                       {b.count}
                     </td>
                     <td
-                      className={`py-2.5 text-xs text-right font-medium ${
+                      className={cn(
+                        "py-2.5 text-xs text-right font-medium",
                         b.count === 0
-                          ? "text-gray-600"
+                          ? "text-tertiary"
                           : b.winRate >= 50
-                            ? "text-accent-400"
-                            : "text-red-400"
-                      }`}
+                            ? "text-profit"
+                            : "text-loss",
+                      )}
                     >
                       {b.count > 0 ? `${b.winRate.toFixed(0)}%` : "—"}
                     </td>
                     <td
-                      className={`py-2.5 text-xs text-right font-medium ${
+                      className={cn(
+                        "py-2.5 text-xs text-right font-medium font-mono",
                         b.count === 0
-                          ? "text-gray-600"
+                          ? "text-tertiary"
                           : b.avgPnl > 0
-                            ? "text-accent-400"
-                            : "text-red-400"
-                      }`}
+                            ? "text-profit"
+                            : "text-loss",
+                      )}
                     >
                       {b.count > 0 ? fmtDollar(b.avgPnl) : "—"}
                     </td>
                     <td
-                      className={`py-2.5 text-xs text-right font-medium ${
+                      className={cn(
+                        "py-2.5 text-xs text-right font-medium font-mono",
                         b.count === 0
-                          ? "text-gray-600"
+                          ? "text-tertiary"
                           : b.totalPnl > 0
-                            ? "text-accent-400"
-                            : "text-red-400"
-                      }`}
+                            ? "text-profit"
+                            : "text-loss",
+                      )}
                     >
                       {b.count > 0 ? fmtDollar(b.totalPnl) : "—"}
                     </td>
@@ -496,23 +503,23 @@ export default function HoldTimeAnalysis({ trades }: Props) {
       </div>
 
       {/* ── Auto-insights ─────────────────────────────────────── */}
-      <div className="card-panel p-5">
-        <h3 className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider mb-3">
+      <div className="rounded-xl bg-surface-1 p-5">
+        <h3 className="text-[11px] font-semibold text-secondary uppercase tracking-wider mb-3">
           Hold Time Insights
         </h3>
 
         <div className="space-y-2.5">
           {sweetSpot && (
             <div className="flex items-baseline gap-2">
-              <span className="text-[11px] font-semibold uppercase tracking-wider shrink-0 text-accent-400">
+              <span className="text-[11px] font-semibold uppercase tracking-wider shrink-0 text-profit">
                 Optimal hold
               </span>
-              <span className="text-xs text-gray-400">
+              <span className="text-xs text-secondary">
                 Your optimal hold time is{" "}
-                <span className="text-gray-200 font-medium">
+                <span className="text-primary font-medium">
                   {sweetSpot.label}
                 </span>{" "}
-                ({fmtDollar(sweetSpot.avgPnl)} avg P&L, {sweetSpot.count}{" "}
+                (<span className="font-mono">{fmtDollar(sweetSpot.avgPnl)}</span> avg P&L, {sweetSpot.count}{" "}
                 trades)
               </span>
             </div>
@@ -520,17 +527,17 @@ export default function HoldTimeAnalysis({ trades }: Props) {
 
           {insights.cutWinnersInsight && (
             <div className="flex items-baseline gap-2">
-              <span className="text-[11px] font-semibold uppercase tracking-wider shrink-0 text-amber-400">
+              <span className="text-[11px] font-semibold uppercase tracking-wider shrink-0 text-amber">
                 Cutting winners
               </span>
-              <span className="text-xs text-gray-400">
+              <span className="text-xs text-secondary">
                 {insights.cutWinnersInsight}
               </span>
             </div>
           )}
 
           {!sweetSpot && !insights.cutWinnersInsight && (
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-tertiary">
               Not enough data yet. Need at least 5 trades in a single
               hold-time bucket to generate insights.
             </p>

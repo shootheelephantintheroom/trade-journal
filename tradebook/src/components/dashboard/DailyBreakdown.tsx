@@ -6,27 +6,27 @@ export default function DailyBreakdown({
   dailyStats: DayStats[];
 }) {
   return (
-    <div className="card-panel p-5">
-      <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4">
+    <div className="rounded-xl bg-surface-1 p-5">
+      <h3 className="text-xs font-medium text-tertiary uppercase tracking-wider mb-4">
         Daily Breakdown
       </h3>
       <div className="overflow-x-auto">
-        <table className="trade-table w-full text-sm text-left">
+        <table className="w-full text-sm text-left">
           <thead>
-            <tr className="border-b border-gray-800">
-              <th className="pb-2.5 text-[10px] text-gray-500 uppercase font-semibold tracking-wider">
+            <tr className="border-b border-border">
+              <th className="pb-2.5 text-[10px] text-tertiary uppercase font-medium tracking-wider">
                 Date
               </th>
-              <th className="pb-2.5 text-[10px] text-gray-500 uppercase font-semibold tracking-wider">
+              <th className="pb-2.5 text-[10px] text-tertiary uppercase font-medium tracking-wider">
                 Trades
               </th>
-              <th className="pb-2.5 text-[10px] text-gray-500 uppercase font-semibold tracking-wider">
+              <th className="pb-2.5 text-[10px] text-tertiary uppercase font-medium tracking-wider">
                 W / L
               </th>
-              <th className="pb-2.5 text-[10px] text-gray-500 uppercase font-semibold tracking-wider">
+              <th className="pb-2.5 text-[10px] text-tertiary uppercase font-medium tracking-wider">
                 Win Rate
               </th>
-              <th className="pb-2.5 text-[10px] text-gray-500 uppercase font-semibold tracking-wider text-right">
+              <th className="pb-2.5 text-[10px] text-tertiary uppercase font-medium tracking-wider text-right">
                 P&L
               </th>
             </tr>
@@ -40,30 +40,30 @@ export default function DailyBreakdown({
               return (
                 <tr
                   key={day.date}
-                  className="border-t border-gray-800/40"
+                  className="border-t border-border hover:bg-surface-2 transition-colors"
                 >
-                  <td className="py-2.5 text-gray-300 text-xs">
+                  <td className="py-2.5 text-secondary text-xs">
                     {day.date}
                   </td>
-                  <td className="py-2.5 text-gray-300 text-xs">
+                  <td className="py-2.5 text-secondary text-xs">
                     {day.trades}
                   </td>
                   <td className="py-2.5 text-xs">
-                    <span className="text-accent-400 font-medium">
+                    <span className="text-profit font-medium">
                       {day.wins}
                     </span>
-                    <span className="text-gray-600"> / </span>
-                    <span className="text-red-400 font-medium">
+                    <span className="text-tertiary"> / </span>
+                    <span className="text-loss font-medium">
                       {day.losses}
                     </span>
                   </td>
-                  <td className="py-2.5 text-gray-300 text-xs">
+                  <td className="py-2.5 text-secondary text-xs">
                     {wr}%
                   </td>
                   <td
                     className={
-                      "py-2.5 text-right text-xs font-semibold " +
-                      (day.pnl >= 0 ? "text-accent-400" : "text-red-400")
+                      "py-2.5 text-right text-xs font-medium font-mono " +
+                      (day.pnl >= 0 ? "text-profit" : "text-loss")
                     }
                   >
                     {day.pnl >= 0 ? "+" : ""}${day.pnl.toFixed(2)}

@@ -5,6 +5,7 @@ import type { TradeFilters } from "../types/filters";
 import { calcPnl, calcRR } from "../lib/calc";
 import { useToast } from "./Toast";
 import TradeImport from "./TradeImport";
+import { cn } from "../lib/utils";
 
 function escapeCsvField(value: string): string {
   if (value.includes(",") || value.includes('"') || value.includes("\n")) {
@@ -90,6 +91,22 @@ function sortTrades(
     return dir === "asc" ? cmp : -cmp;
   });
   return sorted;
+}
+
+function gradeClasses(grade: string): string {
+  switch (grade) {
+    case "A":
+      return "bg-profit-muted text-profit";
+    case "B":
+      return "bg-brand-muted text-brand";
+    case "C":
+      return "bg-amber-muted text-amber";
+    case "D":
+    case "F":
+      return "bg-loss-muted text-loss";
+    default:
+      return "bg-surface-2 text-secondary";
+  }
 }
 
 export default function TradeList({
@@ -223,8 +240,8 @@ export default function TradeList({
   if (initialLoading) {
     return (
       <div className="flex flex-col items-center justify-center py-20 gap-3">
-        <div className="h-6 w-6 border-2 border-gray-600 border-t-accent-500 rounded-full animate-spin" />
-        <p className="text-sm text-gray-500">Loading trades...</p>
+        <div className="h-6 w-6 border-2 border-tertiary border-t-brand rounded-full animate-spin" />
+        <p className="text-sm text-tertiary">Loading trades...</p>
       </div>
     );
   }
@@ -237,19 +254,19 @@ export default function TradeList({
   if (totalCount === 0 && !hasActiveFilters) {
     return (
       <div className="flex flex-col items-center justify-center py-20 gap-4">
-        <div className="w-16 h-16 rounded-2xl bg-gray-900 border border-gray-800 flex items-center justify-center text-3xl">
+        <div className="w-16 h-16 rounded-2xl bg-surface-1 border border-border flex items-center justify-center text-3xl">
           📋
         </div>
-        <h2 className="text-lg font-bold text-white font-display">
+        <h2 className="text-lg font-semibold text-primary tracking-tight">
           No trades yet
         </h2>
-        <p className="text-sm text-gray-400 text-center max-w-xs">
+        <p className="text-sm text-secondary text-center max-w-xs">
           Start logging to see your trade history here.
         </p>
         {onLogTrade && (
           <button
             onClick={onLogTrade}
-            className="btn-submit mt-2 bg-accent-600 hover:bg-accent-500 text-white font-medium text-sm px-6 py-2.5 rounded-lg"
+            className="btn-submit mt-2 bg-brand hover:bg-brand text-primary font-medium text-sm px-6 py-2.5 rounded-lg"
           >
             Log Your First Trade
           </button>
@@ -269,9 +286,9 @@ export default function TradeList({
   }
 
   const SortIcon = ({ col }: { col: SortKey }) => {
-    if (sortKey !== col) return <span className="text-gray-700 ml-0.5">↕</span>;
+    if (sortKey !== col) return <span className="text-surface-3 ml-0.5">↕</span>;
     return (
-      <span className="text-accent-400 ml-0.5">
+      <span className="text-brand ml-0.5">
         {sortDir === "asc" ? "↑" : "↓"}
       </span>
     );
@@ -295,20 +312,21 @@ export default function TradeList({
       {/* Header bar */}
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div className="flex items-center gap-4">
-          <h2 className="text-xl font-bold text-white font-display tracking-tight">
+          <h2 className="text-xl font-semibold text-primary tracking-tight">
             Trade History
           </h2>
           <div className="flex items-center gap-1.5 text-xs">
-            <span className="text-gray-500">{totalCount} trades</span>
-            <span className="text-gray-700">·</span>
-            <span className="text-accent-400 font-medium">{pageWins}W</span>
-            <span className="text-gray-700">/</span>
-            <span className="text-red-400 font-medium">{pageLosses}L</span>
-            <span className="text-gray-700">·</span>
+            <span className="text-tertiary">{totalCount} trades</span>
+            <span className="text-surface-3">·</span>
+            <span className="text-profit font-medium">{pageWins}W</span>
+            <span className="text-surface-3">/</span>
+            <span className="text-loss font-medium">{pageLosses}L</span>
+            <span className="text-surface-3">·</span>
             <span
-              className={`font-semibold ${
-                pagePnl >= 0 ? "text-accent-400" : "text-red-400"
-              }`}
+              className={cn(
+                "font-semibold font-mono",
+                pagePnl >= 0 ? "text-profit" : "text-loss"
+              )}
             >
               {pagePnl >= 0 ? "+" : ""}${pagePnl.toFixed(2)}
             </span>
@@ -321,15 +339,16 @@ export default function TradeList({
               <button
                 key={f}
                 onClick={() => setResultFilter(f)}
-                className={`px-2.5 py-1 rounded-md text-[11px] font-medium transition-all ${
+                className={cn(
+                  "px-2.5 py-1 rounded-md text-[11px] font-medium transition-all",
                   resultFilter === f
                     ? f === "win"
-                      ? "bg-accent-500/15 text-accent-400 border border-accent-500/40"
+                      ? "bg-profit-muted text-profit border border-profit/40"
                       : f === "loss"
-                        ? "bg-red-500/15 text-red-400 border border-red-500/40"
-                        : "bg-gray-800 text-white border border-gray-600"
-                    : "text-gray-500 border border-transparent hover:text-gray-300"
-                }`}
+                        ? "bg-loss-muted text-loss border border-loss/40"
+                        : "bg-surface-2 text-primary border border-border"
+                    : "text-tertiary border border-transparent hover:text-secondary"
+                )}
               >
                 {f === "all" ? "All" : f === "win" ? "Wins" : "Losses"}
               </button>
@@ -339,7 +358,7 @@ export default function TradeList({
           <button
             onClick={handleExportCsv}
             disabled={exporting}
-            className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-white border border-gray-700/80 hover:border-gray-500 px-3 py-1.5 rounded-lg transition-colors disabled:opacity-50"
+            className="flex items-center gap-1.5 text-xs text-tertiary hover:text-primary border border-transparent hover:border-border-hover px-3 py-1.5 rounded-lg transition-colors disabled:opacity-50"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -356,10 +375,10 @@ export default function TradeList({
       </div>
 
       {/* Filter bar */}
-      <div className="card-panel p-3">
+      <div className="rounded-xl bg-surface-1 p-3">
         <div className="flex flex-wrap items-end gap-3">
           <div>
-            <label className="block text-[11px] text-gray-500 uppercase tracking-wider font-semibold mb-1">
+            <label className="block text-[11px] text-tertiary uppercase tracking-wider font-semibold mb-1">
               From
             </label>
             <input
@@ -369,11 +388,11 @@ export default function TradeList({
                 setFilters((f) => ({ ...f, dateFrom: e.target.value || undefined }));
                 setPage(1);
               }}
-              className="bg-gray-800/80 border border-gray-700/80 rounded-lg px-2.5 py-1.5 text-xs text-gray-300 focus:outline-none focus:border-accent-500/50"
+              className="bg-surface-2 border border-transparent hover:border-border-hover rounded-lg px-2.5 py-1.5 text-xs text-secondary focus:outline-none focus:border-brand"
             />
           </div>
           <div>
-            <label className="block text-[11px] text-gray-500 uppercase tracking-wider font-semibold mb-1">
+            <label className="block text-[11px] text-tertiary uppercase tracking-wider font-semibold mb-1">
               To
             </label>
             <input
@@ -383,11 +402,11 @@ export default function TradeList({
                 setFilters((f) => ({ ...f, dateTo: e.target.value || undefined }));
                 setPage(1);
               }}
-              className="bg-gray-800/80 border border-gray-700/80 rounded-lg px-2.5 py-1.5 text-xs text-gray-300 focus:outline-none focus:border-accent-500/50"
+              className="bg-surface-2 border border-transparent hover:border-border-hover rounded-lg px-2.5 py-1.5 text-xs text-secondary focus:outline-none focus:border-brand"
             />
           </div>
           <div>
-            <label className="block text-[11px] text-gray-500 uppercase tracking-wider font-semibold mb-1">
+            <label className="block text-[11px] text-tertiary uppercase tracking-wider font-semibold mb-1">
               Ticker
             </label>
             <input
@@ -395,11 +414,11 @@ export default function TradeList({
               placeholder="Search..."
               value={tickerInput}
               onChange={(e) => setTickerInput(e.target.value)}
-              className="bg-gray-800/80 border border-gray-700/80 rounded-lg px-2.5 py-1.5 text-xs text-gray-300 w-24 focus:outline-none focus:border-accent-500/50"
+              className="bg-surface-2 border border-transparent hover:border-border-hover rounded-lg px-2.5 py-1.5 text-xs text-secondary w-24 focus:outline-none focus:border-brand"
             />
           </div>
           <div>
-            <label className="block text-[11px] text-gray-500 uppercase tracking-wider font-semibold mb-1">
+            <label className="block text-[11px] text-tertiary uppercase tracking-wider font-semibold mb-1">
               Side
             </label>
             <div className="flex gap-1">
@@ -410,15 +429,16 @@ export default function TradeList({
                     setFilters((f) => ({ ...f, side: s === "all" ? undefined : s }));
                     setPage(1);
                   }}
-                  className={`px-2.5 py-1 rounded-md text-[11px] font-medium transition-all ${
+                  className={cn(
+                    "px-2.5 py-1 rounded-md text-[11px] font-medium transition-all",
                     (s === "all" && !filters.side) || filters.side === s
                       ? s === "long"
-                        ? "bg-accent-500/15 text-accent-400 border border-accent-500/40"
+                        ? "bg-profit-muted text-profit border border-profit/40"
                         : s === "short"
-                          ? "bg-red-500/15 text-red-400 border border-red-500/40"
-                          : "bg-gray-800 text-white border border-gray-600"
-                      : "text-gray-500 border border-transparent hover:text-gray-300"
-                  }`}
+                          ? "bg-loss-muted text-loss border border-loss/40"
+                          : "bg-surface-2 text-primary border border-border"
+                      : "text-tertiary border border-transparent hover:text-secondary"
+                  )}
                 >
                   {s === "all" ? "All" : s === "long" ? "Long" : "Short"}
                 </button>
@@ -426,7 +446,7 @@ export default function TradeList({
             </div>
           </div>
           <div>
-            <label className="block text-[11px] text-gray-500 uppercase tracking-wider font-semibold mb-1">
+            <label className="block text-[11px] text-tertiary uppercase tracking-wider font-semibold mb-1">
               Grade
             </label>
             <div className="flex gap-1">
@@ -437,19 +457,20 @@ export default function TradeList({
                     setFilters((f) => ({ ...f, grade: g === "all" ? undefined : g }));
                     setPage(1);
                   }}
-                  className={`px-2.5 py-1 rounded-md text-[11px] font-medium transition-all ${
+                  className={cn(
+                    "px-2.5 py-1 rounded-md text-[11px] font-medium transition-all",
                     (g === "all" && !filters.grade) || filters.grade === g
                       ? g === "A"
-                        ? "bg-accent-500/15 text-accent-400 border border-accent-500/40"
+                        ? "bg-profit-muted text-profit border border-profit/40"
                         : g === "B"
-                          ? "bg-blue-500/15 text-blue-400 border border-blue-500/40"
+                          ? "bg-brand-muted text-brand border border-brand/40"
                           : g === "C"
-                            ? "bg-yellow-500/15 text-yellow-400 border border-yellow-500/40"
+                            ? "bg-amber-muted text-amber border border-amber/40"
                             : g === "D"
-                              ? "bg-red-500/15 text-red-400 border border-red-500/40"
-                              : "bg-gray-800 text-white border border-gray-600"
-                      : "text-gray-500 border border-transparent hover:text-gray-300"
-                  }`}
+                              ? "bg-loss-muted text-loss border border-loss/40"
+                              : "bg-surface-2 text-primary border border-border"
+                      : "text-tertiary border border-transparent hover:text-secondary"
+                  )}
                 >
                   {g === "all" ? "All" : g}
                 </button>
@@ -463,7 +484,7 @@ export default function TradeList({
                 setTickerInput("");
                 setPage(1);
               }}
-              className="text-[11px] text-gray-500 hover:text-white transition-colors underline"
+              className="text-[11px] text-tertiary hover:text-primary transition-colors underline"
             >
               Clear filters
             </button>
@@ -473,51 +494,51 @@ export default function TradeList({
 
       {/* Table */}
       {sorted.length > 0 ? (
-        <div className={`card-panel overflow-hidden transition-opacity ${fetching ? "opacity-60" : ""}`}>
+        <div className={cn("rounded-xl bg-surface-1 overflow-hidden transition-opacity", fetching && "opacity-60")}>
           <div className="overflow-x-auto">
-            <table className="trade-table w-full text-sm text-left">
+            <table className="w-full text-sm text-left">
               <thead>
-                <tr className="border-b border-gray-800">
+                <tr className="border-b border-border">
                   <th
-                    className="px-4 py-3 text-[10px] text-gray-500 uppercase font-semibold tracking-wider cursor-pointer hover:text-gray-300 transition-colors"
+                    className="px-4 py-3 text-[10px] text-tertiary uppercase font-semibold tracking-wider cursor-pointer hover:text-secondary transition-colors"
                     onClick={() => toggleSort("date")}
                   >
                     Date <SortIcon col="date" />
                   </th>
                   <th
-                    className="px-4 py-3 text-[10px] text-gray-500 uppercase font-semibold tracking-wider cursor-pointer hover:text-gray-300 transition-colors"
+                    className="px-4 py-3 text-[10px] text-tertiary uppercase font-semibold tracking-wider cursor-pointer hover:text-secondary transition-colors"
                     onClick={() => toggleSort("ticker")}
                   >
                     Ticker <SortIcon col="ticker" />
                   </th>
-                  <th className="px-4 py-3 text-[10px] text-gray-500 uppercase font-semibold tracking-wider">
+                  <th className="px-4 py-3 text-[10px] text-tertiary uppercase font-semibold tracking-wider">
                     Side
                   </th>
-                  <th className="px-4 py-3 text-[10px] text-gray-500 uppercase font-semibold tracking-wider">
+                  <th className="px-4 py-3 text-[10px] text-tertiary uppercase font-semibold tracking-wider">
                     Entry
                   </th>
-                  <th className="px-4 py-3 text-[10px] text-gray-500 uppercase font-semibold tracking-wider">
+                  <th className="px-4 py-3 text-[10px] text-tertiary uppercase font-semibold tracking-wider">
                     Exit
                   </th>
-                  <th className="px-4 py-3 text-[10px] text-gray-500 uppercase font-semibold tracking-wider">
+                  <th className="px-4 py-3 text-[10px] text-tertiary uppercase font-semibold tracking-wider">
                     Shares
                   </th>
                   <th
-                    className="px-4 py-3 text-[10px] text-gray-500 uppercase font-semibold tracking-wider cursor-pointer hover:text-gray-300 transition-colors"
+                    className="px-4 py-3 text-[10px] text-tertiary uppercase font-semibold tracking-wider cursor-pointer hover:text-secondary transition-colors"
                     onClick={() => toggleSort("pnl")}
                   >
                     P&L <SortIcon col="pnl" />
                   </th>
-                  <th className="px-4 py-3 text-[10px] text-gray-500 uppercase font-semibold tracking-wider">
+                  <th className="px-4 py-3 text-[10px] text-tertiary uppercase font-semibold tracking-wider">
                     R:R
                   </th>
                   <th
-                    className="px-4 py-3 text-[10px] text-gray-500 uppercase font-semibold tracking-wider cursor-pointer hover:text-gray-300 transition-colors"
+                    className="px-4 py-3 text-[10px] text-tertiary uppercase font-semibold tracking-wider cursor-pointer hover:text-secondary transition-colors"
                     onClick={() => toggleSort("grade")}
                   >
                     Grade <SortIcon col="grade" />
                   </th>
-                  <th className="px-4 py-3 text-[10px] text-gray-500 uppercase font-semibold tracking-wider">
+                  <th className="px-4 py-3 text-[10px] text-tertiary uppercase font-semibold tracking-wider">
                     Setup / Tags
                   </th>
                 </tr>
@@ -535,74 +556,71 @@ export default function TradeList({
                         onClick={() =>
                           setExpandedId(isExpanded ? null : t.id)
                         }
-                        className={`border-t border-gray-800/40 cursor-pointer ${
-                          isExpanded ? "bg-gray-800/40" : ""
-                        }`}
+                        className={cn(
+                          "border-t border-border/40 cursor-pointer hover:bg-surface-2 transition-colors",
+                          isExpanded && "bg-surface-2/40"
+                        )}
                       >
-                        <td className="px-4 py-3 text-gray-400 text-xs">
+                        <td className="px-4 py-3 text-secondary text-xs">
                           {t.trade_date}
                         </td>
                         <td className="px-4 py-3">
                           <div className="flex items-center gap-1.5">
                             <span
-                              className={`w-1.5 h-1.5 rounded-full ${
-                                isWin ? "bg-accent-500" : "bg-red-500"
-                              }`}
+                              className={cn(
+                                "w-1.5 h-1.5 rounded-full",
+                                isWin ? "bg-brand" : "bg-loss"
+                              )}
                             />
-                            <span className="font-semibold text-white">
+                            <span className="font-semibold text-primary">
                               {t.ticker}
                             </span>
                           </div>
                         </td>
                         <td className="px-4 py-3">
                           <span
-                            className={`text-xs font-medium ${
+                            className={cn(
+                              "text-xs font-medium",
                               t.side === "long"
-                                ? "text-accent-400"
-                                : "text-red-400"
-                            }`}
+                                ? "text-profit"
+                                : "text-loss"
+                            )}
                           >
                             {t.side.toUpperCase()}
                           </span>
                         </td>
-                        <td className="px-4 py-3 text-gray-400 text-xs">
+                        <td className="px-4 py-3 text-secondary text-xs font-mono">
                           ${t.entry_price.toFixed(2)}
                         </td>
-                        <td className="px-4 py-3 text-gray-400 text-xs">
+                        <td className="px-4 py-3 text-secondary text-xs font-mono">
                           ${t.exit_price.toFixed(2)}
                         </td>
-                        <td className="px-4 py-3 text-gray-400 text-xs">
+                        <td className="px-4 py-3 text-secondary text-xs">
                           {t.shares}
                         </td>
                         <td
-                          className={
-                            "px-4 py-3 font-semibold text-sm " +
-                            (pl >= 0 ? "text-accent-400" : "text-red-400")
-                          }
+                          className={cn(
+                            "px-4 py-3 font-semibold font-mono text-sm",
+                            pl >= 0 ? "text-profit" : "text-loss"
+                          )}
                         >
                           {pl >= 0 ? "+" : ""}${pl.toFixed(2)}
                         </td>
-                        <td className="px-4 py-3 text-gray-400 text-xs">
+                        <td className="px-4 py-3 text-secondary text-xs font-mono">
                           {rr !== null ? `${rr.toFixed(1)}R` : "—"}
                         </td>
                         <td className="px-4 py-3">
                           {t.grade ? (
                             <span
-                              className={
-                                "inline-block w-6 text-center rounded text-xs font-bold py-0.5 " +
-                                (t.grade === "A"
-                                  ? "bg-accent-500/20 text-accent-400"
-                                  : t.grade === "B"
-                                    ? "bg-blue-500/20 text-blue-400"
-                                    : t.grade === "C"
-                                      ? "bg-yellow-500/20 text-yellow-400"
-                                      : "bg-red-500/20 text-red-400")
-                              }
+                              className={cn(
+                                "inline-block w-6 text-center rounded text-xs font-semibold py-0.5",
+                                gradeClasses(t.grade)
+                              )}
                             >
                               {t.grade}
                             </span>
                           ) : (
-                            <span className="text-gray-600">—</span>
+                            <span className="text-tertiary">—</span>
                           )}
                         </td>
                         <td className="px-4 py-3 max-w-[240px]">
@@ -611,14 +629,14 @@ export default function TradeList({
                               {t.tags.map((tag) => (
                                 <span
                                   key={tag}
-                                  className="px-1.5 py-0.5 rounded-full text-[10px] font-medium bg-accent-500/10 text-accent-400/80 border border-accent-500/20"
+                                  className="px-1.5 py-0.5 rounded-full text-[10px] font-medium bg-brand-muted text-brand/80 border border-brand/20"
                                 >
                                   {tag}
                                 </span>
                               ))}
                             </div>
                           )}
-                          <span className="text-gray-500 text-xs truncate block">
+                          <span className="text-tertiary text-xs truncate block">
                             {t.setup || "—"}
                           </span>
                         </td>
@@ -628,15 +646,15 @@ export default function TradeList({
                         <tr key={`${t.id}-detail`}>
                           <td
                             colSpan={10}
-                            className="px-4 py-0 bg-gray-800/20 border-t border-gray-800/30"
+                            className="px-4 py-0 bg-surface-2/20 border-t border-border/30"
                           >
                             <div className="trade-expand py-4 grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
                               {t.entry_time && (
                                 <div>
-                                  <span className="text-gray-500 uppercase tracking-wider text-[10px] font-semibold">
+                                  <span className="text-tertiary uppercase tracking-wider text-[10px] font-semibold">
                                     Time
                                   </span>
-                                  <p className="text-gray-300 mt-0.5">
+                                  <p className="text-secondary mt-0.5">
                                     {t.entry_time}
                                     {t.exit_time ? ` → ${t.exit_time}` : ""}
                                   </p>
@@ -644,34 +662,34 @@ export default function TradeList({
                               )}
                               {t.premarket_plan && (
                                 <div>
-                                  <span className="text-gray-500 uppercase tracking-wider text-[10px] font-semibold">
+                                  <span className="text-tertiary uppercase tracking-wider text-[10px] font-semibold">
                                     Pre-market Plan
                                   </span>
-                                  <p className="text-gray-300 mt-0.5">
+                                  <p className="text-secondary mt-0.5">
                                     {t.premarket_plan}
                                   </p>
                                 </div>
                               )}
                               {t.notes && (
                                 <div>
-                                  <span className="text-gray-500 uppercase tracking-wider text-[10px] font-semibold">
+                                  <span className="text-tertiary uppercase tracking-wider text-[10px] font-semibold">
                                     Notes
                                   </span>
-                                  <p className="text-gray-300 mt-0.5">
+                                  <p className="text-secondary mt-0.5">
                                     {t.notes}
                                   </p>
                                 </div>
                               )}
                               {t.emotions && (
                                 <div>
-                                  <span className="text-gray-500 uppercase tracking-wider text-[10px] font-semibold">
+                                  <span className="text-tertiary uppercase tracking-wider text-[10px] font-semibold">
                                     Emotions
                                   </span>
                                   <div className="flex flex-wrap gap-1 mt-1">
                                     {t.emotions.split(",").map((e) => (
                                       <span
                                         key={e.trim()}
-                                        className="emotion-pill"
+                                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-brand-muted border border-brand/20 text-brand"
                                       >
                                         {e.trim()}
                                       </span>
@@ -681,17 +699,17 @@ export default function TradeList({
                               )}
                               {t.stop_loss_price != null && (
                                 <div>
-                                  <span className="text-gray-500 uppercase tracking-wider text-[10px] font-semibold">
+                                  <span className="text-tertiary uppercase tracking-wider text-[10px] font-semibold">
                                     Stop Loss
                                   </span>
-                                  <p className="text-yellow-400 font-medium mt-0.5">
+                                  <p className="text-amber font-medium font-mono mt-0.5">
                                     ${Number(t.stop_loss_price).toFixed(2)}
                                   </p>
                                 </div>
                               )}
                               {t.screenshot_url && (
                                 <div className="md:col-span-2">
-                                  <span className="text-gray-500 uppercase tracking-wider text-[10px] font-semibold">
+                                  <span className="text-tertiary uppercase tracking-wider text-[10px] font-semibold">
                                     Chart Screenshot
                                   </span>
                                   <a
@@ -704,20 +722,20 @@ export default function TradeList({
                                     <img
                                       src={t.screenshot_url}
                                       alt={`${t.ticker} chart`}
-                                      className="max-h-[200px] rounded-lg border border-gray-700/80 hover:border-gray-500 transition-colors"
+                                      className="max-h-[200px] rounded-lg border border-border hover:border-border-hover transition-colors"
                                     />
                                   </a>
                                 </div>
                               )}
                               {/* Edit / Delete actions */}
-                              <div className="md:col-span-2 flex gap-2 pt-2 border-t border-gray-800/40">
+                              <div className="md:col-span-2 flex gap-2 pt-2 border-t border-border/40">
                                 <button
                                   type="button"
                                   onClick={(e) => {
                                     e.stopPropagation();
                                     onEdit?.(t);
                                   }}
-                                  className="px-3 py-1.5 rounded-lg text-xs font-medium bg-gray-800/80 border border-gray-700/80 text-gray-400 hover:text-white hover:border-gray-500 transition-colors"
+                                  className="px-3 py-1.5 rounded-lg text-xs font-medium bg-surface-2 border border-transparent text-secondary hover:text-primary hover:border-border-hover transition-colors"
                                 >
                                   Edit
                                 </button>
@@ -728,7 +746,7 @@ export default function TradeList({
                                     e.stopPropagation();
                                     handleDelete(t.id);
                                   }}
-                                  className="px-3 py-1.5 rounded-lg text-xs font-medium bg-gray-800/80 border border-gray-700/80 text-red-400 hover:bg-red-500/10 hover:border-red-500/40 transition-colors disabled:opacity-50"
+                                  className="px-3 py-1.5 rounded-lg text-xs font-medium bg-surface-2 border border-transparent text-loss hover:bg-loss-muted hover:border-loss/40 transition-colors disabled:opacity-50"
                                 >
                                   {deleting === t.id ? "Deleting..." : "Delete"}
                                 </button>
@@ -746,7 +764,7 @@ export default function TradeList({
         </div>
       ) : (
         <div className="text-center py-10">
-          <p className="text-sm text-gray-400">
+          <p className="text-sm text-secondary">
             {hasActiveFilters
               ? "No trades match your filters."
               : "No trades to show on this page."}
@@ -758,7 +776,7 @@ export default function TradeList({
                 setTickerInput("");
                 setPage(1);
               }}
-              className="text-xs text-accent-400 hover:text-accent-300 mt-2 transition-colors"
+              className="text-xs text-brand hover:text-brand mt-2 transition-colors"
             >
               Clear filters
             </button>
@@ -772,25 +790,27 @@ export default function TradeList({
           <button
             disabled={page <= 1}
             onClick={() => setPage((p) => p - 1)}
-            className={`px-2.5 py-1 rounded-md text-[11px] font-medium transition-all ${
+            className={cn(
+              "px-2.5 py-1 rounded-md text-[11px] font-medium transition-all",
               page <= 1
-                ? "text-gray-700 border border-transparent cursor-default"
-                : "text-gray-400 border border-gray-700/80 hover:text-white hover:border-gray-500"
-            }`}
+                ? "text-surface-3 border border-transparent cursor-default"
+                : "text-secondary border border-transparent hover:text-primary hover:border-border-hover"
+            )}
           >
             Previous
           </button>
-          <span className="text-[11px] text-gray-500">
+          <span className="text-[11px] text-tertiary">
             Page {page} of {totalPages}
           </span>
           <button
             disabled={page >= totalPages}
             onClick={() => setPage((p) => p + 1)}
-            className={`px-2.5 py-1 rounded-md text-[11px] font-medium transition-all ${
+            className={cn(
+              "px-2.5 py-1 rounded-md text-[11px] font-medium transition-all",
               page >= totalPages
-                ? "text-gray-700 border border-transparent cursor-default"
-                : "text-gray-400 border border-gray-700/80 hover:text-white hover:border-gray-500"
-            }`}
+                ? "text-surface-3 border border-transparent cursor-default"
+                : "text-secondary border border-transparent hover:text-primary hover:border-border-hover"
+            )}
           >
             Next
           </button>

@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { cn } from "../../lib/utils";
 import type { Trade } from "../../types/trade";
 import { calcNetPnl } from "../../lib/calc";
 
@@ -153,7 +154,7 @@ export default function TimeOfDayAnalysis({ trades }: Props) {
 
   if (trades.length === 0) {
     return (
-      <div className="card-panel p-5 text-center text-sm text-gray-500">
+      <div className="rounded-xl bg-surface-1 p-5 text-center text-sm text-tertiary">
         No trades to analyze.
       </div>
     );
@@ -170,8 +171,8 @@ export default function TimeOfDayAnalysis({ trades }: Props) {
   return (
     <div className="space-y-4">
       {/* ── Bar chart ───────────────────────────────────────── */}
-      <div className="card-panel p-5">
-        <h3 className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider mb-4">
+      <div className="rounded-xl bg-surface-1 p-5">
+        <h3 className="text-[11px] font-semibold text-secondary uppercase tracking-wider mb-4">
           P&L by Time of Day
         </h3>
 
@@ -186,7 +187,7 @@ export default function TimeOfDayAnalysis({ trades }: Props) {
             y1={PAD.t}
             x2={centerX}
             y2={H - PAD.b}
-            stroke="rgba(107,114,128,0.25)"
+            stroke="rgba(255,255,255,0.04)"
             strokeWidth="1"
             strokeDasharray="3,3"
           />
@@ -201,7 +202,7 @@ export default function TimeOfDayAnalysis({ trades }: Props) {
                 : 0;
             const isProfit = b.netPnl >= 0;
             const barX = isProfit ? centerX : centerX - barW;
-            const barColor = isProfit ? "#00C853" : "#ef4444";
+            const barColor = isProfit ? "#22c55e" : "#ef4444";
 
             return (
               <g key={b.startMin}>
@@ -254,7 +255,7 @@ export default function TimeOfDayAnalysis({ trades }: Props) {
                     fontSize="10"
                     fontWeight="600"
                     textAnchor={isProfit ? "start" : "end"}
-                    fontFamily="Space Grotesk, sans-serif"
+                    fontFamily="ui-monospace, SFMono-Regular, monospace"
                   >
                     {fmtDollar(b.netPnl)}
                   </text>
@@ -264,7 +265,7 @@ export default function TimeOfDayAnalysis({ trades }: Props) {
                 <text
                   x={W - PAD.r + 8}
                   y={cy + 4}
-                  fill="#6b7280"
+                  fill="#52525b"
                   fontSize="9.5"
                   textAnchor="start"
                   fontFamily="Inter, sans-serif"
@@ -280,8 +281,8 @@ export default function TimeOfDayAnalysis({ trades }: Props) {
       </div>
 
       {/* ── First 30 min vs Rest of Day ─────────────────────── */}
-      <div className="card-panel p-5">
-        <h3 className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider mb-4">
+      <div className="rounded-xl bg-surface-1 p-5">
+        <h3 className="text-[11px] font-semibold text-secondary uppercase tracking-wider mb-4">
           First 30 min vs Rest of Day
         </h3>
 
@@ -300,42 +301,42 @@ export default function TimeOfDayAnalysis({ trades }: Props) {
       </div>
 
       {/* ── Key Insights ────────────────────────────────────── */}
-      <div className="card-panel p-5">
-        <h3 className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider mb-3">
+      <div className="rounded-xl bg-surface-1 p-5">
+        <h3 className="text-[11px] font-semibold text-secondary uppercase tracking-wider mb-3">
           Key Insights
         </h3>
 
         <div className="space-y-2.5">
           {insights.best && insights.best.count > 0 && (
             <InsightRow
-              color="text-accent-400"
+              color="text-profit"
               label="Best window"
               value={`${insights.best.label} — avg ${fmtDollar(insights.best.avgPnl)}/trade`}
             />
           )}
           {insights.worst && insights.worst.count > 0 && (
             <InsightRow
-              color="text-red-400"
+              color="text-loss"
               label="Worst window"
               value={`${insights.worst.label} — avg ${fmtDollar(insights.worst.avgPnl)}/trade`}
             />
           )}
           {insights.mostActive && insights.mostActive.count > 0 && (
             <InsightRow
-              color="text-blue-400"
+              color="text-brand"
               label="Most active"
               value={`${insights.mostActive.label} — ${insights.mostActive.count} trades`}
             />
           )}
           {insights.dangerZones.length > 0 && (
-            <div className="mt-3 rounded-lg border border-red-500/20 bg-red-500/5 px-3 py-2.5">
-              <p className="text-[11px] font-semibold text-red-400 uppercase tracking-wider mb-1.5">
+            <div className="mt-3 rounded-lg border border-loss/20 bg-loss-muted px-3 py-2.5">
+              <p className="text-[11px] font-semibold text-loss uppercase tracking-wider mb-1.5">
                 Danger Zones
               </p>
               {insights.dangerZones.map((dz) => (
                 <p
                   key={dz.startMin}
-                  className="text-xs text-red-300/80"
+                  className="text-xs text-loss/80"
                 >
                   {dz.label} — {dz.winRate.toFixed(0)}% win rate
                   across {dz.count} trades
@@ -344,7 +345,7 @@ export default function TimeOfDayAnalysis({ trades }: Props) {
             </div>
           )}
           {!insights.best?.count && (
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-tertiary">
               Not enough data to generate insights.
             </p>
           )}
@@ -372,35 +373,35 @@ function ComparisonColumn({
 }) {
   const pnlColor =
     stats.totalPnl > 0
-      ? "text-accent-400"
+      ? "text-profit"
       : stats.totalPnl < 0
-        ? "text-red-400"
-        : "text-gray-400";
+        ? "text-loss"
+        : "text-secondary";
 
   return (
-    <div className="rounded-xl border border-gray-800/80 bg-gray-900/60 p-4">
-      <p className="text-xs font-semibold text-white">{title}</p>
-      <p className="text-[10px] text-gray-500 mb-3">{subtitle}</p>
+    <div className="rounded-xl border border-border bg-surface-1 p-4">
+      <p className="text-xs font-semibold text-primary">{title}</p>
+      <p className="text-[10px] text-tertiary mb-3">{subtitle}</p>
 
       <div className="space-y-2">
         <StatRow label="Total P&L" value={fmtDollar(stats.totalPnl)} color={pnlColor} />
         <StatRow
           label="Win Rate"
           value={stats.count > 0 ? `${stats.winRate.toFixed(1)}%` : "—"}
-          color={stats.winRate >= 50 ? "text-accent-400" : "text-red-400"}
+          color={stats.winRate >= 50 ? "text-profit" : "text-loss"}
         />
         <StatRow
           label="Avg Trade"
           value={stats.count > 0 ? fmtDollar(stats.avgTrade) : "—"}
           color={
             stats.avgTrade > 0
-              ? "text-accent-400"
+              ? "text-profit"
               : stats.avgTrade < 0
-                ? "text-red-400"
-                : "text-gray-400"
+                ? "text-loss"
+                : "text-secondary"
           }
         />
-        <StatRow label="Trades" value={String(stats.count)} color="text-gray-300" />
+        <StatRow label="Trades" value={String(stats.count)} color="text-secondary" />
       </div>
     </div>
   );
@@ -417,10 +418,10 @@ function StatRow({
 }) {
   return (
     <div className="flex items-center justify-between">
-      <span className="text-[11px] text-gray-500 uppercase tracking-wider">
+      <span className="text-[11px] text-tertiary uppercase tracking-wider">
         {label}
       </span>
-      <span className={`text-sm font-bold font-display ${color}`}>
+      <span className={cn("text-sm font-semibold font-mono", color)}>
         {value}
       </span>
     </div>
@@ -439,11 +440,14 @@ function InsightRow({
   return (
     <div className="flex items-baseline gap-2">
       <span
-        className={`text-[11px] font-semibold uppercase tracking-wider shrink-0 ${color}`}
+        className={cn(
+          "text-[11px] font-semibold uppercase tracking-wider shrink-0",
+          color,
+        )}
       >
         {label}
       </span>
-      <span className="text-xs text-gray-400">{value}</span>
+      <span className="text-xs text-secondary">{value}</span>
     </div>
   );
 }

@@ -1,6 +1,7 @@
 import { useState, type ReactNode } from "react";
 import { useSubscription } from "../contexts/SubscriptionContext";
 import { startProTrial, invokeEdgeFunction } from "../lib/subscription";
+import { cn } from "../lib/utils";
 
 interface PaywallGateProps {
   feature: string;
@@ -59,11 +60,11 @@ export default function PaywallGate({ feature, children }: PaywallGateProps) {
 
   return (
     <div className="flex items-center justify-center py-16 px-4">
-      <div className="w-full max-w-md rounded-xl border border-gray-800/80 bg-gray-900/60 p-8 text-center">
+      <div className="w-full max-w-md rounded-xl border border-border bg-surface-1 p-8 text-center">
         {/* Icon */}
-        <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-accent-500/10 border border-accent-500/20">
+        <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-brand-muted">
           <svg
-            className="h-6 w-6 text-accent-400"
+            className="h-6 w-6 text-brand"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -78,22 +79,22 @@ export default function PaywallGate({ feature, children }: PaywallGateProps) {
         </div>
 
         {/* Heading */}
-        <h3 className="text-lg font-bold font-display text-white mb-1">
+        <h3 className="text-lg font-semibold text-primary mb-1">
           Unlock {feature}
         </h3>
-        <p className="text-sm text-gray-400 mb-1">
+        <p className="text-sm text-secondary mb-1">
           {statusMessage}
         </p>
-        <p className="text-sm text-gray-500 mb-6">
+        <p className="text-sm text-tertiary mb-6">
           Upgrade to Pro for the full trading toolkit.
         </p>
 
         {/* Feature list */}
         <ul className="text-left space-y-2 mb-8">
           {PRO_FEATURES.map((f) => (
-            <li key={f} className="flex items-start gap-2 text-sm text-gray-300">
+            <li key={f} className="flex items-start gap-2 text-sm text-secondary">
               <svg
-                className="mt-0.5 h-4 w-4 shrink-0 text-accent-500"
+                className="mt-0.5 h-4 w-4 shrink-0 text-brand"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -129,40 +130,42 @@ export default function PaywallGate({ feature, children }: PaywallGateProps) {
               }
             }}
             disabled={trialLoading}
-            className="mb-4 w-full rounded-xl border border-accent-500/30 bg-accent-500/10 px-6 py-3 text-sm font-semibold text-accent-400 transition-all hover:bg-accent-500/20 hover:shadow-[0_0_24px_rgba(0,200,83,0.15)] active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed"
+            className="mb-4 w-full rounded-xl border border-brand/20 bg-brand-muted px-6 py-3 text-sm font-medium text-brand transition-all hover:bg-brand/15 active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed"
           >
             {trialLoading ? "Starting trial..." : "Start 14-day free trial"}
           </button>
         )}
 
         {/* Plan toggle */}
-        <div className="mb-4 flex items-center justify-center gap-1 rounded-lg bg-gray-800/60 p-1">
+        <div className="mb-4 flex items-center justify-center gap-1 rounded-lg bg-surface-2 p-1">
           <button
             type="button"
             onClick={() => setPlan("monthly")}
-            className={`flex-1 rounded-md px-4 py-2 text-sm font-medium transition-colors ${
+            className={cn(
+              "flex-1 rounded-md px-4 py-2 text-sm font-medium transition-colors",
               plan === "monthly"
-                ? "bg-gray-700 text-white shadow-sm"
-                : "text-gray-400 hover:text-gray-300"
-            }`}
+                ? "bg-surface-3 text-primary"
+                : "text-tertiary hover:text-secondary"
+            )}
           >
             Monthly
           </button>
           <button
             type="button"
             onClick={() => setPlan("yearly")}
-            className={`flex-1 rounded-md px-4 py-2 text-sm font-medium transition-colors ${
+            className={cn(
+              "flex-1 rounded-md px-4 py-2 text-sm font-medium transition-colors",
               plan === "yearly"
-                ? "bg-gray-700 text-white shadow-sm"
-                : "text-gray-400 hover:text-gray-300"
-            }`}
+                ? "bg-surface-3 text-primary"
+                : "text-tertiary hover:text-secondary"
+            )}
           >
             Yearly
           </button>
         </div>
 
         {plan === "yearly" && (
-          <p className="mb-3 text-xs font-medium text-accent-400">
+          <p className="mb-3 text-xs font-medium text-profit">
             Save 28% with annual billing
           </p>
         )}
@@ -171,7 +174,7 @@ export default function PaywallGate({ feature, children }: PaywallGateProps) {
         <button
           onClick={handleUpgrade}
           disabled={loading}
-          className="w-full rounded-xl bg-accent-500 px-6 py-3 text-sm font-semibold text-gray-950 transition-all hover:bg-accent-400 hover:shadow-[0_0_24px_rgba(0,200,83,0.25)] active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed"
+          className="w-full rounded-xl bg-brand px-6 py-3 text-sm font-medium text-primary transition-all hover:bg-brand/90 active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed"
         >
           {loading
             ? "Redirecting..."
@@ -180,7 +183,7 @@ export default function PaywallGate({ feature, children }: PaywallGateProps) {
               : "Upgrade to Pro — $249/yr"}
         </button>
 
-        <p className="mt-3 text-[11px] text-gray-600">
+        <p className="mt-3 text-[11px] text-tertiary">
           {statusMessage}
         </p>
       </div>

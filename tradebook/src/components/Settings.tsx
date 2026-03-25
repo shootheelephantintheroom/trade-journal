@@ -5,6 +5,7 @@ import { useAuth } from "../contexts/AuthContext";
 import { useSubscription } from "../contexts/SubscriptionContext";
 import { startProTrial, invokeEdgeFunction } from "../lib/subscription";
 import { useToast } from "./Toast";
+import { cn } from "../lib/utils";
 
 const TIMEZONES = [
   { value: "America/New_York", label: "Eastern (ET)" },
@@ -20,9 +21,9 @@ const TIMEZONES = [
 ];
 
 const inputClass =
-  "w-full rounded-lg border border-gray-700/80 bg-gray-800/80 px-3 py-2.5 text-sm text-white placeholder-gray-500 focus:border-accent-500 focus:outline-none transition-colors";
+  "w-full rounded-lg border border-transparent bg-surface-2 px-3 py-2.5 text-sm text-primary placeholder-tertiary hover:border-border-hover focus:border-brand focus:outline-none transition-colors";
 const labelClass =
-  "block text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-1.5";
+  "block text-[11px] font-medium text-tertiary uppercase tracking-wider mb-1.5";
 
 export default function Settings() {
   const { user, signOut } = useAuth();
@@ -197,28 +198,31 @@ export default function Settings() {
   }
 
   function planBadgeClass() {
-    if (isTrialing) return "bg-amber-500/15 text-amber-400 border-amber-500/30";
-    if (isPro) return "bg-accent-500/15 text-accent-400 border-accent-500/30";
-    return "bg-gray-700/40 text-gray-400 border-gray-600/30";
+    if (isTrialing) return "bg-amber-muted text-amber border-amber/20";
+    if (isPro) return "bg-brand-muted text-brand border-brand/20";
+    return "bg-surface-2 text-tertiary border-border";
   }
 
   return (
     <div className="max-w-lg mx-auto space-y-6">
       <button
         onClick={() => navigate(-1)}
-        className="text-sm text-gray-500 hover:text-gray-300 transition-colors"
+        className="text-sm text-tertiary hover:text-secondary transition-colors"
       >
         &larr; Back
       </button>
 
-      <h2 className="text-xl font-bold text-white">Account Settings</h2>
+      <h2 className="text-xl font-semibold text-primary">Account Settings</h2>
 
       {/* Plan Status */}
-      <div className="card-panel p-5 space-y-4">
-        <h3 className="text-sm font-semibold text-white">Current Plan</h3>
+      <div className="rounded-xl bg-surface-1 p-5 space-y-4">
+        <h3 className="text-sm font-semibold text-primary">Current Plan</h3>
         <div className="flex items-center gap-3">
           <span
-            className={`inline-block px-2.5 py-1 rounded-md text-xs font-semibold border ${planBadgeClass()}`}
+            className={cn(
+              "inline-block px-2.5 py-1 rounded-md text-xs font-medium border",
+              planBadgeClass()
+            )}
           >
             {planLabel()}
           </span>
@@ -226,7 +230,7 @@ export default function Settings() {
 
         {/* Subscription renewal / cancellation info for Pro users */}
         {isPro && !isTrialing && subscription?.current_period_end && (
-          <p className="text-sm text-gray-400">
+          <p className="text-sm text-secondary">
             {subscription.cancel_at_period_end
               ? `Your subscription will be cancelled on ${formatRenewalDate(subscription.current_period_end)}`
               : `Your subscription will auto renew on ${formatRenewalDate(subscription.current_period_end)}`}
@@ -235,14 +239,14 @@ export default function Settings() {
 
         {/* Trial info */}
         {isTrialing && (
-          <p className="text-sm text-gray-400">
+          <p className="text-sm text-secondary">
             Free trial · {daysLeftInTrial} day{daysLeftInTrial !== 1 ? "s" : ""} remaining
           </p>
         )}
 
         {/* Free user prompt */}
         {!isPro && !isTrialing && (
-          <p className="text-sm text-gray-400">
+          <p className="text-sm text-secondary">
             Upgrade to unlock all features
           </p>
         )}
@@ -253,7 +257,7 @@ export default function Settings() {
             <button
               onClick={handleStartTrial}
               disabled={startingTrial}
-              className="bg-accent-600 hover:bg-accent-500 disabled:opacity-40 text-white font-medium text-sm px-4 py-2 rounded-lg transition-colors"
+              className="bg-brand hover:bg-brand/90 disabled:opacity-40 text-primary font-medium text-sm px-4 py-2 rounded-lg transition-colors"
             >
               {startingTrial ? "Starting..." : "Start 14-Day Pro Trial"}
             </button>
@@ -262,7 +266,7 @@ export default function Settings() {
             <button
               onClick={handleManageSubscription}
               disabled={managingSubscription}
-              className="bg-gray-700 hover:bg-gray-600 disabled:opacity-40 text-white font-medium text-sm px-4 py-2 rounded-lg transition-colors"
+              className="bg-surface-2 hover:bg-surface-3 disabled:opacity-40 text-primary font-medium text-sm px-4 py-2 rounded-lg transition-colors"
             >
               {managingSubscription ? "Opening..." : "Manage Subscription"}
             </button>
@@ -271,8 +275,8 @@ export default function Settings() {
       </div>
 
       {/* Display Name */}
-      <div className="card-panel p-5 space-y-3">
-        <h3 className="text-sm font-semibold text-white">Display Name</h3>
+      <div className="rounded-xl bg-surface-1 p-5 space-y-3">
+        <h3 className="text-sm font-semibold text-primary">Display Name</h3>
         <div>
           <label className={labelClass}>Name</label>
           <input
@@ -285,16 +289,16 @@ export default function Settings() {
         <button
           onClick={handleUpdateName}
           disabled={savingName || !displayName.trim()}
-          className="bg-accent-600 hover:bg-accent-500 disabled:opacity-40 text-white font-medium text-sm px-4 py-2 rounded-lg transition-colors"
+          className="bg-brand hover:bg-brand/90 disabled:opacity-40 text-primary font-medium text-sm px-4 py-2 rounded-lg transition-colors"
         >
           {savingName ? "Saving..." : "Save Name"}
         </button>
       </div>
 
       {/* Email */}
-      <div className="card-panel p-5 space-y-3">
-        <h3 className="text-sm font-semibold text-white">Email Address</h3>
-        <p className="text-xs text-gray-500">
+      <div className="rounded-xl bg-surface-1 p-5 space-y-3">
+        <h3 className="text-sm font-semibold text-primary">Email Address</h3>
+        <p className="text-xs text-tertiary">
           Current: {user?.email ?? "—"}
         </p>
         <div>
@@ -310,15 +314,15 @@ export default function Settings() {
         <button
           onClick={handleUpdateEmail}
           disabled={savingEmail || !newEmail.trim()}
-          className="bg-accent-600 hover:bg-accent-500 disabled:opacity-40 text-white font-medium text-sm px-4 py-2 rounded-lg transition-colors"
+          className="bg-brand hover:bg-brand/90 disabled:opacity-40 text-primary font-medium text-sm px-4 py-2 rounded-lg transition-colors"
         >
           {savingEmail ? "Sending..." : "Change Email"}
         </button>
       </div>
 
       {/* Password */}
-      <div className="card-panel p-5 space-y-3">
-        <h3 className="text-sm font-semibold text-white">Password</h3>
+      <div className="rounded-xl bg-surface-1 p-5 space-y-3">
+        <h3 className="text-sm font-semibold text-primary">Password</h3>
         <div>
           <label className={labelClass}>New Password</label>
           <input
@@ -342,15 +346,15 @@ export default function Settings() {
         <button
           onClick={handleUpdatePassword}
           disabled={savingPassword || !newPassword}
-          className="bg-accent-600 hover:bg-accent-500 disabled:opacity-40 text-white font-medium text-sm px-4 py-2 rounded-lg transition-colors"
+          className="bg-brand hover:bg-brand/90 disabled:opacity-40 text-primary font-medium text-sm px-4 py-2 rounded-lg transition-colors"
         >
           {savingPassword ? "Updating..." : "Update Password"}
         </button>
       </div>
 
       {/* Timezone */}
-      <div className="card-panel p-5 space-y-3">
-        <h3 className="text-sm font-semibold text-white">Timezone</h3>
+      <div className="rounded-xl bg-surface-1 p-5 space-y-3">
+        <h3 className="text-sm font-semibold text-primary">Timezone</h3>
         <div>
           <label className={labelClass}>Timezone</label>
           <select
@@ -371,16 +375,16 @@ export default function Settings() {
         <button
           onClick={handleUpdateTimezone}
           disabled={savingTimezone}
-          className="bg-accent-600 hover:bg-accent-500 disabled:opacity-40 text-white font-medium text-sm px-4 py-2 rounded-lg transition-colors"
+          className="bg-brand hover:bg-brand/90 disabled:opacity-40 text-primary font-medium text-sm px-4 py-2 rounded-lg transition-colors"
         >
           {savingTimezone ? "Saving..." : "Save Timezone"}
         </button>
       </div>
 
       {/* Danger Zone */}
-      <div className="card-panel border-red-900/50 p-5 space-y-3">
-        <h3 className="text-sm font-semibold text-red-400">Danger Zone</h3>
-        <p className="text-xs text-gray-500">
+      <div className="rounded-xl bg-surface-1 border border-loss/20 p-5 space-y-3">
+        <h3 className="text-sm font-semibold text-loss">Danger Zone</h3>
+        <p className="text-xs text-tertiary">
           Permanently delete your account and all data. This cannot be undone.
         </p>
         <div>
@@ -397,7 +401,7 @@ export default function Settings() {
         <button
           onClick={handleDeleteAccount}
           disabled={deleteConfirm !== "DELETE" || deleting}
-          className="bg-red-600 hover:bg-red-500 disabled:opacity-40 text-white font-medium text-sm px-4 py-2 rounded-lg transition-colors"
+          className="bg-loss hover:bg-loss/90 disabled:opacity-40 text-primary font-medium text-sm px-4 py-2 rounded-lg transition-colors"
         >
           {deleting ? "Deleting..." : "Delete Account"}
         </button>

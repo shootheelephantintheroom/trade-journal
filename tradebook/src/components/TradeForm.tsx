@@ -6,6 +6,7 @@ import TagSelect from "./TagSelect";
 import { useToast } from "./Toast";
 import { todayLocal } from "../lib/date";
 import { useSubscription } from "../contexts/SubscriptionContext";
+import { cn } from "../lib/utils";
 
 const ALLOWED_TYPES = ["image/png", "image/jpeg", "image/webp"];
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
@@ -59,15 +60,15 @@ const empty: TradeInsert = {
 };
 
 const GRADES = [
-  { value: "A", label: "A", desc: "Textbook", bg: "bg-accent-500/15", border: "border-accent-500", text: "text-accent-400", activeBg: "bg-accent-500/25" },
-  { value: "B", label: "B", desc: "Good", bg: "bg-blue-500/15", border: "border-blue-500", text: "text-blue-400", activeBg: "bg-blue-500/25" },
-  { value: "C", label: "C", desc: "Sloppy", bg: "bg-yellow-500/15", border: "border-yellow-500", text: "text-yellow-400", activeBg: "bg-yellow-500/25" },
-  { value: "D", label: "D", desc: "Broke rules", bg: "bg-red-500/15", border: "border-red-500", text: "text-red-400", activeBg: "bg-red-500/25" },
+  { value: "A", label: "A", desc: "Textbook", bg: "bg-profit-muted", border: "border-profit", text: "text-profit", activeBg: "bg-profit-muted" },
+  { value: "B", label: "B", desc: "Good", bg: "bg-brand-muted", border: "border-brand", text: "text-brand", activeBg: "bg-brand-muted" },
+  { value: "C", label: "C", desc: "Sloppy", bg: "bg-amber-muted", border: "border-amber", text: "text-amber", activeBg: "bg-amber-muted" },
+  { value: "D", label: "D", desc: "Broke rules", bg: "bg-loss-muted", border: "border-loss", text: "text-loss", activeBg: "bg-loss-muted" },
 ] as const;
 
 const chevronSvg = (open: boolean) => (
   <svg
-    className={`h-4 w-4 text-gray-500 transition-transform ${open ? "rotate-180" : ""}`}
+    className={cn("h-4 w-4 text-tertiary transition-transform", open && "rotate-180")}
     fill="none"
     viewBox="0 0 24 24"
     stroke="currentColor"
@@ -245,28 +246,28 @@ export default function TradeForm({
   }
 
   const inputClass =
-    "w-full rounded-lg border border-gray-700/80 bg-gray-800/80 px-3 py-2.5 text-sm text-white placeholder-gray-500 focus:border-accent-500 focus:outline-none transition-colors";
+    "w-full rounded-lg border border-transparent bg-surface-2 px-3 py-2.5 text-sm text-primary placeholder-tertiary hover:border-border-hover focus:border-brand focus:outline-none transition-colors";
   const labelClass =
-    "block text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-1.5";
+    "block text-[11px] font-medium text-tertiary uppercase tracking-wider mb-1.5";
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <h2 className="text-xl font-bold text-white font-display tracking-tight">
+      <h2 className="text-xl font-semibold text-primary tracking-tight">
         {editTrade ? "Edit Trade" : "Log a Trade"}
       </h2>
       {editTrade && (
         <button
           type="button"
           onClick={() => onEditDone?.()}
-          className="text-xs text-gray-500 hover:text-gray-300 transition-colors"
+          className="text-xs text-tertiary hover:text-secondary transition-colors"
         >
           Cancel edit
         </button>
       )}
 
-      {/* ── Section 1: Trade Details (always open) ── */}
-      <div className="card-panel p-5 space-y-4">
-        <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
+      {/* -- Section 1: Trade Details (always open) -- */}
+      <div className="rounded-xl bg-surface-1 p-5 space-y-4">
+        <h3 className="text-xs font-semibold text-secondary uppercase tracking-wider">
           Trade Details
         </h3>
 
@@ -288,22 +289,24 @@ export default function TradeForm({
               <button
                 type="button"
                 onClick={() => set("side", "long")}
-                className={`flex-1 py-2.5 rounded-lg text-sm font-semibold transition-all ${
+                className={cn(
+                  "flex-1 py-2.5 rounded-lg text-sm font-semibold transition-all",
                   form.side === "long"
-                    ? "bg-accent-500/15 border border-accent-500 text-accent-400"
-                    : "bg-gray-800/80 border border-gray-700/80 text-gray-400 hover:border-gray-600"
-                }`}
+                    ? "bg-profit-muted border border-profit text-profit"
+                    : "bg-surface-2 border border-transparent text-secondary hover:border-border-hover"
+                )}
               >
                 Long
               </button>
               <button
                 type="button"
                 onClick={() => set("side", "short")}
-                className={`flex-1 py-2.5 rounded-lg text-sm font-semibold transition-all ${
+                className={cn(
+                  "flex-1 py-2.5 rounded-lg text-sm font-semibold transition-all",
                   form.side === "short"
-                    ? "bg-red-500/15 border border-red-500 text-red-400"
-                    : "bg-gray-800/80 border border-gray-700/80 text-gray-400 hover:border-gray-600"
-                }`}
+                    ? "bg-loss-muted border border-loss text-loss"
+                    : "bg-surface-2 border border-transparent text-secondary hover:border-border-hover"
+                )}
               >
                 Short
               </button>
@@ -377,48 +380,48 @@ export default function TradeForm({
 
         {/* P&L Preview */}
         {pnl !== null && (
-          <div className="rounded-lg border border-gray-700/60 bg-gray-800/40 px-4 py-3 flex flex-wrap gap-x-6 gap-y-1.5">
-            <span className="text-xs text-gray-500 uppercase tracking-wider">
+          <div className="rounded-lg border border-border bg-surface-2 px-4 py-3 flex flex-wrap gap-x-6 gap-y-1.5">
+            <span className="text-xs text-tertiary uppercase tracking-wider">
               {netPnl !== null ? "Gross " : ""}P&L{" "}
               <span
-                className={
-                  "text-sm font-bold ml-1 " +
-                  (pnl >= 0 ? "text-accent-400" : "text-red-400")
-                }
+                className={cn(
+                  "text-sm font-semibold font-mono ml-1",
+                  pnl >= 0 ? "text-profit" : "text-loss"
+                )}
               >
                 {pnl >= 0 ? "+" : ""}${pnl.toFixed(2)}
               </span>
             </span>
             {netPnl !== null && (
-              <span className="text-xs text-gray-500 uppercase tracking-wider">
+              <span className="text-xs text-tertiary uppercase tracking-wider">
                 Net P&L{" "}
                 <span
-                  className={
-                    "text-sm font-bold ml-1 " +
-                    (netPnl >= 0 ? "text-accent-400" : "text-red-400")
-                  }
+                  className={cn(
+                    "text-sm font-semibold font-mono ml-1",
+                    netPnl >= 0 ? "text-profit" : "text-loss"
+                  )}
                 >
                   {netPnl >= 0 ? "+" : ""}${netPnl.toFixed(2)}
                 </span>
               </span>
             )}
             {rr !== null && (
-              <span className="text-xs text-gray-500 uppercase tracking-wider">
+              <span className="text-xs text-tertiary uppercase tracking-wider">
                 R:R{" "}
                 <span
-                  className={
-                    "text-sm font-bold ml-1 " +
-                    (rr >= 0 ? "text-accent-400" : "text-red-400")
-                  }
+                  className={cn(
+                    "text-sm font-semibold font-mono ml-1",
+                    rr >= 0 ? "text-profit" : "text-loss"
+                  )}
                 >
                   {rr.toFixed(2)}
                 </span>
               </span>
             )}
             {maxRisk !== null && (
-              <span className="text-xs text-gray-500 uppercase tracking-wider">
+              <span className="text-xs text-tertiary uppercase tracking-wider">
                 Risk{" "}
-                <span className="text-sm font-bold text-yellow-400 ml-1">
+                <span className="text-sm font-semibold font-mono text-amber ml-1">
                   ${maxRisk.toFixed(2)}
                 </span>
               </span>
@@ -469,11 +472,12 @@ export default function TradeForm({
                 onClick={() =>
                   set("grade", form.grade === g.value ? "" : g.value)
                 }
-                className={`grade-btn flex-1 py-2 rounded-lg text-center border font-bold text-sm ${
+                className={cn(
+                  "flex-1 py-2 rounded-lg text-center border font-semibold text-sm",
                   form.grade === g.value
                     ? `${g.activeBg} ${g.border} ${g.text}`
-                    : "bg-gray-800/80 border-gray-700/80 text-gray-500 hover:border-gray-600"
-                }`}
+                    : "bg-surface-2 border-transparent text-tertiary hover:border-border-hover"
+                )}
               >
                 <span className="text-base">{g.label}</span>
                 <span className="block text-[10px] font-medium opacity-70 mt-0.5">
@@ -485,14 +489,14 @@ export default function TradeForm({
         </div>
       </div>
 
-      {/* ── Section 2: Notes & Reflection (collapsed by default) ── */}
-      <div className="card-panel p-5">
+      {/* -- Section 2: Notes & Reflection (collapsed by default) -- */}
+      <div className="rounded-xl bg-surface-1 p-5">
         <button
           type="button"
           onClick={() => toggleSection("notes")}
           className="w-full flex items-center justify-between group"
         >
-          <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
+          <h3 className="text-xs font-semibold text-secondary uppercase tracking-wider">
             Notes & Reflection
           </h3>
           {chevronSvg(openSections.notes)}
@@ -541,12 +545,15 @@ export default function TradeForm({
               {emotionPills.length > 0 && (
                 <div className="flex flex-wrap gap-1.5 mb-2">
                   {emotionPills.map((emotion) => (
-                    <span key={emotion} className="emotion-pill">
+                    <span
+                      key={emotion}
+                      className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-brand-muted border border-brand/20 text-brand"
+                    >
                       {emotion}
                       <button
                         type="button"
                         onClick={() => removeEmotion(emotion)}
-                        className="text-accent-400/50 hover:text-accent-400 ml-0.5 text-sm leading-none"
+                        className="text-brand/50 hover:text-brand ml-0.5 text-sm leading-none"
                       >
                         &times;
                       </button>
@@ -566,12 +573,12 @@ export default function TradeForm({
                     }
                   }}
                   placeholder="e.g. FOMO, confident, anxious"
-                  className="flex-1 rounded-lg border border-gray-700/80 bg-gray-800/80 px-3 py-2 text-sm text-white placeholder-gray-500 focus:border-accent-500 focus:outline-none transition-colors"
+                  className="flex-1 rounded-lg border border-transparent bg-surface-2 px-3 py-2 text-sm text-primary placeholder-tertiary focus:border-brand focus:outline-none transition-colors"
                 />
                 <button
                   type="button"
                   onClick={addEmotion}
-                  className="px-3 py-2 rounded-lg text-xs font-medium bg-gray-800/80 border border-gray-700/80 text-gray-400 hover:text-white hover:border-gray-600 transition-colors"
+                  className="px-3 py-2 rounded-lg text-xs font-medium bg-surface-2 border border-transparent text-secondary hover:text-primary hover:border-border-hover transition-colors"
                 >
                   Add
                 </button>
@@ -581,19 +588,19 @@ export default function TradeForm({
         )}
       </div>
 
-      {/* ── Section 3: Market Context (collapsed by default) ── */}
-      <div className="card-panel p-5">
+      {/* -- Section 3: Market Context (collapsed by default) -- */}
+      <div className="rounded-xl bg-surface-1 p-5">
         <button
           type="button"
           onClick={() => toggleSection("market")}
           className="w-full flex items-center justify-between group"
         >
           <div className="flex items-center gap-2">
-            <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
+            <h3 className="text-xs font-semibold text-secondary uppercase tracking-wider">
               Market Context
             </h3>
             {!isPro && (
-              <span className="text-[9px] font-bold uppercase tracking-wider bg-accent-500/15 text-accent-400 border border-accent-500/30 rounded px-1.5 py-0.5">
+              <span className="text-[9px] font-semibold uppercase tracking-wider bg-brand-muted text-brand border border-brand/30 rounded px-1.5 py-0.5">
                 Pro
               </span>
             )}
@@ -602,7 +609,7 @@ export default function TradeForm({
         </button>
 
         {openSections.market && (
-          <div className={`mt-4 space-y-3 ${!isPro ? "opacity-50 pointer-events-none select-none" : ""}`}>
+          <div className={cn("mt-4 space-y-3", !isPro && "opacity-50 pointer-events-none select-none")}>
             {/* Catalyst */}
             <div>
               <label className={labelClass}>Catalyst</label>
@@ -639,7 +646,7 @@ export default function TradeForm({
                 <label className={labelClass}>
                   Float
                   {form.float_shares ? (
-                    <span className="ml-1.5 text-accent-400 normal-case">{formatLargeNumber(form.float_shares)}</span>
+                    <span className="ml-1.5 text-brand normal-case">{formatLargeNumber(form.float_shares)}</span>
                   ) : null}
                 </label>
                 <input
@@ -658,7 +665,7 @@ export default function TradeForm({
                 <label className={labelClass}>
                   Market Cap
                   {form.market_cap ? (
-                    <span className="ml-1.5 text-accent-400 normal-case">{formatLargeNumber(form.market_cap)}</span>
+                    <span className="ml-1.5 text-brand normal-case">{formatLargeNumber(form.market_cap)}</span>
                   ) : null}
                 </label>
                 <input
@@ -712,14 +719,14 @@ export default function TradeForm({
         )}
       </div>
 
-      {/* ── Section 4: Tags & Screenshot (collapsed by default) ── */}
-      <div className="card-panel p-5">
+      {/* -- Section 4: Tags & Screenshot (collapsed by default) -- */}
+      <div className="rounded-xl bg-surface-1 p-5">
         <button
           type="button"
           onClick={() => toggleSection("tags")}
           className="w-full flex items-center justify-between group"
         >
-          <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
+          <h3 className="text-xs font-semibold text-secondary uppercase tracking-wider">
             Tags & Screenshot
           </h3>
           {chevronSvg(openSections.tags)}
@@ -754,17 +761,17 @@ export default function TradeForm({
                     <img
                       src={editTrade.screenshot_url}
                       alt="Current screenshot"
-                      className="max-h-[150px] rounded-lg border border-gray-700/80"
+                      className="max-h-[150px] rounded-lg border border-border"
                     />
                     <button
                       type="button"
                       onClick={clearScreenshot}
-                      className="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center hover:bg-red-400 transition-colors"
+                      className="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-loss text-primary text-xs flex items-center justify-center hover:bg-loss/80 transition-colors"
                     >
                       &times;
                     </button>
                   </div>
-                  <p className="text-[10px] text-gray-500 mt-1">Upload a new image to replace</p>
+                  <p className="text-[10px] text-tertiary mt-1">Upload a new image to replace</p>
                 </div>
               )}
 
@@ -775,12 +782,12 @@ export default function TradeForm({
                     <img
                       src={screenshotPreview}
                       alt="Screenshot preview"
-                      className="max-h-[150px] rounded-lg border border-gray-700/80"
+                      className="max-h-[150px] rounded-lg border border-border"
                     />
                     <button
                       type="button"
                       onClick={clearScreenshot}
-                      className="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center hover:bg-red-400 transition-colors"
+                      className="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-loss text-primary text-xs flex items-center justify-center hover:bg-loss/80 transition-colors"
                     >
                       &times;
                     </button>
@@ -788,7 +795,7 @@ export default function TradeForm({
                 </div>
               )}
 
-              {/* Dropzone — show when no preview */}
+              {/* Dropzone -- show when no preview */}
               {!screenshotPreview && !(editTrade?.screenshot_url && !removeExisting) && (
                 <div
                   onClick={() => fileInputRef.current?.click()}
@@ -798,13 +805,13 @@ export default function TradeForm({
                     e.stopPropagation();
                     handleScreenshotSelect(e.dataTransfer.files[0]);
                   }}
-                  className="flex flex-col items-center justify-center gap-1.5 py-6 rounded-lg border-2 border-dashed border-gray-700/80 bg-gray-800/80 cursor-pointer hover:border-gray-600 transition-colors"
+                  className="flex flex-col items-center justify-center gap-1.5 py-6 rounded-lg border-2 border-dashed border-border bg-surface-2 cursor-pointer hover:border-border-hover transition-colors"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5 text-gray-600">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5 text-tertiary">
                     <path fillRule="evenodd" d="M1 5.25A2.25 2.25 0 0 1 3.25 3h13.5A2.25 2.25 0 0 1 19 5.25v9.5A2.25 2.25 0 0 1 16.75 17H3.25A2.25 2.25 0 0 1 1 14.75v-9.5Zm1.5 5.81v3.69c0 .414.336.75.75.75h13.5a.75.75 0 0 0 .75-.75v-2.69l-2.22-2.219a.75.75 0 0 0-1.06 0l-1.91 1.909-4.97-4.969a.75.75 0 0 0-1.06 0L2.5 11.06Zm12.22-4.81a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0Z" clipRule="evenodd" />
                   </svg>
-                  <span className="text-xs text-gray-500">Drop chart screenshot or click to upload</span>
-                  <span className="text-[10px] text-gray-600">PNG, JPG, WebP — max 5MB</span>
+                  <span className="text-xs text-tertiary">Drop chart screenshot or click to upload</span>
+                  <span className="text-[10px] text-tertiary">PNG, JPG, WebP -- max 5MB</span>
                 </div>
               )}
             </div>
@@ -815,7 +822,7 @@ export default function TradeForm({
       <button
         type="submit"
         disabled={saving}
-        className="btn-submit w-full rounded-lg bg-accent-600 px-4 py-3 text-sm font-bold text-white hover:bg-accent-500 disabled:opacity-50"
+        className="w-full rounded-lg bg-brand hover:bg-brand/90 px-4 py-3 text-sm font-medium text-primary disabled:opacity-50 transition-colors"
       >
         {saving ? "Saving..." : editTrade ? "Update Trade" : "Save Trade"}
       </button>

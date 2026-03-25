@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { cn } from "../../lib/utils";
 import type { Trade } from "../../types/trade";
 import { calcNetPnl } from "../../lib/calc";
 
@@ -218,7 +219,7 @@ export default function TiltDetection({ trades }: Props) {
 
   if (trades.length === 0) {
     return (
-      <div className="card-panel p-5 text-center text-sm text-gray-500">
+      <div className="rounded-xl bg-surface-1 p-5 text-center text-sm text-tertiary">
         No trades to analyze.
       </div>
     );
@@ -231,13 +232,13 @@ export default function TiltDetection({ trades }: Props) {
   return (
     <div className="space-y-4">
       {/* ── Threshold slider ───────────────────────────────────── */}
-      <div className="card-panel p-5">
+      <div className="rounded-xl bg-surface-1 p-5">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">
+          <h3 className="text-[11px] font-semibold text-secondary uppercase tracking-wider">
             Tilt Detection
           </h3>
           <div className="flex items-center gap-3">
-            <span className="text-[11px] text-gray-500">
+            <span className="text-[11px] text-tertiary">
               Consecutive losses to trigger:
             </span>
             <div className="flex items-center gap-2">
@@ -248,9 +249,9 @@ export default function TiltDetection({ trades }: Props) {
                 step={1}
                 value={threshold}
                 onChange={(e) => setThreshold(Number(e.target.value))}
-                className="w-20 h-1 bg-gray-700 rounded-full appearance-none cursor-pointer accent-accent-500"
+                className="w-20 h-1 bg-surface-3 rounded-full appearance-none cursor-pointer accent-brand"
               />
-              <span className="text-xs font-bold font-display text-white w-4 text-center">
+              <span className="text-xs font-semibold text-primary w-4 text-center">
                 {threshold}
               </span>
             </div>
@@ -259,61 +260,64 @@ export default function TiltDetection({ trades }: Props) {
 
         {/* ── Summary stats ──────────────────────────────────── */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <div className="rounded-xl border border-gray-800/80 bg-gray-900/60 p-4">
-            <p className="text-[11px] font-medium text-gray-500 uppercase tracking-wider mb-1.5">
+          <div className="rounded-xl border border-border bg-surface-1 p-4">
+            <p className="text-[11px] font-medium text-tertiary uppercase tracking-wider mb-1.5">
               Tilt Episodes
             </p>
-            <p className="text-2xl font-bold font-display text-white">
+            <p className="text-2xl font-semibold text-primary">
               {episodes.length}
             </p>
           </div>
 
-          <div className="rounded-xl border border-gray-800/80 bg-gray-900/60 p-4">
-            <p className="text-[11px] font-medium text-gray-500 uppercase tracking-wider mb-1.5">
+          <div className="rounded-xl border border-border bg-surface-1 p-4">
+            <p className="text-[11px] font-medium text-tertiary uppercase tracking-wider mb-1.5">
               Post-Tilt Avg P&L
             </p>
             <p
-              className={`text-2xl font-bold font-display ${
-                postTiltAvgPnl >= 0 ? "text-accent-400" : "text-red-400"
-              }`}
+              className={cn(
+                "text-2xl font-semibold font-mono",
+                postTiltAvgPnl >= 0 ? "text-profit" : "text-loss",
+              )}
             >
               {episodes.length > 0 ? fmtDollar(postTiltAvgPnl) : "—"}
             </p>
             {episodes.length > 0 && (
-              <p className="text-xs text-gray-500 mt-1">
-                vs {fmtDollar(normalAvgPnl)} normal
+              <p className="text-xs text-tertiary mt-1">
+                vs <span className="font-mono">{fmtDollar(normalAvgPnl)}</span> normal
               </p>
             )}
           </div>
 
-          <div className="rounded-xl border border-gray-800/80 bg-gray-900/60 p-4">
-            <p className="text-[11px] font-medium text-gray-500 uppercase tracking-wider mb-1.5">
+          <div className="rounded-xl border border-border bg-surface-1 p-4">
+            <p className="text-[11px] font-medium text-tertiary uppercase tracking-wider mb-1.5">
               Cost of Tilt
             </p>
             <p
-              className={`text-2xl font-bold font-display ${
-                costOfTilt < 0 ? "text-red-400" : "text-gray-500"
-              }`}
+              className={cn(
+                "text-2xl font-semibold font-mono",
+                costOfTilt < 0 ? "text-loss" : "text-tertiary",
+              )}
             >
               {episodes.length > 0 ? fmtDollar(costOfTilt) : "—"}
             </p>
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-tertiary mt-1">
               post-tilt losing trades
             </p>
           </div>
 
-          <div className="rounded-xl border border-gray-800/80 bg-gray-900/60 p-4">
-            <p className="text-[11px] font-medium text-gray-500 uppercase tracking-wider mb-1.5">
+          <div className="rounded-xl border border-border bg-surface-1 p-4">
+            <p className="text-[11px] font-medium text-tertiary uppercase tracking-wider mb-1.5">
               Avg Size Increase
             </p>
             <p
-              className={`text-2xl font-bold font-display ${
-                avgSizeIncrease > 10 ? "text-amber-400" : "text-white"
-              }`}
+              className={cn(
+                "text-2xl font-semibold font-mono",
+                avgSizeIncrease > 10 ? "text-amber" : "text-primary",
+              )}
             >
               {episodes.length > 0 ? `${avgSizeIncrease >= 0 ? "+" : ""}${avgSizeIncrease.toFixed(0)}%` : "—"}
             </p>
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-tertiary mt-1">
               post-tilt position sizing
             </p>
           </div>
@@ -322,42 +326,43 @@ export default function TiltDetection({ trades }: Props) {
 
       {/* ── Tilt Rules suggestion ──────────────────────────────── */}
       <div
-        className={`card-panel p-5 border-l-2 ${
+        className={cn(
+          "rounded-xl bg-surface-1 p-5 border-l-2",
           isDisciplined
-            ? "border-l-accent-500"
-            : "border-l-amber-500"
-        }`}
+            ? "border-l-brand"
+            : "border-l-amber-500",
+        )}
       >
-        <h3 className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider mb-2">
+        <h3 className="text-[11px] font-semibold text-secondary uppercase tracking-wider mb-2">
           Tilt Rules
         </h3>
         {isDisciplined ? (
-          <p className="text-sm text-gray-300">
+          <p className="text-sm text-secondary">
             Your post-loss trading is disciplined — no tilt pattern detected.
             Keep it up.
           </p>
         ) : (
           <div className="space-y-2">
-            <p className="text-sm text-gray-300">
+            <p className="text-sm text-secondary">
               After {threshold} consecutive losses, your average post-tilt P&L
               is{" "}
-              <span className="font-medium text-red-400">
+              <span className="font-medium font-mono text-loss">
                 {fmtDollar(postTiltAvgPnl)}
               </span>
               . Consider a{" "}
-              <span className="font-medium text-white">
+              <span className="font-medium text-primary">
                 10-minute cooldown rule
               </span>
               .
             </p>
             <div className="flex flex-wrap gap-2 mt-2">
               {avgSizeIncrease > 10 && (
-                <span className="text-[10px] font-medium px-2 py-1 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                <span className="text-[10px] font-medium px-2 py-1 rounded-full bg-amber-muted text-amber border border-amber-500/20">
                   Revenge sizing detected (+{avgSizeIncrease.toFixed(0)}%)
                 </span>
               )}
               {analysis.postTiltWinRate < analysis.overallWinRate * 0.8 && (
-                <span className="text-[10px] font-medium px-2 py-1 rounded-full bg-red-500/10 text-red-400 border border-red-500/20">
+                <span className="text-[10px] font-medium px-2 py-1 rounded-full bg-loss-muted text-loss border border-loss/20">
                   Win rate drops {((1 - analysis.postTiltWinRate / analysis.overallWinRate) * 100).toFixed(0)}% post-tilt
                 </span>
               )}
@@ -378,8 +383,8 @@ export default function TiltDetection({ trades }: Props) {
 
       {/* ── Episode timeline ───────────────────────────────────── */}
       {episodes.length > 0 && (
-        <div className="card-panel p-5">
-          <h3 className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider mb-4">
+        <div className="rounded-xl bg-surface-1 p-5">
+          <h3 className="text-[11px] font-semibold text-secondary uppercase tracking-wider mb-4">
             Tilt Episodes ({episodes.length})
           </h3>
 
@@ -387,30 +392,30 @@ export default function TiltDetection({ trades }: Props) {
             {episodes.map((ep, idx) => (
               <div
                 key={ep.date + idx}
-                className="rounded-xl border border-gray-800/80 bg-gray-900/60 p-4"
+                className="rounded-xl border border-border bg-surface-1 p-4"
               >
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-2">
-                    <span className="text-xs font-bold font-display text-white">
+                    <span className="text-xs font-semibold text-primary">
                       {ep.date}
                     </span>
-                    <span className="text-[10px] text-gray-500">
+                    <span className="text-[10px] text-tertiary">
                       {ep.losingStreak.length} losses → {ep.postTiltTrades.length} post-tilt trade{ep.postTiltTrades.length !== 1 ? "s" : ""}
                     </span>
                   </div>
                   <div className="flex gap-1.5">
                     {ep.impulseEntry && (
-                      <span className="text-[9px] font-bold uppercase tracking-wider bg-orange-500/15 text-orange-400 border border-orange-500/30 rounded px-1.5 py-0.5">
+                      <span className="text-[9px] font-semibold uppercase tracking-wider bg-orange-500/15 text-orange-400 border border-orange-500/30 rounded px-1.5 py-0.5">
                         Impulse
                       </span>
                     )}
                     {ep.deviatedSetup && (
-                      <span className="text-[9px] font-bold uppercase tracking-wider bg-purple-500/15 text-purple-400 border border-purple-500/30 rounded px-1.5 py-0.5">
+                      <span className="text-[9px] font-semibold uppercase tracking-wider bg-purple-500/15 text-purple-400 border border-purple-500/30 rounded px-1.5 py-0.5">
                         Off-plan
                       </span>
                     )}
                     {ep.postSizeIncrease !== null && ep.postSizeIncrease > 10 && (
-                      <span className="text-[9px] font-bold uppercase tracking-wider bg-amber-500/15 text-amber-400 border border-amber-500/30 rounded px-1.5 py-0.5">
+                      <span className="text-[9px] font-semibold uppercase tracking-wider bg-amber-500/15 text-amber border border-amber-500/30 rounded px-1.5 py-0.5">
                         +{ep.postSizeIncrease.toFixed(0)}% size
                       </span>
                     )}
@@ -425,21 +430,21 @@ export default function TiltDetection({ trades }: Props) {
                     return (
                       <div
                         key={t.id}
-                        className="flex items-center gap-3 py-1.5 border-b border-gray-800/40"
+                        className="flex items-center gap-3 py-1.5 border-b border-border hover:bg-surface-2 transition-colors"
                       >
-                        <span className="w-1.5 h-1.5 rounded-full bg-red-500 shrink-0" />
-                        <span className="text-xs font-medium text-gray-300 w-14 shrink-0">
+                        <span className="w-1.5 h-1.5 rounded-full bg-loss shrink-0" />
+                        <span className="text-xs font-medium text-secondary w-14 shrink-0">
                           {t.ticker}
                         </span>
-                        <span className="text-[10px] text-gray-500 w-16 shrink-0">
+                        <span className="text-[10px] text-tertiary w-16 shrink-0">
                           {t.entry_time?.slice(0, 5)}–{t.exit_time?.slice(0, 5)}
                         </span>
                         {t.setup && (
-                          <span className="text-[10px] text-gray-500 truncate max-w-[100px]">
+                          <span className="text-[10px] text-tertiary truncate max-w-[100px]">
                             {t.setup}
                           </span>
                         )}
-                        <span className="ml-auto text-xs font-medium text-red-400">
+                        <span className="ml-auto text-xs font-medium font-mono text-loss">
                           {fmtDollar(pnl)}
                         </span>
                       </div>
@@ -449,7 +454,7 @@ export default function TiltDetection({ trades }: Props) {
                   {/* Divider */}
                   <div className="flex items-center gap-2 py-1.5">
                     <div className="flex-1 border-t border-amber-500/30" />
-                    <span className="text-[9px] font-bold uppercase tracking-wider text-amber-400/60">
+                    <span className="text-[9px] font-semibold uppercase tracking-wider text-amber/60">
                       Post-tilt
                     </span>
                     <div className="flex-1 border-t border-amber-500/30" />
@@ -461,28 +466,30 @@ export default function TiltDetection({ trades }: Props) {
                     return (
                       <div
                         key={t.id}
-                        className="flex items-center gap-3 py-1.5 border-b border-gray-800/40 bg-amber-500/5 -mx-4 px-4"
+                        className="flex items-center gap-3 py-1.5 border-b border-border bg-amber-muted -mx-4 px-4 hover:bg-surface-2 transition-colors"
                       >
                         <span
-                          className={`w-1.5 h-1.5 rounded-full shrink-0 ${
-                            pnl >= 0 ? "bg-accent-500" : "bg-amber-500"
-                          }`}
+                          className={cn(
+                            "w-1.5 h-1.5 rounded-full shrink-0",
+                            pnl >= 0 ? "bg-brand" : "bg-amber-500",
+                          )}
                         />
-                        <span className="text-xs font-medium text-gray-300 w-14 shrink-0">
+                        <span className="text-xs font-medium text-secondary w-14 shrink-0">
                           {t.ticker}
                         </span>
-                        <span className="text-[10px] text-gray-500 w-16 shrink-0">
+                        <span className="text-[10px] text-tertiary w-16 shrink-0">
                           {t.entry_time?.slice(0, 5)}–{t.exit_time?.slice(0, 5)}
                         </span>
                         {t.setup && (
-                          <span className="text-[10px] text-gray-500 truncate max-w-[100px]">
+                          <span className="text-[10px] text-tertiary truncate max-w-[100px]">
                             {t.setup}
                           </span>
                         )}
                         <span
-                          className={`ml-auto text-xs font-medium ${
-                            pnl >= 0 ? "text-accent-400" : "text-amber-400"
-                          }`}
+                          className={cn(
+                            "ml-auto text-xs font-medium font-mono",
+                            pnl >= 0 ? "text-profit" : "text-amber",
+                          )}
                         >
                           {fmtDollar(pnl)}
                         </span>
@@ -492,21 +499,22 @@ export default function TiltDetection({ trades }: Props) {
                 </div>
 
                 {/* Episode summary */}
-                <div className="flex gap-4 mt-3 pt-2 border-t border-gray-800/40">
-                  <span className="text-[10px] text-gray-500">
+                <div className="flex gap-4 mt-3 pt-2 border-t border-border">
+                  <span className="text-[10px] text-tertiary">
                     Streak P&L:{" "}
-                    <span className="text-red-400 font-medium">
+                    <span className="text-loss font-medium font-mono">
                       {fmtDollar(ep.streakPnls.reduce((s, p) => s + p, 0))}
                     </span>
                   </span>
-                  <span className="text-[10px] text-gray-500">
+                  <span className="text-[10px] text-tertiary">
                     Post-tilt P&L:{" "}
                     <span
-                      className={`font-medium ${
+                      className={cn(
+                        "font-medium font-mono",
                         ep.postPnls.reduce((s, p) => s + p, 0) >= 0
-                          ? "text-accent-400"
-                          : "text-amber-400"
-                      }`}
+                          ? "text-profit"
+                          : "text-amber",
+                      )}
                     >
                       {fmtDollar(ep.postPnls.reduce((s, p) => s + p, 0))}
                     </span>

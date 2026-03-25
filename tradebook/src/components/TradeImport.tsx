@@ -1,4 +1,5 @@
 import { useState, useRef } from "react";
+import { cn } from "../lib/utils";
 import { supabase } from "../lib/supabase";
 import { useToast } from "./Toast";
 
@@ -164,7 +165,7 @@ export default function TradeImport({ onImported }: Props) {
         continue;
       }
 
-      // parse date — try ISO (YYYY-MM-DD) first, then MM/DD/YYYY
+      // parse date -- try ISO (YYYY-MM-DD) first, then MM/DD/YYYY
       let tradeDate = "";
       const isoMatch = tradeDateRaw.match(/(\d{4})-(\d{1,2})-(\d{1,2})/);
       const usMatch = tradeDateRaw.match(/(\d{1,2})\/(\d{1,2})\/(\d{2,4})/);
@@ -248,7 +249,7 @@ export default function TradeImport({ onImported }: Props) {
       />
       <button
         onClick={() => fileRef.current?.click()}
-        className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-white border border-gray-700/80 hover:border-gray-500 px-3 py-1.5 rounded-lg transition-colors"
+        className="flex items-center gap-1.5 text-xs text-tertiary hover:text-primary border border-border hover:border-border-hover px-3 py-1.5 rounded-lg transition-colors"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -264,29 +265,29 @@ export default function TradeImport({ onImported }: Props) {
 
       {/* Preview / mapping modal */}
       {open && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-          <div className="bg-gray-900 border border-gray-700/80 rounded-xl shadow-2xl w-full max-w-3xl max-h-[85vh] overflow-y-auto mx-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-surface-0/80 backdrop-blur-sm">
+          <div className="bg-surface-1 border border-border rounded-xl w-full max-w-3xl max-h-[85vh] overflow-y-auto mx-4">
             {/* Modal header */}
-            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-800">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-border">
               <div>
-                <h3 className="text-base font-bold text-white font-display">
+                <h3 className="text-base font-semibold text-primary">
                   Import Trades
                 </h3>
-                <p className="text-xs text-gray-500 mt-0.5">
-                  {rows.length} rows found — map columns to fields below
+                <p className="text-xs text-tertiary mt-0.5">
+                  {rows.length} rows found -- map columns to fields below
                 </p>
               </div>
               <button
                 onClick={() => setOpen(false)}
-                className="text-gray-500 hover:text-white transition-colors text-lg leading-none px-1"
+                className="text-tertiary hover:text-primary transition-colors text-lg leading-none px-1"
               >
                 &times;
               </button>
             </div>
 
             {/* Column mapping */}
-            <div className="px-6 py-4 border-b border-gray-800">
-              <h4 className="text-[10px] text-gray-500 uppercase font-semibold tracking-wider mb-3">
+            <div className="px-6 py-4 border-b border-border">
+              <h4 className="text-[10px] text-tertiary uppercase font-semibold tracking-wider mb-3">
                 Column Mapping
               </h4>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
@@ -294,10 +295,10 @@ export default function TradeImport({ onImported }: Props) {
                   const isRequired = (REQUIRED_FIELDS as readonly string[]).includes(field);
                   return (
                     <div key={field}>
-                      <label className="text-[11px] text-gray-400 mb-1 block">
+                      <label className="text-[11px] text-secondary mb-1 block">
                         {FIELD_LABELS[field]}
                         {isRequired && (
-                          <span className="text-red-400 ml-0.5">*</span>
+                          <span className="text-loss ml-0.5">*</span>
                         )}
                       </label>
                       <select
@@ -305,9 +306,9 @@ export default function TradeImport({ onImported }: Props) {
                         onChange={(e) =>
                           setMapping((m) => ({ ...m, [field]: e.target.value }))
                         }
-                        className="w-full bg-gray-800/80 border border-gray-700/80 rounded-lg px-2.5 py-1.5 text-xs text-gray-100 focus:outline-none focus:border-accent-500/50"
+                        className="w-full bg-surface-2 border border-transparent rounded-lg px-2.5 py-1.5 text-xs text-primary hover:border-border-hover focus:outline-none focus:border-brand"
                       >
-                        <option value="">— skip —</option>
+                        <option value="">-- skip --</option>
                         {headers.map((h) => (
                           <option key={h} value={h}>
                             {h}
@@ -322,17 +323,17 @@ export default function TradeImport({ onImported }: Props) {
 
             {/* Preview table */}
             <div className="px-6 py-4">
-              <h4 className="text-[10px] text-gray-500 uppercase font-semibold tracking-wider mb-3">
+              <h4 className="text-[10px] text-tertiary uppercase font-semibold tracking-wider mb-3">
                 Preview (first {previewRows.length} rows)
               </h4>
-              <div className="overflow-x-auto rounded-lg border border-gray-700/80">
+              <div className="overflow-x-auto rounded-lg border border-border">
                 <table className="w-full text-xs">
                   <thead>
-                    <tr className="bg-gray-800/80">
+                    <tr className="bg-surface-2">
                       {headers.map((h, i) => (
                         <th
                           key={i}
-                          className="px-3 py-2 text-left text-[10px] text-gray-400 uppercase font-semibold tracking-wider whitespace-nowrap"
+                          className="px-3 py-2 text-left text-[10px] text-secondary uppercase font-semibold tracking-wider whitespace-nowrap"
                         >
                           {h}
                         </th>
@@ -343,12 +344,12 @@ export default function TradeImport({ onImported }: Props) {
                     {previewRows.map((row, ri) => (
                       <tr
                         key={ri}
-                        className="border-t border-gray-800/40"
+                        className="border-t border-border"
                       >
                         {headers.map((_, ci) => (
                           <td
                             key={ci}
-                            className="px-3 py-2 text-gray-300 whitespace-nowrap"
+                            className="px-3 py-2 text-secondary whitespace-nowrap"
                           >
                             {row[ci] ?? ""}
                           </td>
@@ -361,17 +362,17 @@ export default function TradeImport({ onImported }: Props) {
             </div>
 
             {/* Footer actions */}
-            <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-gray-800">
+            <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-border">
               <button
                 onClick={() => setOpen(false)}
-                className="px-4 py-2 rounded-lg text-xs font-medium text-gray-400 border border-gray-700/80 hover:text-white hover:border-gray-500 transition-colors"
+                className="px-4 py-2 rounded-lg text-xs font-medium text-secondary border border-border hover:text-primary hover:border-border-hover transition-colors"
               >
                 Cancel
               </button>
               <button
                 onClick={handleImport}
                 disabled={importing}
-                className="px-4 py-2 rounded-lg text-xs font-medium bg-accent-600 hover:bg-accent-500 text-white transition-colors disabled:opacity-50"
+                className="bg-brand hover:bg-brand/90 text-primary font-medium text-sm px-4 py-2 rounded-lg transition-colors disabled:opacity-50"
               >
                 {importing ? "Importing..." : `Import ${rows.length} Trades`}
               </button>

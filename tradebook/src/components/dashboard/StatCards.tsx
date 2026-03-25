@@ -1,3 +1,5 @@
+import { cn } from "../../lib/utils";
+
 export function StatCard({
   label,
   value,
@@ -11,24 +13,15 @@ export function StatCard({
   sub?: string;
   accent?: "green" | "red" | "neutral";
 }) {
-  const accentClass =
-    accent === "green"
-      ? "stat-card-green"
-      : accent === "red"
-        ? "stat-card-red"
-        : "stat-card-neutral";
-
   return (
-    <div
-      className={`stat-card ${accentClass} rounded-xl border border-gray-800/80 bg-gray-900/60 p-5`}
-    >
-      <p className="text-[11px] font-medium text-gray-500 uppercase tracking-wider mb-1.5">
+    <div className="rounded-xl bg-surface-1 p-5">
+      <p className="text-[11px] font-medium text-tertiary uppercase tracking-wider mb-1.5">
         {label}
       </p>
-      <p className={`text-2xl font-bold font-display ${color || "text-white"}`}>
+      <p className={cn("text-2xl font-semibold", color || "text-primary")}>
         {value}
       </p>
-      {sub && <p className="text-xs text-gray-500 mt-1">{sub}</p>}
+      {sub && <p className="text-xs text-tertiary mt-1">{sub}</p>}
     </div>
   );
 }
@@ -45,14 +38,14 @@ export function AmberStatCard({
   sub?: string;
 }) {
   return (
-    <div className="stat-card stat-card-yellow rounded-xl border border-yellow-500/15 bg-gray-900/60 p-5">
-      <p className="text-[11px] font-medium text-gray-500 uppercase tracking-wider mb-1.5">
+    <div className="rounded-xl bg-surface-1 p-5">
+      <p className="text-[11px] font-medium text-tertiary uppercase tracking-wider mb-1.5">
         {label}
       </p>
-      <p className={`text-2xl font-bold font-display ${color || "text-white"}`}>
+      <p className={cn("text-2xl font-semibold", color || "text-primary")}>
         {value}
       </p>
-      {sub && <p className="text-xs text-gray-500 mt-1">{sub}</p>}
+      {sub && <p className="text-xs text-tertiary mt-1">{sub}</p>}
     </div>
   );
 }

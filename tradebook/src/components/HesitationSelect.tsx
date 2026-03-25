@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { cn } from "../lib/utils";
 
 const PRESET_REASONS = [
   "No conviction",
@@ -47,12 +48,12 @@ export default function HesitationSelect({
               key={reason}
               type="button"
               onClick={() => toggle(reason)}
-              className={
-                "pill-tag px-3 py-1.5 rounded-full text-xs font-medium transition-all border " +
-                (active
-                  ? "bg-yellow-500/20 border-yellow-500 text-yellow-400 shadow-[0_0_8px_rgba(234,179,8,0.15)]"
-                  : "bg-gray-800/80 border-gray-700/80 text-gray-400 hover:border-gray-500 hover:text-gray-300")
-              }
+              className={cn(
+                "px-3 py-1.5 rounded-full text-xs font-medium transition-all border",
+                active
+                  ? "bg-amber-muted border-amber/30 text-amber"
+                  : "bg-surface-2 border-transparent text-tertiary hover:border-border-hover hover:text-secondary"
+              )}
             >
               {reason}
             </button>
@@ -65,13 +66,13 @@ export default function HesitationSelect({
           {customReasons.map((reason) => (
             <span
               key={reason}
-              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium bg-yellow-500/20 border border-yellow-500 text-yellow-400"
+              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium bg-amber-muted border border-amber/30 text-amber"
             >
               {reason}
               <button
                 type="button"
                 onClick={() => toggle(reason)}
-                className="text-yellow-400/50 hover:text-yellow-400 text-sm leading-none"
+                className="text-amber/50 hover:text-amber text-sm leading-none"
               >
                 ×
               </button>
@@ -92,12 +93,12 @@ export default function HesitationSelect({
             }
           }}
           placeholder="Add custom reason..."
-          className="flex-1 rounded-lg border border-gray-700/80 bg-gray-800/80 px-3 py-1.5 text-xs text-white placeholder-gray-500 focus:border-yellow-500 focus:outline-none transition-colors"
+          className="flex-1 rounded-lg border border-transparent bg-surface-2 px-3 py-1.5 text-xs text-primary placeholder-tertiary hover:border-border-hover focus:border-amber focus:outline-none transition-colors"
         />
         <button
           type="button"
           onClick={addCustom}
-          className="px-3 py-1.5 rounded-lg text-xs font-medium bg-gray-800/80 border border-gray-700/80 text-gray-400 hover:text-white hover:border-gray-500 transition-colors"
+          className="px-3 py-1.5 rounded-lg text-xs font-medium bg-surface-2 border border-transparent text-tertiary hover:text-primary hover:border-border-hover transition-colors"
         >
           Add
         </button>

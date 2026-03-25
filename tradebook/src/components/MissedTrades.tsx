@@ -1,4 +1,5 @@
 import { useState, Fragment } from "react";
+import { cn } from "../lib/utils";
 import { supabase } from "../lib/supabase";
 import type { MissedTrade, MissedTradeInsert } from "../types/trade";
 import TagSelect from "./TagSelect";
@@ -106,9 +107,9 @@ export default function MissedTrades({
   }
 
   const inputClass =
-    "w-full rounded-lg border border-gray-700/80 bg-gray-800/80 px-3 py-2.5 text-sm text-white placeholder-gray-500 focus:border-yellow-500 focus:outline-none transition-colors";
+    "w-full rounded-lg border border-transparent bg-surface-2 px-3 py-2.5 text-sm text-primary placeholder-tertiary hover:border-border-hover focus:border-brand focus:outline-none transition-colors";
   const labelClass =
-    "block text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-1.5";
+    "block text-[11px] font-semibold text-tertiary uppercase tracking-wider mb-1.5";
 
   return (
     <div className="space-y-8">
@@ -117,12 +118,12 @@ export default function MissedTrades({
         onSubmit={handleSubmit}
         className="max-w-lg mx-auto space-y-5"
       >
-        <h2 className="text-xl font-bold text-white font-display tracking-tight">
+        <h2 className="text-xl font-semibold text-primary tracking-tight">
           Log Missed Trade
         </h2>
 
         {/* Ticker, Side, Date */}
-        <div className="form-section" style={{ borderColor: "rgba(234, 179, 8, 0.15)" }}>
+        <div className="rounded-xl bg-surface-1 p-5 border border-amber/20">
           <div className="grid grid-cols-3 gap-3">
             <div>
               <label className={labelClass}>Ticker</label>
@@ -140,22 +141,24 @@ export default function MissedTrades({
                 <button
                   type="button"
                   onClick={() => set("side", "long")}
-                  className={`flex-1 py-2.5 rounded-lg text-xs font-semibold transition-all ${
+                  className={cn(
+                    "flex-1 py-2.5 rounded-lg text-xs font-semibold transition-all",
                     form.side === "long"
-                      ? "bg-accent-500/15 border border-accent-500 text-accent-400"
-                      : "bg-gray-800/80 border border-gray-700/80 text-gray-400 hover:border-gray-600"
-                  }`}
+                      ? "bg-brand/15 border border-brand text-profit"
+                      : "bg-surface-2 border border-transparent text-secondary hover:border-border"
+                  )}
                 >
                   Long
                 </button>
                 <button
                   type="button"
                   onClick={() => set("side", "short")}
-                  className={`flex-1 py-2.5 rounded-lg text-xs font-semibold transition-all ${
+                  className={cn(
+                    "flex-1 py-2.5 rounded-lg text-xs font-semibold transition-all",
                     form.side === "short"
-                      ? "bg-red-500/15 border border-red-500 text-red-400"
-                      : "bg-gray-800/80 border border-gray-700/80 text-gray-400 hover:border-gray-600"
-                  }`}
+                      ? "bg-loss-muted border border-loss text-loss"
+                      : "bg-surface-2 border border-transparent text-secondary hover:border-border"
+                  )}
                 >
                   Short
                 </button>
@@ -175,8 +178,8 @@ export default function MissedTrades({
         </div>
 
         {/* Estimated Entry, Exit, Shares */}
-        <div className="form-section" style={{ borderColor: "rgba(234, 179, 8, 0.15)" }}>
-          <p className="text-[10px] font-semibold text-gray-600 uppercase tracking-widest mb-3">
+        <div className="rounded-xl bg-surface-1 p-5 border border-amber/20">
+          <p className="text-[10px] font-semibold text-tertiary uppercase tracking-widest mb-3">
             Estimated Position
           </p>
           <div className="grid grid-cols-3 gap-3">
@@ -226,14 +229,14 @@ export default function MissedTrades({
 
         {/* Estimated P&L preview */}
         {estimatedPnl !== null && (
-          <div className="card-panel px-4 py-3" style={{ borderColor: "rgba(234, 179, 8, 0.2)" }}>
-            <span className="text-xs text-gray-500 uppercase tracking-wider">
+          <div className="rounded-xl bg-surface-1 px-4 py-3 border border-amber/20">
+            <span className="text-xs text-tertiary uppercase tracking-wider">
               Est. P&L{" "}
               <span
-                className={
-                  "text-sm font-bold ml-1 " +
-                  (estimatedPnl >= 0 ? "text-accent-400" : "text-red-400")
-                }
+                className={cn(
+                  "text-sm font-semibold font-mono ml-1",
+                  estimatedPnl >= 0 ? "text-profit" : "text-loss"
+                )}
               >
                 {estimatedPnl >= 0 ? "+" : ""}${estimatedPnl.toFixed(2)}
               </span>
@@ -259,9 +262,9 @@ export default function MissedTrades({
           />
         </div>
 
-        {/* Why I Hesitated — Prominent */}
-        <div className="rounded-xl border border-yellow-500/20 bg-yellow-500/5 p-4">
-          <label className="block text-[11px] font-bold text-yellow-400 uppercase tracking-wider mb-2">
+        {/* Why I Hesitated */}
+        <div className="rounded-xl border border-amber/20 bg-amber-muted p-4">
+          <label className="block text-[11px] font-semibold text-amber uppercase tracking-wider mb-2">
             Why I Hesitated
           </label>
           <HesitationSelect
@@ -284,8 +287,7 @@ export default function MissedTrades({
         <button
           type="submit"
           disabled={saving}
-          className="btn-submit w-full rounded-lg bg-yellow-600 px-4 py-3 text-sm font-bold text-white hover:bg-yellow-500 disabled:opacity-50"
-          style={{ boxShadow: "0 0 20px rgba(234, 179, 8, 0.15)" }}
+          className="w-full bg-brand hover:bg-brand/90 text-primary font-medium text-sm px-4 py-3 rounded-lg transition-colors disabled:opacity-50"
         >
           {saving ? "Saving..." : "Save Missed Trade"}
         </button>
@@ -294,13 +296,13 @@ export default function MissedTrades({
       {/* List */}
       {missedTrades.length === 0 && (
         <div className="flex flex-col items-center justify-center py-12 gap-3">
-          <div className="w-16 h-16 rounded-2xl bg-gray-900 border border-yellow-500/20 flex items-center justify-center text-3xl">
+          <div className="w-16 h-16 rounded-2xl bg-surface-1 border border-amber/20 flex items-center justify-center text-3xl">
             👀
           </div>
-          <h3 className="text-lg font-bold text-white font-display">
+          <h3 className="text-lg font-semibold text-primary">
             No missed trades yet
           </h3>
-          <p className="text-sm text-gray-400 text-center max-w-xs">
+          <p className="text-sm text-secondary text-center max-w-xs">
             Spot a setup you didn't take? Log it above so you can track your
             hesitation patterns.
           </p>
@@ -314,37 +316,37 @@ export default function MissedTrades({
         return (
         <div>
           <div className="flex items-center gap-3 mb-3">
-            <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
+            <h3 className="text-xs font-semibold text-secondary uppercase tracking-wider">
               Missed Trades Log
             </h3>
-            <span className="text-[10px] text-yellow-400/70 bg-yellow-500/10 border border-yellow-500/20 px-2 py-0.5 rounded-full font-medium">
+            <span className="text-[10px] text-amber/70 bg-amber-muted border border-amber/20 px-2 py-0.5 rounded-full font-medium">
               {missedTrades.length} missed
             </span>
           </div>
-          <div className="card-panel overflow-hidden" style={{ borderColor: "rgba(234, 179, 8, 0.15)" }}>
+          <div className="rounded-xl bg-surface-1 overflow-hidden border border-amber/20">
             <div className="overflow-x-auto">
-              <table className="trade-table w-full text-sm text-left">
+              <table className="w-full text-sm text-left">
                 <thead>
-                  <tr className="border-b border-yellow-500/10">
-                    <th className="px-4 py-3 text-[10px] text-gray-500 uppercase font-semibold tracking-wider">
+                  <tr className="border-b border-amber/10">
+                    <th className="px-4 py-3 text-[10px] text-tertiary uppercase font-semibold tracking-wider">
                       Date
                     </th>
-                    <th className="px-4 py-3 text-[10px] text-gray-500 uppercase font-semibold tracking-wider">
+                    <th className="px-4 py-3 text-[10px] text-tertiary uppercase font-semibold tracking-wider">
                       Ticker
                     </th>
-                    <th className="px-4 py-3 text-[10px] text-gray-500 uppercase font-semibold tracking-wider">
+                    <th className="px-4 py-3 text-[10px] text-tertiary uppercase font-semibold tracking-wider">
                       Side
                     </th>
-                    <th className="px-4 py-3 text-[10px] text-gray-500 uppercase font-semibold tracking-wider">
+                    <th className="px-4 py-3 text-[10px] text-tertiary uppercase font-semibold tracking-wider">
                       Est. Entry
                     </th>
-                    <th className="px-4 py-3 text-[10px] text-gray-500 uppercase font-semibold tracking-wider">
+                    <th className="px-4 py-3 text-[10px] text-tertiary uppercase font-semibold tracking-wider">
                       Est. Exit
                     </th>
-                    <th className="px-4 py-3 text-[10px] text-gray-500 uppercase font-semibold tracking-wider">
+                    <th className="px-4 py-3 text-[10px] text-tertiary uppercase font-semibold tracking-wider">
                       Est. P&L
                     </th>
-                    <th className="px-4 py-3 text-[10px] text-gray-500 uppercase font-semibold tracking-wider">
+                    <th className="px-4 py-3 text-[10px] text-tertiary uppercase font-semibold tracking-wider">
                       Hesitation
                     </th>
                   </tr>
@@ -360,17 +362,18 @@ export default function MissedTrades({
                           onClick={() =>
                             setExpandedId(isExpanded ? null : mt.id)
                           }
-                          className={`border-t border-gray-800/40 cursor-pointer ${
-                            isExpanded ? "bg-yellow-500/5" : ""
-                          }`}
+                          className={cn(
+                            "border-t border-border cursor-pointer",
+                            isExpanded && "bg-amber-muted"
+                          )}
                         >
-                          <td className="px-4 py-3 text-gray-400 text-xs">
+                          <td className="px-4 py-3 text-secondary text-xs">
                             {mt.trade_date}
                           </td>
                           <td className="px-4 py-3">
                             <div className="flex items-center gap-1.5">
-                              <span className="w-1.5 h-1.5 rounded-full bg-yellow-500" />
-                              <span className="font-semibold text-white">
+                              <span className="w-1.5 h-1.5 rounded-full bg-amber" />
+                              <span className="font-semibold text-primary">
                                 {mt.ticker}
                               </span>
                             </div>
@@ -378,37 +381,38 @@ export default function MissedTrades({
                           <td className="px-4 py-3">
                             {mt.side ? (
                               <span
-                                className={`text-xs font-medium ${
+                                className={cn(
+                                  "text-xs font-medium",
                                   mt.side === "long"
-                                    ? "text-accent-400"
-                                    : "text-red-400"
-                                }`}
+                                    ? "text-profit"
+                                    : "text-loss"
+                                )}
                               >
                                 {mt.side.toUpperCase()}
                               </span>
                             ) : (
-                              <span className="text-gray-600">—</span>
+                              <span className="text-tertiary">—</span>
                             )}
                           </td>
-                          <td className="px-4 py-3 text-gray-400 text-xs">
+                          <td className="px-4 py-3 text-secondary text-xs font-mono">
                             {mt.estimated_entry != null
                               ? `$${Number(mt.estimated_entry).toFixed(2)}`
                               : "—"}
                           </td>
-                          <td className="px-4 py-3 text-gray-400 text-xs">
+                          <td className="px-4 py-3 text-secondary text-xs font-mono">
                             {mt.estimated_exit != null
                               ? `$${Number(mt.estimated_exit).toFixed(2)}`
                               : "—"}
                           </td>
                           <td
-                            className={
-                              "px-4 py-3 font-semibold text-sm " +
-                              (pnl === null
-                                ? "text-gray-600"
+                            className={cn(
+                              "px-4 py-3 font-semibold font-mono text-sm",
+                              pnl === null
+                                ? "text-tertiary"
                                 : pnl >= 0
-                                  ? "text-accent-400"
-                                  : "text-red-400")
-                            }
+                                  ? "text-profit"
+                                  : "text-loss"
+                            )}
                           >
                             {pnl !== null
                               ? `${pnl >= 0 ? "+" : ""}$${pnl.toFixed(2)}`
@@ -420,19 +424,19 @@ export default function MissedTrades({
                                 {mt.hesitation_reasons.slice(0, 2).map((r) => (
                                   <span
                                     key={r}
-                                    className="px-1.5 py-0.5 rounded-full text-[10px] font-medium bg-yellow-500/10 text-yellow-400/80 border border-yellow-500/20"
+                                    className="px-1.5 py-0.5 rounded-full text-[10px] font-medium bg-amber-muted text-amber/80 border border-amber/20"
                                   >
                                     {r}
                                   </span>
                                 ))}
                                 {mt.hesitation_reasons.length > 2 && (
-                                  <span className="text-[10px] text-yellow-400/50">
+                                  <span className="text-[10px] text-amber/50">
                                     +{mt.hesitation_reasons.length - 2}
                                   </span>
                                 )}
                               </div>
                             ) : (
-                              <span className="text-gray-600 text-xs">—</span>
+                              <span className="text-tertiary text-xs">—</span>
                             )}
                           </td>
                         </tr>
@@ -441,29 +445,29 @@ export default function MissedTrades({
                           <tr key={`${mt.id}-detail`}>
                             <td
                               colSpan={7}
-                              className="px-4 py-0 bg-yellow-500/5 border-t border-yellow-500/10"
+                              className="px-4 py-0 bg-amber-muted border-t border-amber/10"
                             >
-                              <div className="trade-expand py-4 grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                              <div className="py-4 grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
                                 {mt.setup && (
                                   <div>
-                                    <span className="text-gray-500 uppercase tracking-wider text-[10px] font-semibold">
+                                    <span className="text-tertiary uppercase tracking-wider text-[10px] font-semibold">
                                       Setup
                                     </span>
-                                    <p className="text-gray-300 mt-0.5">
+                                    <p className="text-secondary mt-0.5">
                                       {mt.setup}
                                     </p>
                                   </div>
                                 )}
                                 {mt.tags && mt.tags.length > 0 && (
                                   <div>
-                                    <span className="text-gray-500 uppercase tracking-wider text-[10px] font-semibold">
+                                    <span className="text-tertiary uppercase tracking-wider text-[10px] font-semibold">
                                       Tags
                                     </span>
                                     <div className="flex flex-wrap gap-1 mt-1">
                                       {mt.tags.map((tag) => (
                                         <span
                                           key={tag}
-                                          className="px-1.5 py-0.5 rounded-full text-[10px] font-medium bg-accent-500/10 text-accent-400/80 border border-accent-500/20"
+                                          className="px-1.5 py-0.5 rounded-full text-[10px] font-medium bg-brand/10 text-brand/80 border border-brand/20"
                                         >
                                           {tag}
                                         </span>
@@ -474,14 +478,14 @@ export default function MissedTrades({
                                 {mt.hesitation_reasons &&
                                   mt.hesitation_reasons.length > 0 && (
                                     <div>
-                                      <span className="text-yellow-400 uppercase tracking-wider text-[10px] font-bold">
+                                      <span className="text-amber uppercase tracking-wider text-[10px] font-semibold">
                                         Why I Hesitated
                                       </span>
                                       <div className="flex flex-wrap gap-1 mt-1">
                                         {mt.hesitation_reasons.map((r) => (
                                           <span
                                             key={r}
-                                            className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-yellow-500/10 text-yellow-400 border border-yellow-500/20"
+                                            className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-amber-muted text-amber border border-amber/20"
                                           >
                                             {r}
                                           </span>
@@ -491,16 +495,16 @@ export default function MissedTrades({
                                   )}
                                 {mt.reason && (
                                   <div>
-                                    <span className="text-yellow-400 uppercase tracking-wider text-[10px] font-bold">
+                                    <span className="text-amber uppercase tracking-wider text-[10px] font-semibold">
                                       Why I Passed
                                     </span>
-                                    <p className="text-gray-300 mt-0.5">
+                                    <p className="text-secondary mt-0.5">
                                       {mt.reason}
                                     </p>
                                   </div>
                                 )}
                                 {/* Delete action */}
-                                <div className="md:col-span-2 flex gap-2 pt-2 border-t border-yellow-500/10">
+                                <div className="md:col-span-2 flex gap-2 pt-2 border-t border-amber/10">
                                   <button
                                     type="button"
                                     disabled={deleting === mt.id}
@@ -508,7 +512,7 @@ export default function MissedTrades({
                                       e.stopPropagation();
                                       handleDelete(mt.id);
                                     }}
-                                    className="px-3 py-1.5 rounded-lg text-xs font-medium bg-gray-800/80 border border-gray-700/80 text-red-400 hover:bg-red-500/10 hover:border-red-500/40 transition-colors disabled:opacity-50"
+                                    className="px-3 py-1.5 rounded-lg text-xs font-medium bg-surface-2 border border-transparent text-loss hover:bg-loss-muted hover:border-loss/40 transition-colors disabled:opacity-50"
                                   >
                                     {deleting === mt.id ? "Deleting..." : "Delete"}
                                   </button>
@@ -531,25 +535,27 @@ export default function MissedTrades({
               <button
                 disabled={safePage <= 1}
                 onClick={() => setPage(safePage - 1)}
-                className={`px-2.5 py-1 rounded-md text-[11px] font-medium transition-all ${
+                className={cn(
+                  "px-2.5 py-1 rounded-md text-[11px] font-medium transition-all",
                   safePage <= 1
-                    ? "text-gray-700 border border-transparent cursor-default"
-                    : "text-gray-400 border border-gray-700/80 hover:text-white hover:border-gray-500"
-                }`}
+                    ? "text-surface-3 border border-transparent cursor-default"
+                    : "text-secondary border border-border hover:text-primary hover:border-border-hover"
+                )}
               >
                 Previous
               </button>
-              <span className="text-[11px] text-gray-500">
+              <span className="text-[11px] text-tertiary">
                 {safePage} / {totalPages}
               </span>
               <button
                 disabled={safePage >= totalPages}
                 onClick={() => setPage(safePage + 1)}
-                className={`px-2.5 py-1 rounded-md text-[11px] font-medium transition-all ${
+                className={cn(
+                  "px-2.5 py-1 rounded-md text-[11px] font-medium transition-all",
                   safePage >= totalPages
-                    ? "text-gray-700 border border-transparent cursor-default"
-                    : "text-gray-400 border border-gray-700/80 hover:text-white hover:border-gray-500"
-                }`}
+                    ? "text-surface-3 border border-transparent cursor-default"
+                    : "text-secondary border border-border hover:text-primary hover:border-border-hover"
+                )}
               >
                 Next
               </button>

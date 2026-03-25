@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { supabase } from "../lib/supabase";
+import { cn } from "../lib/utils";
 import type { Trade, MissedTrade } from "../types/trade";
 import { calcPnl, calcRR, calcStreak } from "../lib/calc";
 import { calcMissedPnl } from "./MissedTrades";
@@ -27,32 +28,33 @@ function TodaySummary({ trades }: { trades: Trade[] }) {
   const losses = pnls.filter((p) => p < 0).length;
 
   return (
-    <div className="card-panel p-5 mb-6">
+    <div className="rounded-xl bg-surface-1 p-5 mb-6">
       <div className="flex items-center gap-3 mb-3">
-        <div className="w-2 h-2 rounded-full bg-accent-500 animate-ping" />
-        <h3 className="text-sm font-semibold text-white uppercase tracking-wide">
+        <div className="w-2 h-2 rounded-full bg-brand animate-ping" />
+        <h3 className="text-sm font-semibold text-primary uppercase tracking-wide">
           Today's Session
         </h3>
       </div>
       <div className="grid grid-cols-3 gap-4">
         <div>
-          <p className="text-[11px] text-gray-500 uppercase tracking-wider">Trades</p>
-          <p className="text-xl font-bold font-display text-white">{todayTrades.length}</p>
+          <p className="text-[11px] text-tertiary uppercase tracking-wider">Trades</p>
+          <p className="text-xl font-semibold text-primary">{todayTrades.length}</p>
         </div>
         <div>
-          <p className="text-[11px] text-gray-500 uppercase tracking-wider">W / L</p>
-          <p className="text-xl font-bold font-display">
-            <span className="text-accent-400">{wins}</span>
-            <span className="text-gray-600"> / </span>
-            <span className="text-red-400">{losses}</span>
+          <p className="text-[11px] text-tertiary uppercase tracking-wider">W / L</p>
+          <p className="text-xl font-semibold">
+            <span className="text-profit">{wins}</span>
+            <span className="text-tertiary"> / </span>
+            <span className="text-loss">{losses}</span>
           </p>
         </div>
         <div>
-          <p className="text-[11px] text-gray-500 uppercase tracking-wider">P&L</p>
+          <p className="text-[11px] text-tertiary uppercase tracking-wider">P&L</p>
           <p
-            className={`text-xl font-bold font-display ${
-              totalPnl >= 0 ? "text-accent-400" : "text-red-400"
-            }`}
+            className={cn(
+              "text-xl font-semibold font-mono",
+              totalPnl >= 0 ? "text-profit" : "text-loss"
+            )}
           >
             {totalPnl >= 0 ? "+" : ""}${totalPnl.toFixed(2)}
           </p>
@@ -104,8 +106,8 @@ export default function Dashboard({
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center py-20 gap-3">
-        <div className="h-6 w-6 border-2 border-gray-600 border-t-accent-500 rounded-full animate-spin" />
-        <p className="text-sm text-gray-500">Loading dashboard...</p>
+        <div className="h-6 w-6 border-2 border-tertiary border-t-brand rounded-full animate-spin" />
+        <p className="text-sm text-tertiary">Loading dashboard...</p>
       </div>
     );
   }
@@ -113,20 +115,20 @@ export default function Dashboard({
   if (trades.length === 0 && missedTrades.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-20 gap-4">
-        <div className="w-16 h-16 rounded-2xl bg-gray-900 border border-gray-800 flex items-center justify-center text-3xl">
+        <div className="w-16 h-16 rounded-2xl bg-surface-1 border border-border flex items-center justify-center text-3xl">
           📊
         </div>
-        <h2 className="text-lg font-bold text-white font-display">
+        <h2 className="text-lg font-semibold text-primary tracking-tight">
           No trades logged yet
         </h2>
-        <p className="text-sm text-gray-400 text-center max-w-xs">
+        <p className="text-sm text-secondary text-center max-w-xs">
           Your dashboard will come alive once you start logging trades — win
           rate, P&L, streaks, and more.
         </p>
         {onLogTrade && (
           <button
             onClick={onLogTrade}
-            className="btn-submit mt-2 bg-accent-600 hover:bg-accent-500 text-white font-medium text-sm px-6 py-2.5 rounded-lg"
+            className="btn-submit mt-2 bg-brand hover:bg-brand text-primary font-medium text-sm px-6 py-2.5 rounded-lg"
           >
             Log Your First Trade
           </button>
@@ -262,7 +264,7 @@ export default function Dashboard({
 
   return (
     <div className="space-y-6">
-      <h2 className="text-xl font-bold text-white font-display tracking-tight">
+      <h2 className="text-xl font-semibold text-primary tracking-tight">
         Dashboard
       </h2>
 
@@ -292,7 +294,7 @@ export default function Dashboard({
             <StatCard
               label="Total P&L"
               value={`${totalPnl >= 0 ? "+" : ""}$${totalPnl.toFixed(2)}`}
-              color={totalPnl >= 0 ? "text-accent-400" : "text-red-400"}
+              color={totalPnl >= 0 ? "text-profit" : "text-loss"}
               accent={totalPnl >= 0 ? "green" : "red"}
             />
             <StatCard
@@ -303,7 +305,7 @@ export default function Dashboard({
             <StatCard
               label="Win Rate"
               value={`${winRate.toFixed(1)}%`}
-              color={winRate >= 50 ? "text-accent-400" : "text-red-400"}
+              color={winRate >= 50 ? "text-profit" : "text-loss"}
               sub={`${wins.length}W / ${losses.length}L`}
               accent={winRate >= 50 ? "green" : "red"}
             />
@@ -316,9 +318,9 @@ export default function Dashboard({
               }
               color={
                 streak.type === "win"
-                  ? "text-accent-400"
+                  ? "text-profit"
                   : streak.type === "loss"
-                    ? "text-red-400"
+                    ? "text-loss"
                     : undefined
               }
               accent={
@@ -337,20 +339,20 @@ export default function Dashboard({
               <StatCard
                 label="Avg Win"
                 value={`+$${avgWin.toFixed(2)}`}
-                color="text-accent-400"
+                color="text-profit"
                 accent="green"
               />
               <StatCard
                 label="Avg Loss"
                 value={`-$${Math.abs(avgLoss).toFixed(2)}`}
-                color="text-red-400"
+                color="text-loss"
                 accent="red"
               />
               {avgRR !== null && (
                 <StatCard
                   label="Avg R:R"
                   value={`${avgRR.toFixed(2)}R`}
-                  color={avgRR >= 1 ? "text-accent-400" : "text-red-400"}
+                  color={avgRR >= 1 ? "text-profit" : "text-loss"}
                   accent={avgRR >= 1 ? "green" : "red"}
                 />
               )}
@@ -358,21 +360,21 @@ export default function Dashboard({
                 <StatCard
                   label="Profit Factor"
                   value={profitFactor.toFixed(2)}
-                  color={profitFactor >= 1 ? "text-accent-400" : "text-red-400"}
+                  color={profitFactor >= 1 ? "text-profit" : "text-loss"}
                   accent={profitFactor >= 1 ? "green" : "red"}
                 />
               )}
               <StatCard
                 label="Best Trade"
                 value={bestPnl > 0 ? `+$${bestPnl.toFixed(2)}` : "—"}
-                color={bestPnl > 0 ? "text-accent-400" : "text-gray-500"}
+                color={bestPnl > 0 ? "text-profit" : "text-tertiary"}
                 sub={bestPnl > 0 && bestTrade ? bestTrade.ticker : undefined}
                 accent={bestPnl > 0 ? "green" : "neutral"}
               />
               <StatCard
                 label="Worst Trade"
                 value={worstPnl < 0 ? `-$${Math.abs(worstPnl).toFixed(2)}` : "—"}
-                color={worstPnl < 0 ? "text-red-400" : "text-gray-500"}
+                color={worstPnl < 0 ? "text-loss" : "text-tertiary"}
                 sub={worstPnl < 0 && worstTrade ? worstTrade.ticker : undefined}
                 accent={worstPnl < 0 ? "red" : "neutral"}
               />
@@ -382,14 +384,14 @@ export default function Dashboard({
           {/* Risk Metrics (Pro only) */}
           {proUser && (
             <>
-              <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
+              <h3 className="text-xs font-semibold text-secondary uppercase tracking-wider">
                 Risk Metrics
               </h3>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                 <StatCard
                   label="Expectancy"
                   value={`${expectancy >= 0 ? "+" : "-"}$${Math.abs(expectancy).toFixed(2)}`}
-                  color={expectancy >= 0 ? "text-accent-400" : "text-red-400"}
+                  color={expectancy >= 0 ? "text-profit" : "text-loss"}
                   sub="per trade"
                   accent={expectancy >= 0 ? "green" : "red"}
                 />
@@ -397,7 +399,7 @@ export default function Dashboard({
                   <StatCard
                     label="Expectancy / R"
                     value={`${expectancyR >= 0 ? "+" : ""}${expectancyR.toFixed(2)}R`}
-                    color={expectancyR >= 0 ? "text-accent-400" : "text-red-400"}
+                    color={expectancyR >= 0 ? "text-profit" : "text-loss"}
                     accent={expectancyR >= 0 ? "green" : "red"}
                   />
                 )}
@@ -408,7 +410,7 @@ export default function Dashboard({
                       ? `-$${drawdownInfo.maxDrawdown.toFixed(2)}`
                       : "—"
                   }
-                  color={drawdownInfo.maxDrawdown > 0 ? "text-red-400" : "text-gray-500"}
+                  color={drawdownInfo.maxDrawdown > 0 ? "text-loss" : "text-tertiary"}
                   sub={
                     drawdownInfo.maxDrawdownPct > 0
                       ? `${drawdownInfo.maxDrawdownPct.toFixed(1)}% of peak`
@@ -425,8 +427,8 @@ export default function Dashboard({
                   }
                   color={
                     drawdownInfo.currentDrawdown > 0
-                      ? "text-red-400"
-                      : "text-accent-400"
+                      ? "text-loss"
+                      : "text-profit"
                   }
                   accent={drawdownInfo.currentDrawdown > 0 ? "red" : "green"}
                 />
@@ -434,7 +436,7 @@ export default function Dashboard({
                   <StatCard
                     label="Recovery Factor"
                     value={recoveryFactor.toFixed(2)}
-                    color={recoveryFactor >= 1 ? "text-accent-400" : "text-red-400"}
+                    color={recoveryFactor >= 1 ? "text-profit" : "text-loss"}
                     accent={recoveryFactor >= 1 ? "green" : "red"}
                   />
                 )}
@@ -442,7 +444,7 @@ export default function Dashboard({
                   <StatCard
                     label="Sharpe Ratio"
                     value={sharpe.toFixed(2)}
-                    color={sharpe >= 0 ? "text-accent-400" : "text-red-400"}
+                    color={sharpe >= 0 ? "text-profit" : "text-loss"}
                     sub="annualized"
                     accent={sharpe >= 0 ? "green" : "red"}
                   />
@@ -456,14 +458,14 @@ export default function Dashboard({
       {/* Missed Opportunities (Pro only) */}
       {proUser && missedTrades.length > 0 && (
         <>
-          <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
+          <h3 className="text-xs font-semibold text-secondary uppercase tracking-wider">
             Missed Opportunities
           </h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             <AmberStatCard
               label="Missed Trades"
               value={String(missedTrades.length)}
-              color="text-yellow-400"
+              color="text-amber"
             />
             {(() => {
               const missedPnls = missedTrades
@@ -483,10 +485,10 @@ export default function Dashboard({
                   }
                   color={
                     totalMissedPnl === null
-                      ? "text-gray-500"
+                      ? "text-tertiary"
                       : totalMissedPnl >= 0
-                        ? "text-accent-400"
-                        : "text-red-400"
+                        ? "text-profit"
+                        : "text-loss"
                   }
                 />
               );
@@ -510,7 +512,7 @@ export default function Dashboard({
                 <AmberStatCard
                   label="Top Missed Setup"
                   value={topSetup || "—"}
-                  color={topSetup ? "text-yellow-400" : "text-gray-500"}
+                  color={topSetup ? "text-amber" : "text-tertiary"}
                   sub={topSetup ? `${topCount}x` : undefined}
                 />
               );
@@ -534,7 +536,7 @@ export default function Dashboard({
                 <AmberStatCard
                   label="Top Hesitation"
                   value={topReason || "—"}
-                  color={topReason ? "text-yellow-400" : "text-gray-500"}
+                  color={topReason ? "text-amber" : "text-tertiary"}
                   sub={topReason ? `${topCount}x` : undefined}
                 />
               );
@@ -545,20 +547,21 @@ export default function Dashboard({
 
       {/* Equity Curve & Daily Breakdown */}
       {hasTrades && (
-        <div className={`grid grid-cols-1 ${proUser ? "md:grid-cols-2" : ""} gap-4`}>
+        <div className={cn("grid grid-cols-1 gap-4", proUser && "md:grid-cols-2")}>
           {/* Equity Curve */}
           {equityPoints.length >= 2 && (
-            <div className="card-panel p-5">
+            <div className="rounded-xl bg-surface-1 p-5">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                <h3 className="text-xs font-semibold text-secondary uppercase tracking-wider">
                   Equity Curve
                 </h3>
                 <span
-                  className={`text-xs font-bold px-2.5 py-1 rounded-md ${
+                  className={cn(
+                    "text-xs font-semibold font-mono px-2.5 py-1 rounded-md",
                     totalPnl >= 0
-                      ? "text-accent-400 bg-accent-500/10 border border-accent-500/20"
-                      : "text-red-400 bg-red-500/10 border border-red-500/20"
-                  }`}
+                      ? "text-profit bg-profit-muted border border-profit-muted"
+                      : "text-loss bg-loss-muted border border-loss-muted"
+                  )}
                 >
                   {totalPnl >= 0 ? "+" : ""}${totalPnl.toFixed(2)}
                 </span>
@@ -584,8 +587,8 @@ export default function Dashboard({
 
       {/* Trade Calendar */}
       {hasTrades && dailyStats.length > 0 && (
-        <div className="card-panel p-5 page-enter">
-          <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4">
+        <div className="rounded-xl bg-surface-1 p-5 page-enter">
+          <h3 className="text-xs font-semibold text-secondary uppercase tracking-wider mb-4">
             Trade Calendar
           </h3>
           <CalendarHeatmap dailyStats={dailyStats} />

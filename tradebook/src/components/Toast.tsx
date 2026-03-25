@@ -5,6 +5,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
+import { cn } from "../lib/utils";
 
 type ToastType = "success" | "error";
 
@@ -36,17 +37,16 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   return (
     <ToastContext.Provider value={{ showToast }}>
       {children}
-      {/* Toast container — fixed at top center */}
       <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 flex flex-col gap-2 pointer-events-none">
         {toasts.map((toast) => (
           <div
             key={toast.id}
-            className={
-              "pointer-events-auto px-4 py-2 rounded-lg text-sm font-medium shadow-lg animate-fade-in " +
-              (toast.type === "error"
-                ? "bg-red-500/90 text-white"
-                : "bg-accent-500/90 text-white")
-            }
+            className={cn(
+              "pointer-events-auto px-4 py-2 rounded-lg text-sm font-medium shadow-lg animate-fade-in",
+              toast.type === "error"
+                ? "bg-loss text-primary"
+                : "bg-profit text-primary"
+            )}
           >
             {toast.message}
           </div>

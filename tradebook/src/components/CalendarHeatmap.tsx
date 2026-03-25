@@ -23,10 +23,9 @@ export default function CalendarHeatmap({
     statsMap.set(d.date, d);
   }
 
-  // Build the grid: 13 columns (weeks), 7 rows (Mon=0 … Sun=6)
   const today = new Date();
-  const todayDow = today.getDay(); // 0=Sun
-  const todayMon = todayDow === 0 ? 6 : todayDow - 1; // Mon-based
+  const todayDow = today.getDay();
+  const todayMon = todayDow === 0 ? 6 : todayDow - 1;
 
   const lastWeekMon = new Date(today);
   lastWeekMon.setDate(today.getDate() - todayMon);
@@ -47,18 +46,17 @@ export default function CalendarHeatmap({
     }
   }
 
-  // Scale colors by max |P&L|
   const absPnls = dailyStats.map((d) => Math.abs(d.pnl)).filter((v) => v > 0);
   const maxAbs = absPnls.length > 0 ? Math.max(...absPnls) : 1;
 
   function cellColor(dateStr: string): string {
     const s = statsMap.get(dateStr);
-    if (!s || s.trades === 0) return "#1f2937";
+    if (!s || s.trades === 0) return "#18181b"; // surface-2
     const t = Math.min(Math.abs(s.pnl) / maxAbs, 1);
     const opacity = 0.25 + t * 0.75;
     return s.pnl >= 0
-      ? `rgba(0,200,83,${opacity})`
-      : `rgba(239,68,68,${opacity})`;
+      ? `rgba(34,197,94,${opacity})`  // profit
+      : `rgba(239,68,68,${opacity})`; // loss
   }
 
   function tooltip(dateStr: string): string {
@@ -68,7 +66,6 @@ export default function CalendarHeatmap({
     return `${dateStr}: ${sign}$${s.pnl.toFixed(2)} (${s.trades} trade${s.trades !== 1 ? "s" : ""})`;
   }
 
-  // Month labels — first Monday of each new month
   const monthLabels: { label: string; col: number }[] = [];
   let prevMonth = -1;
   for (const d of days) {
@@ -102,7 +99,7 @@ export default function CalendarHeatmap({
           key={i}
           x={LABEL_LEFT + m.col * STEP + CELL / 2}
           y={10}
-          fill="#6b7280"
+          fill="#52525b"
           fontSize="9"
           textAnchor="middle"
         >
@@ -115,7 +112,7 @@ export default function CalendarHeatmap({
           key={d.label}
           x={LABEL_LEFT - 5}
           y={LABEL_TOP + d.row * STEP + CELL / 2 + 3}
-          fill="#6b7280"
+          fill="#52525b"
           fontSize="9"
           textAnchor="end"
         >

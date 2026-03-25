@@ -2,25 +2,25 @@ import { Link } from "react-router-dom";
 
 export default function PrivacyPage() {
   return (
-    <div className="min-h-screen bg-gray-950 text-gray-100">
-      <header className="border-b border-gray-800/50">
+    <div className="min-h-screen bg-surface-0 text-primary">
+      <header className="border-b border-border">
         <div className="max-w-3xl mx-auto px-4 py-5 flex items-center justify-between">
-          <Link to="/" className="font-display text-lg font-bold text-white">
+          <Link to="/" className="text-lg font-semibold text-primary">
             MyTradeBook
           </Link>
-          <Link to="/" className="text-xs text-gray-500 hover:text-gray-300 transition-colors">
+          <Link to="/" className="text-xs text-tertiary hover:text-secondary transition-colors">
             Back to Home
           </Link>
         </div>
       </header>
 
       <main className="max-w-3xl mx-auto px-4 py-12">
-        <h1 className="text-2xl font-bold font-display text-white mb-2">Privacy Policy</h1>
-        <p className="text-sm text-gray-500 mb-8">Last updated: March 24, 2026</p>
+        <h1 className="text-2xl font-semibold text-primary mb-2">Privacy Policy</h1>
+        <p className="text-sm text-tertiary mb-8">Last updated: March 24, 2026</p>
 
-        <div className="space-y-6 text-sm text-gray-400 leading-relaxed">
+        <div className="space-y-6 text-sm text-secondary leading-relaxed">
           <section>
-            <h2 className="text-base font-semibold text-white mb-2">1. Introduction</h2>
+            <h2 className="text-base font-semibold text-primary mb-2">1. Introduction</h2>
             <p>
               Ohjudo ("Company," "we," "us," or "our") operates the MyTradeBook application and
               related services available at mytradebook.app (the "Service"). This Privacy Policy
@@ -31,16 +31,16 @@ export default function PrivacyPage() {
           </section>
 
           <section>
-            <h2 className="text-base font-semibold text-white mb-2">2. Information We Collect</h2>
+            <h2 className="text-base font-semibold text-primary mb-2">2. Information We Collect</h2>
             <p className="mb-3">We collect the following categories of information:</p>
 
-            <h3 className="text-sm font-medium text-gray-300 mb-1">Account Information</h3>
+            <h3 className="text-sm font-medium text-secondary mb-1">Account Information</h3>
             <p className="mb-3">
               When you create an account, we collect your email address and display name. This
               information is required to authenticate you and provide the Service.
             </p>
 
-            <h3 className="text-sm font-medium text-gray-300 mb-1">Payment Information</h3>
+            <h3 className="text-sm font-medium text-secondary mb-1">Payment Information</h3>
             <p className="mb-3">
               Subscription payments are processed by Stripe, our third-party payment processor. When
               you subscribe, your payment details (credit card number, billing address, etc.) are
@@ -50,20 +50,20 @@ export default function PrivacyPage() {
               display in your account settings and manage your subscription.
             </p>
 
-            <h3 className="text-sm font-medium text-gray-300 mb-1">Trading Journal Data</h3>
+            <h3 className="text-sm font-medium text-secondary mb-1">Trading Journal Data</h3>
             <p className="mb-3">
               We store all trade data, journal entries, notes, tags, and other content you voluntarily
               enter into the Service. This includes ticker symbols, entry/exit prices, position sizes,
               dates, emotions, setups, and any notes or screenshots you upload.
             </p>
 
-            <h3 className="text-sm font-medium text-gray-300 mb-1">Usage Data</h3>
+            <h3 className="text-sm font-medium text-secondary mb-1">Usage Data</h3>
             <p className="mb-3">
               We automatically collect information about how you interact with the Service, including
               pages visited, features used, and actions taken within the application.
             </p>
 
-            <h3 className="text-sm font-medium text-gray-300 mb-1">Device & Technical Information</h3>
+            <h3 className="text-sm font-medium text-secondary mb-1">Device & Technical Information</h3>
             <p>
               We collect your IP address, browser type, operating system, device type, and referring
               URLs. This information helps us operate, maintain, and improve the Service, as well as
@@ -72,7 +72,7 @@ export default function PrivacyPage() {
           </section>
 
           <section>
-            <h2 className="text-base font-semibold text-white mb-2">3. How We Use Your Information</h2>
+            <h2 className="text-base font-semibold text-primary mb-2">3. How We Use Your Information</h2>
             <p className="mb-2">We use the information we collect to:</p>
             <ul className="list-disc list-inside space-y-1.5 pl-1">
               <li>Provide, operate, and maintain the Service</li>
@@ -90,7 +90,7 @@ export default function PrivacyPage() {
           </section>
 
           <section>
-            <h2 className="text-base font-semibold text-white mb-2">4. Data Sharing & Third Parties</h2>
+            <h2 className="text-base font-semibold text-primary mb-2">4. Data Sharing & Third Parties</h2>
             <p className="mb-2">
               We do not sell, rent, lease, or trade your personal information to third parties. We may
               share limited information with the following service providers who assist us in operating
@@ -98,20 +98,20 @@ export default function PrivacyPage() {
             </p>
             <ul className="list-disc list-inside space-y-1.5 pl-1">
               <li>
-                <strong className="text-gray-300">Stripe:</strong> Processes subscription payments.
+                <strong className="text-secondary">Stripe:</strong> Processes subscription payments.
                 Stripe's use of your information is governed by{" "}
                 <a
                   href="https://stripe.com/privacy"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-accent-400 hover:underline"
+                  className="text-brand hover:text-brand/80 transition-colors"
                 >
                   Stripe's Privacy Policy
                 </a>
                 .
               </li>
               <li>
-                <strong className="text-gray-300">Supabase:</strong> Provides database hosting,
+                <strong className="text-secondary">Supabase:</strong> Provides database hosting,
                 authentication, and backend infrastructure. Your data is stored with row-level
                 security, ensuring only you can access your own data.
               </li>
@@ -124,7 +124,7 @@ export default function PrivacyPage() {
           </section>
 
           <section>
-            <h2 className="text-base font-semibold text-white mb-2">5. Data Security</h2>
+            <h2 className="text-base font-semibold text-primary mb-2">5. Data Security</h2>
             <p>
               We take the security of your data seriously. All data transmitted between your browser
               and our servers is encrypted using HTTPS (TLS/SSL). Your data is stored with
@@ -136,16 +136,16 @@ export default function PrivacyPage() {
           </section>
 
           <section>
-            <h2 className="text-base font-semibold text-white mb-2">6. Cookies & Tracking</h2>
+            <h2 className="text-base font-semibold text-primary mb-2">6. Cookies & Tracking</h2>
             <p className="mb-2">We use cookies and similar technologies for the following purposes:</p>
             <ul className="list-disc list-inside space-y-1.5 pl-1">
               <li>
-                <strong className="text-gray-300">Essential cookies:</strong> Required for
+                <strong className="text-secondary">Essential cookies:</strong> Required for
                 authentication, session management, and core Service functionality. These cannot be
                 disabled.
               </li>
               <li>
-                <strong className="text-gray-300">Analytics cookies:</strong> Help us understand how
+                <strong className="text-secondary">Analytics cookies:</strong> Help us understand how
                 users interact with the Service so we can improve it. These collect anonymized usage
                 data.
               </li>
@@ -156,7 +156,7 @@ export default function PrivacyPage() {
           </section>
 
           <section>
-            <h2 className="text-base font-semibold text-white mb-2">7. Data Retention & Deletion</h2>
+            <h2 className="text-base font-semibold text-primary mb-2">7. Data Retention & Deletion</h2>
             <p>
               We retain your personal information and trade data for as long as your account is
               active or as needed to provide the Service. If you request deletion of your account, we
@@ -165,7 +165,7 @@ export default function PrivacyPage() {
               information. To request account deletion, contact us at{" "}
               <a
                 href="mailto:countingthis@gmail.com"
-                className="text-accent-400 hover:underline"
+                className="text-brand hover:text-brand/80 transition-colors"
               >
                 countingthis@gmail.com
               </a>
@@ -174,7 +174,7 @@ export default function PrivacyPage() {
           </section>
 
           <section>
-            <h2 className="text-base font-semibold text-white mb-2">8. Your Rights</h2>
+            <h2 className="text-base font-semibold text-primary mb-2">8. Your Rights</h2>
             <p className="mb-2">Depending on your jurisdiction, you may have the right to:</p>
             <ul className="list-disc list-inside space-y-1.5 pl-1">
               <li>Access the personal information we hold about you</li>
@@ -187,7 +187,7 @@ export default function PrivacyPage() {
               To exercise any of these rights, please contact us at{" "}
               <a
                 href="mailto:countingthis@gmail.com"
-                className="text-accent-400 hover:underline"
+                className="text-brand hover:text-brand/80 transition-colors"
               >
                 countingthis@gmail.com
               </a>
@@ -196,7 +196,7 @@ export default function PrivacyPage() {
           </section>
 
           <section>
-            <h2 className="text-base font-semibold text-white mb-2">9. Children's Privacy</h2>
+            <h2 className="text-base font-semibold text-primary mb-2">9. Children's Privacy</h2>
             <p>
               The Service is not intended for individuals under the age of 18. We do not knowingly
               collect personal information from children under 18. If we learn that we have collected
@@ -206,7 +206,7 @@ export default function PrivacyPage() {
           </section>
 
           <section>
-            <h2 className="text-base font-semibold text-white mb-2">10. Changes to This Policy</h2>
+            <h2 className="text-base font-semibold text-primary mb-2">10. Changes to This Policy</h2>
             <p>
               We may update this Privacy Policy from time to time to reflect changes in our practices
               or applicable laws. If we make material changes, we will notify you by email or by
@@ -217,7 +217,7 @@ export default function PrivacyPage() {
           </section>
 
           <section>
-            <h2 className="text-base font-semibold text-white mb-2">11. Governing Law</h2>
+            <h2 className="text-base font-semibold text-primary mb-2">11. Governing Law</h2>
             <p>
               This Privacy Policy shall be governed by and construed in accordance with the laws of
               the Commonwealth of Massachusetts, without regard to its conflict of laws principles.
@@ -225,13 +225,13 @@ export default function PrivacyPage() {
           </section>
 
           <section>
-            <h2 className="text-base font-semibold text-white mb-2">12. Contact Us</h2>
+            <h2 className="text-base font-semibold text-primary mb-2">12. Contact Us</h2>
             <p>
               If you have any questions or concerns about this Privacy Policy or our data practices,
               please contact us at{" "}
               <a
                 href="mailto:countingthis@gmail.com"
-                className="text-accent-400 hover:underline"
+                className="text-brand hover:text-brand/80 transition-colors"
               >
                 countingthis@gmail.com
               </a>
@@ -241,14 +241,14 @@ export default function PrivacyPage() {
         </div>
       </main>
 
-      <footer className="border-t border-gray-800/50 mt-12">
+      <footer className="border-t border-border mt-12">
         <div className="max-w-3xl mx-auto px-4 py-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <span className="text-xs text-gray-500">&copy; 2026 Ohjudo. All rights reserved.</span>
-          <div className="flex items-center gap-6 text-xs text-gray-500">
-            <Link to="/privacy" className="hover:text-gray-300 transition-colors">
+          <span className="text-xs text-tertiary">&copy; 2026 Ohjudo. All rights reserved.</span>
+          <div className="flex items-center gap-6 text-xs text-tertiary">
+            <Link to="/privacy" className="hover:text-secondary transition-colors">
               Privacy Policy
             </Link>
-            <Link to="/terms" className="hover:text-gray-300 transition-colors">
+            <Link to="/terms" className="hover:text-secondary transition-colors">
               Terms of Service
             </Link>
           </div>

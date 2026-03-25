@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
+import { cn } from "../lib/utils";
 import { supabase } from "../lib/supabase";
 import type { Trade, CatalystType } from "../types/trade";
 import { calcPnl } from "../lib/calc";
@@ -13,7 +14,7 @@ import TimeOfDayAnalysis from "./analytics/TimeOfDayAnalysis";
 import HoldTimeAnalysis from "./analytics/HoldTimeAnalysis";
 import TiltDetection from "./analytics/TiltDetection";
 
-/* ── Collapsible Section ─────────────────────────────── */
+/* -- Collapsible Section ---------------------------------------- */
 
 function Section({
   title,
@@ -24,16 +25,19 @@ function Section({
 }) {
   const [open, setOpen] = useState(true);
   return (
-    <div className="card-panel p-5">
+    <div className="rounded-xl bg-surface-1 p-5">
       <button
         onClick={() => setOpen((o) => !o)}
         className="w-full flex items-center justify-between group"
       >
-        <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
+        <h3 className="text-xs font-semibold text-secondary uppercase tracking-wider">
           {title}
         </h3>
         <svg
-          className={`h-4 w-4 text-gray-500 transition-transform ${open ? "rotate-180" : ""}`}
+          className={cn(
+            "h-4 w-4 text-tertiary transition-transform",
+            open && "rotate-180",
+          )}
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -51,7 +55,7 @@ function Section({
   );
 }
 
-/* ── Catalyst Performance ────────────────────────────── */
+/* -- Catalyst Performance --------------------------------------- */
 
 const CATALYST_LABELS: Record<CatalystType, string> = {
   earnings: "Earnings",
@@ -104,7 +108,7 @@ function CatalystPerformance({ trades }: { trades: Trade[] }) {
 
   if (stats.length === 0) {
     return (
-      <p className="text-sm text-gray-500">
+      <p className="text-sm text-tertiary">
         No trades with catalyst data yet.
       </p>
     );
@@ -112,47 +116,56 @@ function CatalystPerformance({ trades }: { trades: Trade[] }) {
 
   return (
     <div className="overflow-x-auto">
-      <table className="trade-table w-full text-sm text-left">
+      <table className="w-full text-sm text-left">
         <thead>
-          <tr className="border-b border-gray-800">
-            <th className="pb-2.5 text-[10px] text-gray-500 uppercase font-semibold tracking-wider">
+          <tr className="border-b border-border">
+            <th className="pb-2.5 text-[10px] text-tertiary uppercase font-semibold tracking-wider">
               Catalyst
             </th>
-            <th className="pb-2.5 text-[10px] text-gray-500 uppercase font-semibold tracking-wider">
+            <th className="pb-2.5 text-[10px] text-tertiary uppercase font-semibold tracking-wider">
               Trades
             </th>
-            <th className="pb-2.5 text-[10px] text-gray-500 uppercase font-semibold tracking-wider">
+            <th className="pb-2.5 text-[10px] text-tertiary uppercase font-semibold tracking-wider">
               Win Rate
             </th>
-            <th className="pb-2.5 text-[10px] text-gray-500 uppercase font-semibold tracking-wider text-right">
+            <th className="pb-2.5 text-[10px] text-tertiary uppercase font-semibold tracking-wider text-right">
               Avg P&L
             </th>
-            <th className="pb-2.5 text-[10px] text-gray-500 uppercase font-semibold tracking-wider text-right">
+            <th className="pb-2.5 text-[10px] text-tertiary uppercase font-semibold tracking-wider text-right">
               Total P&L
             </th>
           </tr>
         </thead>
         <tbody>
           {stats.map((s) => (
-            <tr key={s.type} className="border-t border-gray-800/40">
+            <tr key={s.type} className="border-t border-border">
               <td className="py-2.5">
-                <span className="px-1.5 py-0.5 rounded-full text-[10px] font-medium bg-accent-500/10 text-accent-400/80 border border-accent-500/20">
+                <span className="px-1.5 py-0.5 rounded-full text-[10px] font-medium bg-brand-muted text-brand border border-brand/20">
                   {CATALYST_LABELS[s.type as CatalystType] ?? s.type}
                 </span>
               </td>
-              <td className="py-2.5 text-gray-300 text-xs">{s.count}</td>
+              <td className="py-2.5 text-secondary text-xs">{s.count}</td>
               <td
-                className={`py-2.5 text-xs font-semibold ${s.winRate >= 50 ? "text-accent-400" : "text-red-400"}`}
+                className={cn(
+                  "py-2.5 text-xs font-semibold font-mono",
+                  s.winRate >= 50 ? "text-profit" : "text-loss",
+                )}
               >
                 {s.winRate.toFixed(0)}%
               </td>
               <td
-                className={`py-2.5 text-right text-xs font-semibold ${s.avgPnl >= 0 ? "text-accent-400" : "text-red-400"}`}
+                className={cn(
+                  "py-2.5 text-right text-xs font-semibold font-mono",
+                  s.avgPnl >= 0 ? "text-profit" : "text-loss",
+                )}
               >
                 {s.avgPnl >= 0 ? "+" : ""}${s.avgPnl.toFixed(2)}
               </td>
               <td
-                className={`py-2.5 text-right text-xs font-semibold ${s.totalPnl >= 0 ? "text-accent-400" : "text-red-400"}`}
+                className={cn(
+                  "py-2.5 text-right text-xs font-semibold font-mono",
+                  s.totalPnl >= 0 ? "text-profit" : "text-loss",
+                )}
               >
                 {s.totalPnl >= 0 ? "+" : ""}${s.totalPnl.toFixed(2)}
               </td>
@@ -164,7 +177,7 @@ function CatalystPerformance({ trades }: { trades: Trade[] }) {
   );
 }
 
-/* ── Float Size Performance ──────────────────────────── */
+/* -- Float Size Performance ------------------------------------- */
 
 interface FloatBucket {
   label: string;
@@ -174,8 +187,8 @@ interface FloatBucket {
 
 const FLOAT_BUCKETS: FloatBucket[] = [
   { label: "<10M", min: 0, max: 10_000_000 },
-  { label: "10–50M", min: 10_000_000, max: 50_000_000 },
-  { label: "50–200M", min: 50_000_000, max: 200_000_000 },
+  { label: "10-50M", min: 10_000_000, max: 50_000_000 },
+  { label: "50-200M", min: 50_000_000, max: 200_000_000 },
   { label: ">200M", min: 200_000_000, max: Infinity },
 ];
 
@@ -224,7 +237,7 @@ function FloatSizePerformance({ trades }: { trades: Trade[] }) {
 
   if (stats.length === 0) {
     return (
-      <p className="text-sm text-gray-500">
+      <p className="text-sm text-tertiary">
         No trades with float data yet.
       </p>
     );
@@ -232,47 +245,56 @@ function FloatSizePerformance({ trades }: { trades: Trade[] }) {
 
   return (
     <div className="overflow-x-auto">
-      <table className="trade-table w-full text-sm text-left">
+      <table className="w-full text-sm text-left">
         <thead>
-          <tr className="border-b border-gray-800">
-            <th className="pb-2.5 text-[10px] text-gray-500 uppercase font-semibold tracking-wider">
+          <tr className="border-b border-border">
+            <th className="pb-2.5 text-[10px] text-tertiary uppercase font-semibold tracking-wider">
               Float Size
             </th>
-            <th className="pb-2.5 text-[10px] text-gray-500 uppercase font-semibold tracking-wider">
+            <th className="pb-2.5 text-[10px] text-tertiary uppercase font-semibold tracking-wider">
               Trades
             </th>
-            <th className="pb-2.5 text-[10px] text-gray-500 uppercase font-semibold tracking-wider">
+            <th className="pb-2.5 text-[10px] text-tertiary uppercase font-semibold tracking-wider">
               Win Rate
             </th>
-            <th className="pb-2.5 text-[10px] text-gray-500 uppercase font-semibold tracking-wider text-right">
+            <th className="pb-2.5 text-[10px] text-tertiary uppercase font-semibold tracking-wider text-right">
               Avg P&L
             </th>
-            <th className="pb-2.5 text-[10px] text-gray-500 uppercase font-semibold tracking-wider text-right">
+            <th className="pb-2.5 text-[10px] text-tertiary uppercase font-semibold tracking-wider text-right">
               Total P&L
             </th>
           </tr>
         </thead>
         <tbody>
           {stats.map((s) => (
-            <tr key={s.label} className="border-t border-gray-800/40">
+            <tr key={s.label} className="border-t border-border">
               <td className="py-2.5">
-                <span className="px-1.5 py-0.5 rounded-full text-[10px] font-medium bg-accent-500/10 text-accent-400/80 border border-accent-500/20">
+                <span className="px-1.5 py-0.5 rounded-full text-[10px] font-medium bg-brand-muted text-brand border border-brand/20">
                   {s.label}
                 </span>
               </td>
-              <td className="py-2.5 text-gray-300 text-xs">{s.count}</td>
+              <td className="py-2.5 text-secondary text-xs">{s.count}</td>
               <td
-                className={`py-2.5 text-xs font-semibold ${s.winRate >= 50 ? "text-accent-400" : "text-red-400"}`}
+                className={cn(
+                  "py-2.5 text-xs font-semibold font-mono",
+                  s.winRate >= 50 ? "text-profit" : "text-loss",
+                )}
               >
                 {s.winRate.toFixed(0)}%
               </td>
               <td
-                className={`py-2.5 text-right text-xs font-semibold ${s.avgPnl >= 0 ? "text-accent-400" : "text-red-400"}`}
+                className={cn(
+                  "py-2.5 text-right text-xs font-semibold font-mono",
+                  s.avgPnl >= 0 ? "text-profit" : "text-loss",
+                )}
               >
                 {s.avgPnl >= 0 ? "+" : ""}${s.avgPnl.toFixed(2)}
               </td>
               <td
-                className={`py-2.5 text-right text-xs font-semibold ${s.totalPnl >= 0 ? "text-accent-400" : "text-red-400"}`}
+                className={cn(
+                  "py-2.5 text-right text-xs font-semibold font-mono",
+                  s.totalPnl >= 0 ? "text-profit" : "text-loss",
+                )}
               >
                 {s.totalPnl >= 0 ? "+" : ""}${s.totalPnl.toFixed(2)}
               </td>
@@ -284,7 +306,7 @@ function FloatSizePerformance({ trades }: { trades: Trade[] }) {
   );
 }
 
-/* ── Analytics Page ──────────────────────────────────── */
+/* -- Analytics Page --------------------------------------------- */
 
 export default function Analytics() {
   const { showToast } = useToast();
@@ -320,8 +342,8 @@ export default function Analytics() {
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center py-20 gap-3">
-        <div className="h-6 w-6 border-2 border-gray-600 border-t-accent-500 rounded-full animate-spin" />
-        <p className="text-sm text-gray-500">Loading analytics...</p>
+        <div className="h-6 w-6 border-2 border-tertiary border-t-brand rounded-full animate-spin" />
+        <p className="text-sm text-tertiary">Loading analytics...</p>
       </div>
     );
   }
@@ -330,7 +352,7 @@ export default function Analytics() {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-bold text-white font-display tracking-tight">
+        <h2 className="text-xl font-semibold text-primary tracking-tight">
           Analytics
         </h2>
       </div>
