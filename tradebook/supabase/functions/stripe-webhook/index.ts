@@ -4,7 +4,6 @@ import Stripe from "https://esm.sh/stripe@17.7.0?target=denonext";
 
 const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY")!, {
   apiVersion: "2024-12-18.acacia",
-  httpClient: Stripe.createFetchHttpClient(),
 });
 
 const webhookSecret = Deno.env.get("STRIPE_WEBHOOK_SECRET")!;
