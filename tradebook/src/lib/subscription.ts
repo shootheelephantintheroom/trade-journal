@@ -55,26 +55,12 @@ export function canStartTrial(profile: Profile | null): boolean {
 
 /** Starts a 14-day Pro trial for the user via Edge Function */
 export async function startProTrial(): Promise<{ success: boolean; error?: string }> {
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-  if (!session) return { success: false, error: "Not authenticated" };
+  const { data, error } = await supabase.functions.invoke("start-trial", {
+    method: "POST",
+  });
 
-  const res = await fetch(
-    `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/start-trial`,
-    {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${session.access_token}`,
-        apikey: import.meta.env.VITE_SUPABASE_ANON_KEY,
-        "Content-Type": "application/json",
-      },
-    }
-  );
-
-  const data = await res.json();
-  if (!res.ok) {
-    return { success: false, error: data?.error ?? "Failed to start trial" };
+  if (error) {
+    return { success: false, error: "Failed to start trial" };
   }
   return { success: true };
 }

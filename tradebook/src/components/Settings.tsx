@@ -132,28 +132,11 @@ export default function Settings() {
     if (deleteConfirm !== "DELETE") return;
     setDeleting(true);
     try {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-      if (!session) {
-        showToast("Not authenticated", "error");
-        setDeleting(false);
-        return;
-      }
-      const res = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/delete-account`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${session.access_token}`,
-            apikey: import.meta.env.VITE_SUPABASE_ANON_KEY,
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      if (!res.ok) {
-        const data = await res.json().catch(() => null);
-        throw new Error(data?.error ?? "Failed to delete account");
+      const { error } = await supabase.functions.invoke("delete-account", {
+        method: "POST",
+      });
+      if (error) {
+        throw new Error("Failed to delete account");
       }
       await signOut();
       navigate("/", { replace: true });

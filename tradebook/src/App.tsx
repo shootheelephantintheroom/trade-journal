@@ -135,22 +135,12 @@ export default function App() {
                       onClick={async () => {
                         setMenuOpen(false);
                         try {
-                          const { data: { session } } = await supabase.auth.getSession();
-                          if (!session) return;
-                          const res = await fetch(
-                            `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/create-portal-session`,
-                            {
-                              method: "POST",
-                              headers: {
-                                Authorization: `Bearer ${session.access_token}`,
-                                apikey: import.meta.env.VITE_SUPABASE_ANON_KEY,
-                                "Content-Type": "application/json",
-                              },
-                            }
+                          const { data, error } = await supabase.functions.invoke(
+                            "create-portal-session",
+                            { method: "POST" }
                           );
-                          const data = await res.json();
-                          if (!res.ok || data.error) {
-                            showToast(data.error || "Failed to open billing portal", "error");
+                          if (error) {
+                            showToast("Failed to open billing portal", "error");
                             return;
                           }
                           if (data.url) window.location.href = data.url;
