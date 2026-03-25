@@ -8,6 +8,7 @@ import {
   useLocation,
 } from "react-router-dom";
 import { supabase } from "./lib/supabase";
+import { invokeEdgeFunction } from "./lib/subscription";
 import type { Trade, MissedTrade } from "./types/trade";
 import TradeForm from "./components/TradeForm";
 import TradeList from "./components/TradeList";
@@ -135,10 +136,7 @@ export default function App() {
                       onClick={async () => {
                         setMenuOpen(false);
                         try {
-                          const { data, error } = await supabase.functions.invoke(
-                            "create-portal-session",
-                            { method: "POST" }
-                          );
+                          const { data, error } = await invokeEdgeFunction("create-portal-session");
                           if (error) {
                             showToast("Failed to open billing portal", "error");
                             return;

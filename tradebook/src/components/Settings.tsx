@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "../lib/supabase";
 import { useAuth } from "../contexts/AuthContext";
 import { useSubscription } from "../contexts/SubscriptionContext";
-import { startProTrial } from "../lib/subscription";
+import { startProTrial, invokeEdgeFunction } from "../lib/subscription";
 import { useToast } from "./Toast";
 
 const TIMEZONES = [
@@ -132,9 +132,7 @@ export default function Settings() {
     if (deleteConfirm !== "DELETE") return;
     setDeleting(true);
     try {
-      const { error } = await supabase.functions.invoke("delete-account", {
-        method: "POST",
-      });
+      const { error } = await invokeEdgeFunction("delete-account");
       if (error) {
         throw new Error("Failed to delete account");
       }

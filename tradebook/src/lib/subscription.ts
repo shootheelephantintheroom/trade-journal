@@ -1,5 +1,39 @@
 import { supabase } from "./supabase";
 
+/** Call a Supabase Edge Function with a guaranteed-fresh auth token */
+export async function invokeEdgeFunction(
+  functionName: string,
+  body?: Record<string, unknown>
+): Promise<{ data: any; error: string | null }> {
+  // refreshSession() forces a token refresh so we never send an expired JWT
+  let session: { access_token: string } | null = null;
+  const { data: refreshed } = await supabase.auth.refreshSession();
+  session = refreshed.session;
+  if (!session) {
+    // fallback: try cached session (covers edge cases where refresh fails but session is still valid)
+    const { data: cached } = await supabase.auth.getSession();
+    session = cached.session;
+  }
+  if (!session) return { data: null, error: "Not authenticated" };
+
+  const res = await fetch(
+    `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/${functionName}`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${session.access_token}`,
+        apikey: import.meta.env.VITE_SUPABASE_ANON_KEY,
+        "Content-Type": "application/json",
+      },
+      body: body ? JSON.stringify(body) : undefined,
+    }
+  );
+
+  const data = await res.json().catch(() => null);
+  if (!res.ok) return { data: null, error: data?.error ?? `HTTP ${res.status}` };
+  return { data, error: null };
+}
+
 export interface Profile {
   id: string;
   email: string | null;
@@ -55,12 +89,7 @@ export function canStartTrial(profile: Profile | null): boolean {
 
 /** Starts a 14-day Pro trial for the user via Edge Function */
 export async function startProTrial(): Promise<{ success: boolean; error?: string }> {
-  const { data, error } = await supabase.functions.invoke("start-trial", {
-    method: "POST",
-  });
-
-  if (error) {
-    return { success: false, error: "Failed to start trial" };
-  }
+  const { error } = await invokeEdgeFunction("start-trial");
+  if (error) return { success: false, error };
   return { success: true };
 }

@@ -1,7 +1,6 @@
 import { useState, type ReactNode } from "react";
 import { useSubscription } from "../contexts/SubscriptionContext";
-import { startProTrial } from "../lib/subscription";
-import { supabase } from "../lib/supabase";
+import { startProTrial, invokeEdgeFunction } from "../lib/subscription";
 
 interface PaywallGateProps {
   feature: string;
@@ -39,12 +38,12 @@ export default function PaywallGate({ feature, children }: PaywallGateProps) {
   async function handleUpgrade() {
     setLoading(true);
     try {
-      const { data, error } = await supabase.functions.invoke(
+      const { data, error } = await invokeEdgeFunction(
         "create-checkout-session",
-        { body: { plan } }
+        { plan }
       );
 
-      if (error) throw error;
+      if (error) throw new Error(error);
       if (data.url) {
         window.location.href = data.url;
       } else {
