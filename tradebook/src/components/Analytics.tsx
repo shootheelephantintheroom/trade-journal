@@ -25,7 +25,7 @@ function Section({
 }) {
   const [open, setOpen] = useState(true);
   return (
-    <div className="rounded-xl bg-surface-1 p-5">
+    <div className="bg-surface-1 rounded-lg p-6">
       <button
         onClick={() => setOpen((o) => !o)}
         className="w-full flex items-center justify-between group"
@@ -349,7 +349,7 @@ export default function Analytics() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* Header */}
       <div className="flex items-center justify-between">
         <h2 className="text-xl font-semibold text-primary tracking-tight">

@@ -306,7 +306,7 @@ export default function TradeImport({ onImported }: Props) {
                         onChange={(e) =>
                           setMapping((m) => ({ ...m, [field]: e.target.value }))
                         }
-                        className="w-full bg-surface-2 border border-transparent rounded-lg px-2.5 py-1.5 text-xs text-primary hover:border-border-hover focus:outline-none focus:border-brand"
+                        className="w-full bg-surface-2 border border-transparent rounded-lg px-2.5 py-1.5 text-xs text-primary hover:border-border-hover focus:outline-none focus:border-brand transition-colors"
                       >
                         <option value="">-- skip --</option>
                         {headers.map((h) => (

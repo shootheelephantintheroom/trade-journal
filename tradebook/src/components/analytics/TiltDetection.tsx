@@ -219,7 +219,7 @@ export default function TiltDetection({ trades }: Props) {
 
   if (trades.length === 0) {
     return (
-      <div className="rounded-xl bg-surface-1 p-5 text-center text-sm text-tertiary">
+      <div className="bg-surface-1 rounded-lg p-6 text-center text-sm text-tertiary">
         No trades to analyze.
       </div>
     );
@@ -230,9 +230,9 @@ export default function TiltDetection({ trades }: Props) {
   const { episodes, postTiltAvgPnl, normalAvgPnl, costOfTilt, avgSizeIncrease, isDisciplined } = analysis;
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-8">
       {/* ── Threshold slider ───────────────────────────────────── */}
-      <div className="rounded-xl bg-surface-1 p-5">
+      <div className="bg-surface-1 rounded-lg p-6">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-[11px] font-semibold text-secondary uppercase tracking-wider">
             Tilt Detection
@@ -260,22 +260,22 @@ export default function TiltDetection({ trades }: Props) {
 
         {/* ── Summary stats ──────────────────────────────────── */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <div className="rounded-xl bg-surface-1 p-4">
-            <p className="text-[11px] font-medium text-tertiary uppercase tracking-wider mb-1.5">
+          <div className="bg-surface-1 rounded-lg p-6">
+            <p className="text-xs text-tertiary uppercase tracking-wide mb-1.5">
               Tilt Episodes
             </p>
-            <p className="text-2xl font-semibold text-primary">
+            <p className="text-2xl font-semibold text-primary tabular-nums">
               {episodes.length}
             </p>
           </div>
 
-          <div className="rounded-xl bg-surface-1 p-4">
-            <p className="text-[11px] font-medium text-tertiary uppercase tracking-wider mb-1.5">
+          <div className="bg-surface-1 rounded-lg p-6">
+            <p className="text-xs text-tertiary uppercase tracking-wide mb-1.5">
               Post-Tilt Avg P&L
             </p>
             <p
               className={cn(
-                "text-2xl font-semibold font-mono",
+                "text-2xl font-semibold font-mono tabular-nums",
                 postTiltAvgPnl >= 0 ? "text-profit" : "text-loss",
               )}
             >
@@ -288,13 +288,13 @@ export default function TiltDetection({ trades }: Props) {
             )}
           </div>
 
-          <div className="rounded-xl bg-surface-1 p-4">
-            <p className="text-[11px] font-medium text-tertiary uppercase tracking-wider mb-1.5">
+          <div className="bg-surface-1 rounded-lg p-6">
+            <p className="text-xs text-tertiary uppercase tracking-wide mb-1.5">
               Cost of Tilt
             </p>
             <p
               className={cn(
-                "text-2xl font-semibold font-mono",
+                "text-2xl font-semibold font-mono tabular-nums",
                 costOfTilt < 0 ? "text-loss" : "text-tertiary",
               )}
             >
@@ -305,13 +305,13 @@ export default function TiltDetection({ trades }: Props) {
             </p>
           </div>
 
-          <div className="rounded-xl bg-surface-1 p-4">
-            <p className="text-[11px] font-medium text-tertiary uppercase tracking-wider mb-1.5">
+          <div className="bg-surface-1 rounded-lg p-6">
+            <p className="text-xs text-tertiary uppercase tracking-wide mb-1.5">
               Avg Size Increase
             </p>
             <p
               className={cn(
-                "text-2xl font-semibold font-mono",
+                "text-2xl font-semibold font-mono tabular-nums",
                 avgSizeIncrease > 10 ? "text-amber" : "text-primary",
               )}
             >
@@ -327,7 +327,7 @@ export default function TiltDetection({ trades }: Props) {
       {/* ── Tilt Rules suggestion ──────────────────────────────── */}
       <div
         className={cn(
-          "rounded-xl bg-surface-1 p-5 border-l-2",
+          "bg-surface-1 rounded-lg p-6 border-l-2",
           isDisciplined
             ? "border-l-brand"
             : "border-l-amber",
@@ -383,7 +383,7 @@ export default function TiltDetection({ trades }: Props) {
 
       {/* ── Episode timeline ───────────────────────────────────── */}
       {episodes.length > 0 && (
-        <div className="rounded-xl bg-surface-1 p-5">
+        <div className="bg-surface-1 rounded-lg p-6">
           <h3 className="text-[11px] font-semibold text-secondary uppercase tracking-wider mb-4">
             Tilt Episodes ({episodes.length})
           </h3>
@@ -392,7 +392,7 @@ export default function TiltDetection({ trades }: Props) {
             {episodes.map((ep, idx) => (
               <div
                 key={ep.date + idx}
-                className="rounded-xl bg-surface-1 p-4"
+                className="bg-surface-1 rounded-lg p-6"
               >
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-2">

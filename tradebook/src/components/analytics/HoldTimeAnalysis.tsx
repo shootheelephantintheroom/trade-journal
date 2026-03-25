@@ -177,7 +177,7 @@ export default function HoldTimeAnalysis({ trades }: Props) {
 
   if (trades.length === 0) {
     return (
-      <div className="rounded-xl bg-surface-1 p-5 text-center text-sm text-tertiary">
+      <div className="bg-surface-1 rounded-lg p-6 text-center text-sm text-tertiary">
         No trades to analyze.
       </div>
     );
@@ -185,7 +185,7 @@ export default function HoldTimeAnalysis({ trades }: Props) {
 
   if (points.length === 0) {
     return (
-      <div className="rounded-xl bg-surface-1 p-5 text-center text-sm text-tertiary">
+      <div className="bg-surface-1 rounded-lg p-6 text-center text-sm text-tertiary">
         No trades with valid entry &amp; exit times.
       </div>
     );
@@ -236,9 +236,9 @@ export default function HoldTimeAnalysis({ trades }: Props) {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-8">
       {/* ── Scatter plot ──────────────────────────────────────── */}
-      <div className="rounded-xl bg-surface-1 p-5">
+      <div className="bg-surface-1 rounded-lg p-6">
         <h3 className="text-[11px] font-semibold text-secondary uppercase tracking-wider mb-4">
           Hold Time vs P&L
         </h3>
@@ -255,7 +255,7 @@ export default function HoldTimeAnalysis({ trades }: Props) {
               y1={zeroY}
               x2={W - PAD.r}
               y2={zeroY}
-              stroke="rgba(255,255,255,0.04)"
+              stroke="rgba(255,255,255,0.06)"
               strokeWidth="1"
               strokeDasharray="4,4"
             />
@@ -266,7 +266,7 @@ export default function HoldTimeAnalysis({ trades }: Props) {
               y1={H - PAD.b}
               x2={W - PAD.r}
               y2={H - PAD.b}
-              stroke="rgba(255,255,255,0.04)"
+              stroke="rgba(255,255,255,0.06)"
               strokeWidth="1"
             />
 
@@ -276,7 +276,7 @@ export default function HoldTimeAnalysis({ trades }: Props) {
               y1={PAD.t}
               x2={PAD.l}
               y2={H - PAD.b}
-              stroke="rgba(255,255,255,0.04)"
+              stroke="rgba(255,255,255,0.06)"
               strokeWidth="1"
             />
 
@@ -288,7 +288,7 @@ export default function HoldTimeAnalysis({ trades }: Props) {
                   y1={H - PAD.b}
                   x2={toX(v)}
                   y2={H - PAD.b + 4}
-                  stroke="rgba(255,255,255,0.04)"
+                  stroke="rgba(255,255,255,0.06)"
                   strokeWidth="1"
                 />
                 <text
@@ -312,7 +312,7 @@ export default function HoldTimeAnalysis({ trades }: Props) {
                   y1={toY(v)}
                   x2={PAD.l}
                   y2={toY(v)}
-                  stroke="rgba(255,255,255,0.04)"
+                  stroke="rgba(255,255,255,0.06)"
                   strokeWidth="1"
                 />
                 <text
@@ -411,7 +411,7 @@ export default function HoldTimeAnalysis({ trades }: Props) {
       </div>
 
       {/* ── Bucketed stats ────────────────────────────────────── */}
-      <div className="rounded-xl bg-surface-1 p-5">
+      <div className="bg-surface-1 rounded-lg p-6">
         <h3 className="text-[11px] font-semibold text-secondary uppercase tracking-wider mb-4">
           Hold Time Breakdown
         </h3>
@@ -503,7 +503,7 @@ export default function HoldTimeAnalysis({ trades }: Props) {
       </div>
 
       {/* ── Auto-insights ─────────────────────────────────────── */}
-      <div className="rounded-xl bg-surface-1 p-5">
+      <div className="bg-surface-1 rounded-lg p-6">
         <h3 className="text-[11px] font-semibold text-secondary uppercase tracking-wider mb-3">
           Hold Time Insights
         </h3>

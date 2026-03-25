@@ -248,7 +248,7 @@ export default function TradeForm({
   const inputClass =
     "w-full rounded-lg border border-transparent bg-surface-2 px-3 py-2.5 text-sm text-primary placeholder-tertiary hover:border-border-hover focus:border-brand focus:outline-none transition-colors";
   const labelClass =
-    "block text-[11px] font-medium text-tertiary uppercase tracking-wider mb-1.5";
+    "block text-xs font-medium text-secondary uppercase tracking-wide";
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
@@ -266,14 +266,14 @@ export default function TradeForm({
       )}
 
       {/* -- Section 1: Trade Details (always open) -- */}
-      <div className="rounded-xl bg-surface-1 p-5 space-y-4">
+      <div className="rounded-lg bg-surface-1 p-6 space-y-4">
         <h3 className="text-xs font-semibold text-secondary uppercase tracking-wider">
           Trade Details
         </h3>
 
         {/* Ticker & Side */}
         <div className="grid grid-cols-2 gap-4">
-          <div>
+          <div className="space-y-1.5">
             <label className={labelClass}>Ticker</label>
             <input
               className={inputClass}
@@ -283,7 +283,7 @@ export default function TradeForm({
               required
             />
           </div>
-          <div>
+          <div className="space-y-1.5">
             <label className={labelClass}>Side</label>
             <div className="flex gap-2">
               <button
@@ -317,7 +317,7 @@ export default function TradeForm({
         {/* Entry / Exit / Shares */}
         <div>
           <div className="grid grid-cols-3 gap-3">
-            <div>
+            <div className="space-y-1.5">
               <label className={labelClass}>Entry</label>
               <input
                 type="number"
@@ -331,7 +331,7 @@ export default function TradeForm({
                 required
               />
             </div>
-            <div>
+            <div className="space-y-1.5">
               <label className={labelClass}>Exit</label>
               <input
                 type="number"
@@ -345,7 +345,7 @@ export default function TradeForm({
                 required
               />
             </div>
-            <div>
+            <div className="space-y-1.5">
               <label className={labelClass}>Shares</label>
               <input
                 type="number"
@@ -359,7 +359,7 @@ export default function TradeForm({
           </div>
 
           {/* Stop Loss */}
-          <div className="mt-3">
+          <div className="mt-3 space-y-1.5">
             <label className={labelClass}>Stop Loss</label>
             <input
               type="number"
@@ -431,7 +431,7 @@ export default function TradeForm({
 
         {/* Date / Times */}
         <div className="grid grid-cols-3 gap-3">
-          <div>
+          <div className="space-y-1.5">
             <label className={labelClass}>Date</label>
             <input
               type="date"
@@ -441,7 +441,7 @@ export default function TradeForm({
               required
             />
           </div>
-          <div>
+          <div className="space-y-1.5">
             <label className={labelClass}>Entry Time</label>
             <input
               type="time"
@@ -450,7 +450,7 @@ export default function TradeForm({
               onChange={(e) => set("entry_time", e.target.value)}
             />
           </div>
-          <div>
+          <div className="space-y-1.5">
             <label className={labelClass}>Exit Time</label>
             <input
               type="time"
@@ -462,7 +462,7 @@ export default function TradeForm({
         </div>
 
         {/* Trade Grade */}
-        <div>
+        <div className="space-y-1.5">
           <label className={labelClass}>Trade Grade</label>
           <div className="flex gap-2">
             {GRADES.map((g) => (
@@ -473,7 +473,7 @@ export default function TradeForm({
                   set("grade", form.grade === g.value ? "" : g.value)
                 }
                 className={cn(
-                  "flex-1 py-2 rounded-lg text-center border font-semibold text-sm",
+                  "flex-1 py-2 rounded-lg text-center border font-semibold text-sm transition-colors",
                   form.grade === g.value
                     ? `${g.activeBg} ${g.border} ${g.text}`
                     : "bg-surface-2 border-transparent text-tertiary hover:border-border-hover"
@@ -490,7 +490,7 @@ export default function TradeForm({
       </div>
 
       {/* -- Section 2: Notes & Reflection (collapsed by default) -- */}
-      <div className="rounded-xl bg-surface-1 p-5">
+      <div className="rounded-lg bg-surface-1 p-6">
         <button
           type="button"
           onClick={() => toggleSection("notes")}
@@ -505,7 +505,7 @@ export default function TradeForm({
         {openSections.notes && (
           <div className="mt-4 space-y-4">
             {/* Pre-market Plan */}
-            <div>
+            <div className="space-y-1.5">
               <label className={labelClass}>Pre-market Plan / Thesis</label>
               <textarea
                 className={inputClass + " resize-none"}
@@ -517,7 +517,7 @@ export default function TradeForm({
             </div>
 
             {/* Setup */}
-            <div>
+            <div className="space-y-1.5">
               <label className={labelClass}>Setup</label>
               <input
                 className={inputClass}
@@ -528,7 +528,7 @@ export default function TradeForm({
             </div>
 
             {/* Notes */}
-            <div>
+            <div className="space-y-1.5">
               <label className={labelClass}>Notes</label>
               <textarea
                 className={inputClass + " resize-none"}
@@ -540,7 +540,7 @@ export default function TradeForm({
             </div>
 
             {/* Emotions */}
-            <div>
+            <div className="space-y-1.5">
               <label className={labelClass}>Emotions</label>
               {emotionPills.length > 0 && (
                 <div className="flex flex-wrap gap-1.5 mb-2">
@@ -553,7 +553,7 @@ export default function TradeForm({
                       <button
                         type="button"
                         onClick={() => removeEmotion(emotion)}
-                        className="text-brand/50 hover:text-brand ml-0.5 text-sm leading-none"
+                        className="text-brand/50 hover:text-brand ml-0.5 text-sm leading-none transition-colors"
                       >
                         &times;
                       </button>
@@ -589,7 +589,7 @@ export default function TradeForm({
       </div>
 
       {/* -- Section 3: Market Context (collapsed by default) -- */}
-      <div className="rounded-xl bg-surface-1 p-5">
+      <div className="rounded-lg bg-surface-1 p-6">
         <button
           type="button"
           onClick={() => toggleSection("market")}
@@ -611,7 +611,7 @@ export default function TradeForm({
         {openSections.market && (
           <div className={cn("mt-4 space-y-3", !isPro && "opacity-50 pointer-events-none select-none")}>
             {/* Catalyst */}
-            <div>
+            <div className="space-y-1.5">
               <label className={labelClass}>Catalyst</label>
               <input
                 className={inputClass}
@@ -623,7 +623,7 @@ export default function TradeForm({
             </div>
 
             {/* Catalyst Type */}
-            <div>
+            <div className="space-y-1.5">
               <label className={labelClass}>Catalyst Type</label>
               <select
                 className={inputClass}
@@ -642,7 +642,7 @@ export default function TradeForm({
 
             {/* Float & Market Cap */}
             <div className="grid grid-cols-2 gap-3">
-              <div>
+              <div className="space-y-1.5">
                 <label className={labelClass}>
                   Float
                   {form.float_shares ? (
@@ -661,7 +661,7 @@ export default function TradeForm({
                   disabled={!isPro}
                 />
               </div>
-              <div>
+              <div className="space-y-1.5">
                 <label className={labelClass}>
                   Market Cap
                   {form.market_cap ? (
@@ -684,7 +684,7 @@ export default function TradeForm({
 
             {/* RVOL & Commission */}
             <div className="grid grid-cols-2 gap-3">
-              <div>
+              <div className="space-y-1.5">
                 <label className={labelClass}>RVOL</label>
                 <input
                   type="number"
@@ -699,7 +699,7 @@ export default function TradeForm({
                   disabled={!isPro}
                 />
               </div>
-              <div>
+              <div className="space-y-1.5">
                 <label className={labelClass}>Commission</label>
                 <input
                   type="number"
@@ -720,7 +720,7 @@ export default function TradeForm({
       </div>
 
       {/* -- Section 4: Tags & Screenshot (collapsed by default) -- */}
-      <div className="rounded-xl bg-surface-1 p-5">
+      <div className="rounded-lg bg-surface-1 p-6">
         <button
           type="button"
           onClick={() => toggleSection("tags")}
@@ -735,7 +735,7 @@ export default function TradeForm({
         {openSections.tags && (
           <div className="mt-4 space-y-4">
             {/* Playbook Tags */}
-            <div>
+            <div className="space-y-1.5">
               <label className={labelClass}>Playbook Tags</label>
               <TagSelect
                 selected={form.tags}
@@ -744,7 +744,7 @@ export default function TradeForm({
             </div>
 
             {/* Chart Screenshot */}
-            <div>
+            <div className="space-y-1.5">
               <label className={labelClass}>Chart Screenshot</label>
               <input
                 ref={fileInputRef}
@@ -822,7 +822,7 @@ export default function TradeForm({
       <button
         type="submit"
         disabled={saving}
-        className="w-full rounded-lg bg-brand hover:bg-brand/90 px-4 py-3 text-sm font-medium text-surface-0 disabled:opacity-50 transition-colors"
+        className="w-full rounded-md bg-brand hover:bg-brand-hover px-4 py-3 text-sm font-medium text-surface-0 disabled:opacity-50 transition-colors"
       >
         {saving ? "Saving..." : editTrade ? "Update Trade" : "Save Trade"}
       </button>

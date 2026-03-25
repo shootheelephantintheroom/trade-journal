@@ -49,10 +49,10 @@ export default function HesitationSelect({
               type="button"
               onClick={() => toggle(reason)}
               className={cn(
-                "px-3 py-1.5 rounded-full text-xs font-medium transition-all border",
+                "px-3 py-1.5 rounded-full text-xs font-medium transition-colors duration-150",
                 active
-                  ? "bg-amber-muted border-amber/30 text-amber"
-                  : "bg-surface-2 border-transparent text-tertiary hover:border-border-hover hover:text-secondary"
+                  ? "bg-brand-muted text-brand"
+                  : "bg-surface-2 text-tertiary hover:text-secondary"
               )}
             >
               {reason}
@@ -66,13 +66,13 @@ export default function HesitationSelect({
           {customReasons.map((reason) => (
             <span
               key={reason}
-              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium bg-amber-muted border border-amber/30 text-amber"
+              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium bg-brand-muted text-brand"
             >
               {reason}
               <button
                 type="button"
                 onClick={() => toggle(reason)}
-                className="text-amber/50 hover:text-amber text-sm leading-none"
+                className="text-brand/50 hover:text-brand text-sm leading-none transition-colors duration-150"
               >
                 ×
               </button>
@@ -93,12 +93,12 @@ export default function HesitationSelect({
             }
           }}
           placeholder="Add custom reason..."
-          className="flex-1 rounded-lg border border-transparent bg-surface-2 px-3 py-1.5 text-xs text-primary placeholder-tertiary hover:border-border-hover focus:border-amber focus:outline-none transition-colors"
+          className="flex-1 rounded-lg border border-transparent bg-surface-2 px-3 py-1.5 text-xs text-primary placeholder-tertiary hover:border-border-hover focus:border-brand focus:outline-none transition-colors duration-150"
         />
         <button
           type="button"
           onClick={addCustom}
-          className="px-3 py-1.5 rounded-lg text-xs font-medium bg-surface-2 border border-transparent text-tertiary hover:text-primary hover:border-border-hover transition-colors"
+          className="px-3 py-1.5 rounded-lg text-xs font-medium bg-surface-2 text-tertiary hover:text-primary transition-colors duration-150"
         >
           Add
         </button>

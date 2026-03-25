@@ -16,16 +16,16 @@ const MOODS: { value: JournalMood; label: string; emoji: string }[] = [
 ];
 
 const GRADES = [
-  { value: "A" as const, label: "A", desc: "Textbook", bg: "bg-profit-muted", border: "border-profit", text: "text-profit", activeBg: "bg-profit-muted" },
+  { value: "A" as const, label: "A", desc: "Textbook", bg: "bg-profit-bg", border: "border-profit", text: "text-profit", activeBg: "bg-profit-bg" },
   { value: "B" as const, label: "B", desc: "Good", bg: "bg-brand-muted", border: "border-brand", text: "text-brand", activeBg: "bg-brand-muted" },
   { value: "C" as const, label: "C", desc: "Sloppy", bg: "bg-amber-muted", border: "border-amber", text: "text-amber", activeBg: "bg-amber-muted" },
-  { value: "D" as const, label: "D", desc: "Broke rules", bg: "bg-loss-muted", border: "border-loss", text: "text-loss", activeBg: "bg-loss-muted" },
+  { value: "D" as const, label: "D", desc: "Broke rules", bg: "bg-loss-bg", border: "border-loss", text: "text-loss", activeBg: "bg-loss-bg" },
 ];
 
 const inputClass =
-  "w-full rounded-lg border border-transparent bg-surface-2 px-3 py-2.5 text-sm text-primary placeholder-tertiary hover:border-border-hover focus:border-brand focus:outline-none transition-colors resize-none";
+  "w-full rounded-lg border border-transparent bg-surface-2 px-3 py-2.5 text-sm text-primary placeholder-tertiary hover:border-border-hover focus:border-brand focus:outline-none transition-colors duration-150 resize-none";
 const labelClass =
-  "block text-[11px] font-semibold text-tertiary uppercase tracking-wider mb-1.5";
+  "block text-xs text-tertiary uppercase tracking-wider mb-1.5";
 
 export default function Journal() {
   const { showToast } = useToast();
@@ -194,16 +194,16 @@ export default function Journal() {
     <div className="flex gap-6 items-start">
       {/* Left sidebar — Calendar */}
       <div className="hidden md:block w-64 shrink-0">
-        <div className="rounded-xl bg-surface-1 p-4 sticky top-24">
+        <div className="bg-surface-1 rounded-lg p-6 sticky top-24">
           {/* Month navigation */}
           <div className="flex items-center justify-between mb-3">
-            <button onClick={prevMonth} className="p-1 rounded hover:bg-surface-2 text-secondary hover:text-primary transition-colors">
+            <button onClick={prevMonth} className="p-1 rounded hover:bg-surface-2 text-secondary hover:text-primary transition-colors duration-150">
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
               </svg>
             </button>
-            <span className="text-sm font-semibold text-primary">{monthLabel}</span>
-            <button onClick={nextMonth} className="p-1 rounded hover:bg-surface-2 text-secondary hover:text-primary transition-colors">
+            <span className="text-sm font-medium text-primary">{monthLabel}</span>
+            <button onClick={nextMonth} className="p-1 rounded hover:bg-surface-2 text-secondary hover:text-primary transition-colors duration-150">
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
               </svg>
@@ -232,9 +232,9 @@ export default function Journal() {
                   onClick={() => !isFuture && setSelectedDate(ds)}
                   disabled={isFuture}
                   className={cn(
-                    "relative py-1.5 rounded text-xs font-medium transition-colors",
+                    "relative py-1.5 rounded text-xs font-medium transition-colors duration-150",
                     isSelected
-                      ? "bg-brand-muted text-brand border border-brand/40"
+                      ? "bg-brand-muted text-brand"
                       : isFuture
                         ? "text-surface-3 cursor-not-allowed"
                         : "text-secondary hover:bg-surface-2 hover:text-primary"
@@ -257,7 +257,7 @@ export default function Journal() {
               const d = new Date();
               setCalendarMonth({ year: d.getFullYear(), month: d.getMonth() });
             }}
-            className="mt-3 w-full text-center text-xs text-tertiary hover:text-brand transition-colors py-1.5 rounded-lg hover:bg-surface-2"
+            className="mt-3 w-full text-center text-xs text-tertiary hover:text-brand transition-colors duration-150 py-1.5 rounded-lg hover:bg-surface-2"
           >
             Go to today
           </button>
@@ -269,8 +269,8 @@ export default function Journal() {
         {/* Header with date and save status */}
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-xl font-semibold text-primary tracking-tight">Journal</h2>
-            <p className="text-sm text-tertiary mt-0.5">
+            <h2 className="text-base font-medium text-primary">Journal</h2>
+            <p className="text-sm text-secondary mt-0.5">
               {new Date(selectedDate + "T12:00:00").toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" })}
             </p>
           </div>
@@ -281,7 +281,7 @@ export default function Journal() {
               value={selectedDate}
               max={todayLocal()}
               onChange={(e) => e.target.value && setSelectedDate(e.target.value)}
-              className="md:hidden rounded-lg border border-transparent bg-surface-2 px-2 py-1.5 text-xs text-primary hover:border-border-hover focus:border-brand focus:outline-none"
+              className="md:hidden rounded-lg border border-transparent bg-surface-2 px-2 py-1.5 text-xs text-primary hover:border-border-hover focus:border-brand focus:outline-none transition-colors duration-150"
             />
             {/* Save status */}
             <span className={cn(
@@ -296,27 +296,27 @@ export default function Journal() {
 
         {/* Reflection banner */}
         {hasTradesNoEntry && (
-          <div className="rounded-xl bg-surface-1 px-4 py-3 border border-brand/30 bg-brand/5">
-            <p className="text-sm text-brand">
-              You took <span className="font-semibold">{tradeCount} trade{tradeCount !== 1 ? "s" : ""}</span> today. Take a minute to reflect.
+          <div className="bg-surface-1 rounded-lg p-6">
+            <p className="text-sm text-secondary">
+              You took <span className="font-medium text-primary">{tradeCount} trade{tradeCount !== 1 ? "s" : ""}</span> today. Take a minute to reflect.
             </p>
           </div>
         )}
 
         {/* Trades summary */}
         {tradeCount > 0 && (
-          <div className="rounded-xl bg-surface-1 px-4 py-3 flex flex-wrap gap-x-6 gap-y-1.5">
+          <div className="bg-surface-1 rounded-lg p-6 flex flex-wrap gap-x-6 gap-y-1.5">
             <span className="text-xs text-tertiary uppercase tracking-wider">
-              Trades <span className="text-sm font-semibold text-primary ml-1">{tradeCount}</span>
+              Trades <span className="text-sm font-medium text-primary ml-1">{tradeCount}</span>
             </span>
             <span className="text-xs text-tertiary uppercase tracking-wider">
               P&L{" "}
-              <span className={cn("text-sm font-semibold ml-1", totalPnl >= 0 ? "text-profit" : "text-loss")}>
+              <span className={cn("text-sm font-medium font-mono ml-1", totalPnl >= 0 ? "text-profit" : "text-loss")}>
                 {totalPnl >= 0 ? "+" : ""}${totalPnl.toFixed(2)}
               </span>
             </span>
             <span className="text-xs text-tertiary uppercase tracking-wider">
-              Win Rate <span className="text-sm font-semibold text-primary ml-1">{winRate}%</span>
+              Win Rate <span className="text-sm font-medium text-primary ml-1">{winRate}%</span>
             </span>
           </div>
         )}
@@ -324,12 +324,12 @@ export default function Journal() {
         {loading ? (
           <div className="flex flex-col items-center justify-center py-16 gap-3">
             <div className="h-6 w-6 border-2 border-tertiary border-t-brand rounded-full animate-spin" />
-            <p className="text-sm text-tertiary">Loading...</p>
+            <p className="text-sm text-secondary">Loading...</p>
           </div>
         ) : entry ? (
           <div className="space-y-5">
             {/* Pre-market Plan */}
-            <div className="rounded-xl bg-surface-1 p-5">
+            <div className="bg-surface-1 rounded-lg p-6">
               <label className={labelClass}>Pre-market Plan</label>
               <textarea
                 className={inputClass}
@@ -341,7 +341,7 @@ export default function Journal() {
             </div>
 
             {/* Post-market Review */}
-            <div className="rounded-xl bg-surface-1 p-5">
+            <div className="bg-surface-1 rounded-lg p-6">
               <label className={labelClass}>Post-market Review</label>
               <textarea
                 className={inputClass}
@@ -353,7 +353,7 @@ export default function Journal() {
             </div>
 
             {/* Lessons Learned */}
-            <div className="rounded-xl bg-surface-1 p-5">
+            <div className="bg-surface-1 rounded-lg p-6">
               <label className={labelClass}>Lessons Learned</label>
               <textarea
                 className={inputClass}
@@ -374,18 +374,18 @@ export default function Journal() {
                     type="button"
                     onClick={() => updateField("mood", entry.mood === m.value ? null : m.value)}
                     className={cn(
-                      "px-3 py-2 rounded-lg text-sm font-medium border transition-all",
+                      "px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-150",
                       entry.mood === m.value
                         ? m.value === "great"
-                          ? "bg-profit-muted border-profit/50 text-profit"
+                          ? "bg-profit-bg text-profit"
                           : m.value === "good"
-                            ? "bg-brand-muted border-brand/50 text-brand"
+                            ? "bg-brand-muted text-brand"
                             : m.value === "neutral"
-                              ? "bg-surface-3/20 border-border-hover text-secondary"
+                              ? "bg-surface-3/20 text-secondary"
                               : m.value === "frustrated"
-                                ? "bg-amber-muted border-amber/50 text-amber"
-                                : "bg-loss-muted border-loss/50 text-loss"
-                        : "bg-surface-2 border-transparent text-tertiary hover:border-border-hover"
+                                ? "bg-amber-muted text-amber"
+                                : "bg-loss-bg text-loss"
+                        : "bg-surface-2 text-tertiary hover:text-secondary"
                     )}
                   >
                     <span className="mr-1.5">{m.emoji}</span>
@@ -405,10 +405,10 @@ export default function Journal() {
                     type="button"
                     onClick={() => updateField("grade", entry.grade === g.value ? null : g.value)}
                     className={cn(
-                      "flex-1 py-2 rounded-lg text-center border font-semibold text-sm",
+                      "flex-1 py-2 rounded-lg text-center font-medium text-sm transition-colors duration-150",
                       entry.grade === g.value
-                        ? `${g.activeBg} ${g.border} ${g.text}`
-                        : "bg-surface-2 border-transparent text-tertiary hover:border-border-hover"
+                        ? `${g.activeBg} ${g.text}`
+                        : "bg-surface-2 text-tertiary hover:text-secondary"
                     )}
                   >
                     <span className="text-base">{g.label}</span>
@@ -419,7 +419,7 @@ export default function Journal() {
             </div>
 
             {/* Goals for Tomorrow */}
-            <div className="rounded-xl bg-surface-1 p-5">
+            <div className="bg-surface-1 rounded-lg p-6">
               <label className={labelClass}>Goals for Tomorrow</label>
               <textarea
                 className={inputClass}
@@ -432,7 +432,7 @@ export default function Journal() {
           </div>
         ) : (
           <div className="text-center py-16">
-            <p className="text-sm text-tertiary">Could not load journal entry.</p>
+            <p className="text-sm text-secondary">Could not load journal entry.</p>
           </div>
         )}
       </div>

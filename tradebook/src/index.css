@@ -28,13 +28,16 @@
 
   /* ── Brand ── */
   --color-brand: #3b82f6;
+  --color-brand-hover: #2563eb;
   --color-brand-muted: rgba(59, 130, 246, 0.12);
 
   /* ── Semantic ── */
   --color-profit: #22c55e;
   --color-profit-muted: rgba(34, 197, 94, 0.12);
+  --color-profit-bg: rgba(34, 197, 94, 0.12);
   --color-loss: #ef4444;
   --color-loss-muted: rgba(239, 68, 68, 0.12);
+  --color-loss-bg: rgba(239, 68, 68, 0.12);
   --color-amber: #f59e0b;
   --color-amber-muted: rgba(245, 158, 11, 0.12);
 

@@ -381,7 +381,7 @@ export default function LandingPage() {
                   className={cn(
                     "rounded-full px-6 py-2.5 text-sm font-semibold transition-all duration-200",
                     pricingPlan === "monthly"
-                      ? "bg-white text-surface-1 shadow-md"
+                      ? "bg-primary text-surface-1 shadow-md"
                       : "text-secondary hover:text-primary"
                   )}
                 >
@@ -393,7 +393,7 @@ export default function LandingPage() {
                   className={cn(
                     "rounded-full px-6 py-2.5 text-sm font-semibold transition-all duration-200",
                     pricingPlan === "yearly"
-                      ? "bg-white text-surface-1 shadow-md"
+                      ? "bg-primary text-surface-1 shadow-md"
                       : "text-secondary hover:text-primary"
                   )}
                 >

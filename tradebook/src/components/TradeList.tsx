@@ -388,7 +388,7 @@ export default function TradeList({
                 setFilters((f) => ({ ...f, dateFrom: e.target.value || undefined }));
                 setPage(1);
               }}
-              className="bg-surface-2 border border-transparent hover:border-border-hover rounded-lg px-2.5 py-1.5 text-xs text-secondary focus:outline-none focus:border-brand"
+              className="bg-surface-2 border border-transparent hover:border-border-hover rounded-lg px-2.5 py-1.5 text-xs text-secondary focus:outline-none focus:border-brand transition-colors"
             />
           </div>
           <div>
@@ -402,7 +402,7 @@ export default function TradeList({
                 setFilters((f) => ({ ...f, dateTo: e.target.value || undefined }));
                 setPage(1);
               }}
-              className="bg-surface-2 border border-transparent hover:border-border-hover rounded-lg px-2.5 py-1.5 text-xs text-secondary focus:outline-none focus:border-brand"
+              className="bg-surface-2 border border-transparent hover:border-border-hover rounded-lg px-2.5 py-1.5 text-xs text-secondary focus:outline-none focus:border-brand transition-colors"
             />
           </div>
           <div>
@@ -414,7 +414,7 @@ export default function TradeList({
               placeholder="Search..."
               value={tickerInput}
               onChange={(e) => setTickerInput(e.target.value)}
-              className="bg-surface-2 border border-transparent hover:border-border-hover rounded-lg px-2.5 py-1.5 text-xs text-secondary w-24 focus:outline-none focus:border-brand"
+              className="bg-surface-2 border border-transparent hover:border-border-hover rounded-lg px-2.5 py-1.5 text-xs text-secondary w-24 focus:outline-none focus:border-brand transition-colors"
             />
           </div>
           <div>
@@ -494,51 +494,51 @@ export default function TradeList({
 
       {/* Table */}
       {sorted.length > 0 ? (
-        <div className={cn("rounded-xl bg-surface-1 overflow-hidden transition-opacity", fetching && "opacity-60")}>
+        <div className={cn("rounded-xl overflow-hidden transition-opacity", fetching && "opacity-60")}>
           <div className="overflow-x-auto">
             <table className="w-full text-sm text-left">
               <thead>
-                <tr className="border-b border-border">
+                <tr>
                   <th
-                    className="px-4 py-3 text-[10px] text-tertiary uppercase font-semibold tracking-wider cursor-pointer hover:text-secondary transition-colors"
+                    className="text-xs font-medium text-tertiary uppercase tracking-wide px-4 py-3 border-b border-border cursor-pointer hover:text-secondary transition-colors"
                     onClick={() => toggleSort("date")}
                   >
                     Date <SortIcon col="date" />
                   </th>
                   <th
-                    className="px-4 py-3 text-[10px] text-tertiary uppercase font-semibold tracking-wider cursor-pointer hover:text-secondary transition-colors"
+                    className="text-xs font-medium text-tertiary uppercase tracking-wide px-4 py-3 border-b border-border cursor-pointer hover:text-secondary transition-colors"
                     onClick={() => toggleSort("ticker")}
                   >
                     Ticker <SortIcon col="ticker" />
                   </th>
-                  <th className="px-4 py-3 text-[10px] text-tertiary uppercase font-semibold tracking-wider">
+                  <th className="text-xs font-medium text-tertiary uppercase tracking-wide px-4 py-3 border-b border-border">
                     Side
                   </th>
-                  <th className="px-4 py-3 text-[10px] text-tertiary uppercase font-semibold tracking-wider">
+                  <th className="text-xs font-medium text-tertiary uppercase tracking-wide px-4 py-3 border-b border-border text-right">
                     Entry
                   </th>
-                  <th className="px-4 py-3 text-[10px] text-tertiary uppercase font-semibold tracking-wider">
+                  <th className="text-xs font-medium text-tertiary uppercase tracking-wide px-4 py-3 border-b border-border text-right">
                     Exit
                   </th>
-                  <th className="px-4 py-3 text-[10px] text-tertiary uppercase font-semibold tracking-wider">
+                  <th className="text-xs font-medium text-tertiary uppercase tracking-wide px-4 py-3 border-b border-border text-right">
                     Shares
                   </th>
                   <th
-                    className="px-4 py-3 text-[10px] text-tertiary uppercase font-semibold tracking-wider cursor-pointer hover:text-secondary transition-colors"
+                    className="text-xs font-medium text-tertiary uppercase tracking-wide px-4 py-3 border-b border-border text-right cursor-pointer hover:text-secondary transition-colors"
                     onClick={() => toggleSort("pnl")}
                   >
                     P&L <SortIcon col="pnl" />
                   </th>
-                  <th className="px-4 py-3 text-[10px] text-tertiary uppercase font-semibold tracking-wider">
+                  <th className="text-xs font-medium text-tertiary uppercase tracking-wide px-4 py-3 border-b border-border text-right">
                     R:R
                   </th>
                   <th
-                    className="px-4 py-3 text-[10px] text-tertiary uppercase font-semibold tracking-wider cursor-pointer hover:text-secondary transition-colors"
+                    className="text-xs font-medium text-tertiary uppercase tracking-wide px-4 py-3 border-b border-border cursor-pointer hover:text-secondary transition-colors"
                     onClick={() => toggleSort("grade")}
                   >
                     Grade <SortIcon col="grade" />
                   </th>
-                  <th className="px-4 py-3 text-[10px] text-tertiary uppercase font-semibold tracking-wider">
+                  <th className="text-xs font-medium text-tertiary uppercase tracking-wide px-4 py-3 border-b border-border">
                     Setup / Tags
                   </th>
                 </tr>
@@ -557,11 +557,11 @@ export default function TradeList({
                           setExpandedId(isExpanded ? null : t.id)
                         }
                         className={cn(
-                          "border-t border-border/40 cursor-pointer hover:bg-surface-2 transition-colors",
+                          "border-b border-border cursor-pointer hover:bg-surface-1 transition-colors",
                           isExpanded && "bg-surface-2/40"
                         )}
                       >
-                        <td className="px-4 py-3 text-secondary text-xs">
+                        <td className="px-4 py-3 text-sm text-primary">
                           {t.trade_date}
                         </td>
                         <td className="px-4 py-3">
@@ -589,24 +589,24 @@ export default function TradeList({
                             {t.side.toUpperCase()}
                           </span>
                         </td>
-                        <td className="px-4 py-3 text-secondary text-xs font-mono">
+                        <td className="px-4 py-3 text-sm text-primary font-mono text-right tabular-nums">
                           ${t.entry_price.toFixed(2)}
                         </td>
-                        <td className="px-4 py-3 text-secondary text-xs font-mono">
+                        <td className="px-4 py-3 text-sm text-primary font-mono text-right tabular-nums">
                           ${t.exit_price.toFixed(2)}
                         </td>
-                        <td className="px-4 py-3 text-secondary text-xs">
+                        <td className="px-4 py-3 text-sm text-primary text-right tabular-nums">
                           {t.shares}
                         </td>
                         <td
                           className={cn(
-                            "px-4 py-3 font-semibold font-mono text-sm",
+                            "px-4 py-3 font-semibold font-mono text-sm text-right tabular-nums",
                             pl >= 0 ? "text-profit" : "text-loss"
                           )}
                         >
                           {pl >= 0 ? "+" : ""}${pl.toFixed(2)}
                         </td>
-                        <td className="px-4 py-3 text-secondary text-xs font-mono">
+                        <td className="px-4 py-3 text-sm text-primary font-mono text-right tabular-nums">
                           {rr !== null ? `${rr.toFixed(1)}R` : "—"}
                         </td>
                         <td className="px-4 py-3">
@@ -623,7 +623,7 @@ export default function TradeList({
                             <span className="text-tertiary">—</span>
                           )}
                         </td>
-                        <td className="px-4 py-3 max-w-[240px]">
+                        <td className="px-4 py-3 text-sm text-primary max-w-[240px]">
                           {t.tags && t.tags.length > 0 && (
                             <div className="flex flex-wrap gap-1 mb-0.5">
                               {t.tags.map((tag) => (
@@ -646,7 +646,7 @@ export default function TradeList({
                         <tr key={`${t.id}-detail`}>
                           <td
                             colSpan={10}
-                            className="px-4 py-0 bg-surface-2/20 border-t border-border/30"
+                            className="px-4 py-0 bg-surface-2/20"
                           >
                             <div className="trade-expand py-4 grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
                               {t.entry_time && (

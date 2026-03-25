@@ -154,7 +154,7 @@ export default function TimeOfDayAnalysis({ trades }: Props) {
 
   if (trades.length === 0) {
     return (
-      <div className="rounded-xl bg-surface-1 p-5 text-center text-sm text-tertiary">
+      <div className="bg-surface-1 rounded-lg p-6 text-center text-sm text-tertiary">
         No trades to analyze.
       </div>
     );
@@ -169,9 +169,9 @@ export default function TimeOfDayAnalysis({ trades }: Props) {
   const H = PAD.t + WINDOWS.length * ROW_H + PAD.b;
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-8">
       {/* ── Bar chart ───────────────────────────────────────── */}
-      <div className="rounded-xl bg-surface-1 p-5">
+      <div className="bg-surface-1 rounded-lg p-6">
         <h3 className="text-[11px] font-semibold text-secondary uppercase tracking-wider mb-4">
           P&L by Time of Day
         </h3>
@@ -187,7 +187,7 @@ export default function TimeOfDayAnalysis({ trades }: Props) {
             y1={PAD.t}
             x2={centerX}
             y2={H - PAD.b}
-            stroke="rgba(255,255,255,0.04)"
+            stroke="rgba(255,255,255,0.06)"
             strokeWidth="1"
             strokeDasharray="3,3"
           />
@@ -281,7 +281,7 @@ export default function TimeOfDayAnalysis({ trades }: Props) {
       </div>
 
       {/* ── First 30 min vs Rest of Day ─────────────────────── */}
-      <div className="rounded-xl bg-surface-1 p-5">
+      <div className="bg-surface-1 rounded-lg p-6">
         <h3 className="text-[11px] font-semibold text-secondary uppercase tracking-wider mb-4">
           First 30 min vs Rest of Day
         </h3>
@@ -301,7 +301,7 @@ export default function TimeOfDayAnalysis({ trades }: Props) {
       </div>
 
       {/* ── Key Insights ────────────────────────────────────── */}
-      <div className="rounded-xl bg-surface-1 p-5">
+      <div className="bg-surface-1 rounded-lg p-6">
         <h3 className="text-[11px] font-semibold text-secondary uppercase tracking-wider mb-3">
           Key Insights
         </h3>
@@ -379,7 +379,7 @@ function ComparisonColumn({
         : "text-secondary";
 
   return (
-    <div className="rounded-xl bg-surface-1 p-4">
+    <div className="bg-surface-1 rounded-lg p-6">
       <p className="text-xs font-semibold text-primary">{title}</p>
       <p className="text-[10px] text-tertiary mb-3">{subtitle}</p>
 
@@ -418,7 +418,7 @@ function StatRow({
 }) {
   return (
     <div className="flex items-center justify-between">
-      <span className="text-[11px] text-tertiary uppercase tracking-wider">
+      <span className="text-xs text-tertiary uppercase tracking-wide">
         {label}
       </span>
       <span className={cn("text-sm font-semibold font-mono", color)}>

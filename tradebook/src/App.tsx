@@ -99,7 +99,7 @@ export default function App() {
   return (
     <div className="min-h-screen bg-surface-0 text-primary">
       {/* Header */}
-      <header className="sticky top-0 z-40 h-14 bg-surface-0/80 backdrop-blur-xl border-b border-white/[0.06]">
+      <header className="sticky top-0 z-40 h-14 bg-surface-0/80 backdrop-blur-xl border-b border-border">
         <div className="max-w-5xl mx-auto px-4 h-full flex items-center justify-between">
           <h1 className="text-lg font-semibold tracking-tight text-primary">
             MyTradeBook
@@ -271,7 +271,7 @@ export default function App() {
       </main>
 
       {/* Mobile bottom tab bar */}
-      <nav className="fixed bottom-0 left-0 right-0 z-40 bg-surface-0/80 backdrop-blur-xl border-t border-white/[0.06] sm:hidden">
+      <nav className="fixed bottom-0 left-0 right-0 z-40 bg-surface-0/80 backdrop-blur-xl border-t border-border sm:hidden">
         <div className="flex justify-around items-center py-1.5">
           {tabs.map((t) => (
             <NavLink

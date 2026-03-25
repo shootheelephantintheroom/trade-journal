@@ -50,10 +50,10 @@ export default function TagSelect({
               type="button"
               onClick={() => toggle(tag)}
               className={cn(
-                "px-3 py-1.5 rounded-full text-xs font-medium transition-all border",
+                "px-3 py-1.5 rounded-full text-xs font-medium transition-colors duration-150",
                 active
-                  ? "bg-brand-muted border-brand/30 text-brand"
-                  : "bg-surface-2 border-transparent text-tertiary hover:border-border-hover hover:text-secondary"
+                  ? "bg-brand-muted text-brand"
+                  : "bg-surface-2 text-tertiary hover:text-secondary"
               )}
             >
               {tag}
@@ -67,13 +67,13 @@ export default function TagSelect({
           {customTags.map((tag) => (
             <span
               key={tag}
-              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium bg-brand-muted border border-brand/30 text-brand"
+              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium bg-brand-muted text-brand"
             >
               {tag}
               <button
                 type="button"
                 onClick={() => toggle(tag)}
-                className="text-brand/50 hover:text-brand text-sm leading-none"
+                className="text-brand/50 hover:text-brand text-sm leading-none transition-colors duration-150"
               >
                 ×
               </button>
@@ -94,12 +94,12 @@ export default function TagSelect({
             }
           }}
           placeholder="Add custom tag..."
-          className="flex-1 rounded-lg border border-transparent bg-surface-2 px-3 py-1.5 text-xs text-primary placeholder-tertiary hover:border-border-hover focus:border-brand focus:outline-none transition-colors"
+          className="flex-1 rounded-lg border border-transparent bg-surface-2 px-3 py-1.5 text-xs text-primary placeholder-tertiary hover:border-border-hover focus:border-brand focus:outline-none transition-colors duration-150"
         />
         <button
           type="button"
           onClick={addCustom}
-          className="px-3 py-1.5 rounded-lg text-xs font-medium bg-surface-2 border border-transparent text-tertiary hover:text-primary hover:border-border-hover transition-colors"
+          className="px-3 py-1.5 rounded-lg text-xs font-medium bg-surface-2 text-tertiary hover:text-primary transition-colors duration-150"
         >
           Add
         </button>
