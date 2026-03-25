@@ -10,6 +10,17 @@ const webhookSecret = Deno.env.get("STRIPE_WEBHOOK_SECRET")!;
 const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
 const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 
+/** Extract period dates — newer Stripe API versions moved these to the item level */
+function getPeriodDates(sub: any): { start: string; end: string } {
+  const item = sub.items?.data?.[0];
+  const periodStart = sub.current_period_start ?? item?.current_period_start;
+  const periodEnd = sub.current_period_end ?? item?.current_period_end;
+  return {
+    start: new Date(periodStart * 1000).toISOString(),
+    end: new Date(periodEnd * 1000).toISOString(),
+  };
+}
+
 serve(async (req) => {
   const signature = req.headers.get("stripe-signature");
   if (!signature) {
@@ -55,6 +66,7 @@ serve(async (req) => {
         session.metadata?.supabase_user_id ??
         null;
 
+      const period = getPeriodDates(subscription);
       await supabaseAdmin.from("subscriptions").upsert(
         {
           stripe_subscription_id: subscriptionId,
@@ -62,12 +74,8 @@ serve(async (req) => {
           user_id: userId,
           status: subscription.status,
           price_id: priceId,
-          current_period_start: new Date(
-            subscription.current_period_start * 1000
-          ).toISOString(),
-          current_period_end: new Date(
-            subscription.current_period_end * 1000
-          ).toISOString(),
+          current_period_start: period.start,
+          current_period_end: period.end,
           cancel_at_period_end: subscription.cancel_at_period_end,
           updated_at: new Date().toISOString(),
         },
@@ -99,6 +107,7 @@ serve(async (req) => {
       const priceId = subscription.items.data[0]?.price?.id ?? null;
       const userId = subscription.metadata?.supabase_user_id ?? null;
 
+      const period = getPeriodDates(subscription);
       const upsertResult = await supabaseAdmin.from("subscriptions").upsert(
         {
           stripe_subscription_id: subscription.id,
@@ -106,12 +115,8 @@ serve(async (req) => {
           user_id: userId,
           status: subscription.status,
           price_id: priceId,
-          current_period_start: new Date(
-            subscription.current_period_start * 1000
-          ).toISOString(),
-          current_period_end: new Date(
-            subscription.current_period_end * 1000
-          ).toISOString(),
+          current_period_start: period.start,
+          current_period_end: period.end,
           cancel_at_period_end: subscription.cancel_at_period_end,
           updated_at: new Date().toISOString(),
         },
