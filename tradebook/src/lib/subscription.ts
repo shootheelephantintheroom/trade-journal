@@ -81,6 +81,27 @@ export function daysLeftInTrial(profile: Profile | null): number {
   return Math.max(0, Math.ceil(ms / (1000 * 60 * 60 * 24)));
 }
 
+export interface Subscription {
+  stripe_subscription_id: string;
+  user_id: string;
+  status: string;
+  price_id: string;
+  current_period_start: string;
+  current_period_end: string;
+  cancel_at_period_end: boolean;
+}
+
+export async function getSubscription(userId: string): Promise<Subscription | null> {
+  const { data, error } = await supabase
+    .from("subscriptions")
+    .select("*")
+    .eq("user_id", userId)
+    .single();
+
+  if (error || !data) return null;
+  return data as Subscription;
+}
+
 /** Returns true if the user has never started a Pro trial */
 export function canStartTrial(profile: Profile | null): boolean {
   if (!profile) return false;

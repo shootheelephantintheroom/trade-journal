@@ -9,15 +9,18 @@ import {
 import { useAuth } from "./AuthContext";
 import {
   getProfile,
+  getSubscription,
   isPro as checkIsPro,
   isTrialing as checkIsTrialing,
   daysLeftInTrial as calcDaysLeft,
   canStartTrial as checkCanStartTrial,
   type Profile,
+  type Subscription,
 } from "../lib/subscription";
 
 interface SubscriptionContextType {
   profile: Profile | null;
+  subscription: Subscription | null;
   loading: boolean;
   isPro: boolean;
   isPastDue: boolean;
@@ -34,16 +37,22 @@ const SubscriptionContext = createContext<SubscriptionContextType | undefined>(
 export function SubscriptionProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
   const [profile, setProfile] = useState<Profile | null>(null);
+  const [subscription, setSubscription] = useState<Subscription | null>(null);
   const [loading, setLoading] = useState(true);
 
   const fetchProfile = useCallback(async () => {
     if (!user) {
       setProfile(null);
+      setSubscription(null);
       setLoading(false);
       return;
     }
-    const p = await getProfile(user.id);
+    const [p, sub] = await Promise.all([
+      getProfile(user.id),
+      getSubscription(user.id),
+    ]);
     setProfile(p);
+    setSubscription(sub);
     setLoading(false);
   }, [user]);
 
@@ -66,6 +75,7 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
     <SubscriptionContext.Provider
       value={{
         profile,
+        subscription,
         loading,
         isPro: checkIsPro(profile),
         isPastDue: profile?.subscription_status === "past_due",

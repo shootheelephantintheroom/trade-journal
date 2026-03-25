@@ -26,7 +26,7 @@ const labelClass =
 
 export default function Settings() {
   const { user, signOut } = useAuth();
-  const { profile, isPro, isTrialing, canStartTrial, daysLeftInTrial, refetchProfile } =
+  const { profile, subscription, isPro, isTrialing, canStartTrial, daysLeftInTrial, refetchProfile } =
     useSubscription();
   const { showToast } = useToast();
   const navigate = useNavigate();
@@ -52,6 +52,9 @@ export default function Settings() {
 
   // Start trial
   const [startingTrial, setStartingTrial] = useState(false);
+
+  // Manage subscription
+  const [managingSubscription, setManagingSubscription] = useState(false);
 
   // Delete account
   const [deleteConfirm, setDeleteConfirm] = useState("");
@@ -164,6 +167,29 @@ export default function Settings() {
     setStartingTrial(false);
   }
 
+  async function handleManageSubscription() {
+    setManagingSubscription(true);
+    try {
+      const { data, error } = await invokeEdgeFunction("create-portal-session");
+      if (error || !data?.url) {
+        showToast(error ?? "Failed to open billing portal", "error");
+      } else {
+        window.location.href = data.url;
+      }
+    } catch {
+      showToast("Failed to open billing portal", "error");
+    }
+    setManagingSubscription(false);
+  }
+
+  function formatRenewalDate(dateStr: string): string {
+    return new Date(dateStr).toLocaleDateString("en-US", {
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+    });
+  }
+
   function planLabel() {
     if (isTrialing) return "Free Trial";
     if (isPro) return "Pro";
@@ -188,7 +214,7 @@ export default function Settings() {
       <h2 className="text-xl font-bold text-white">Account Settings</h2>
 
       {/* Plan Status */}
-      <div className="card-panel p-5 space-y-3">
+      <div className="card-panel p-5 space-y-4">
         <h3 className="text-sm font-semibold text-white">Current Plan</h3>
         <div className="flex items-center gap-3">
           <span
@@ -196,29 +222,52 @@ export default function Settings() {
           >
             {planLabel()}
           </span>
-          {isTrialing && (
-            <span className="text-xs text-gray-500">
-              Free trial · {daysLeftInTrial} day{daysLeftInTrial !== 1 ? "s" : ""} remaining
-            </span>
+        </div>
+
+        {/* Subscription renewal / cancellation info for Pro users */}
+        {isPro && !isTrialing && subscription?.current_period_end && (
+          <p className="text-sm text-gray-400">
+            {subscription.cancel_at_period_end
+              ? `Your subscription will end on ${formatRenewalDate(subscription.current_period_end)}`
+              : `Your subscription will auto renew on ${formatRenewalDate(subscription.current_period_end)}`}
+          </p>
+        )}
+
+        {/* Trial info */}
+        {isTrialing && (
+          <p className="text-sm text-gray-400">
+            Free trial · {daysLeftInTrial} day{daysLeftInTrial !== 1 ? "s" : ""} remaining
+          </p>
+        )}
+
+        {/* Free user prompt */}
+        {!isPro && !isTrialing && (
+          <p className="text-sm text-gray-400">
+            Upgrade to unlock all features
+          </p>
+        )}
+
+        {/* Actions */}
+        <div className="flex items-center gap-3">
+          {canStartTrial && (
+            <button
+              onClick={handleStartTrial}
+              disabled={startingTrial}
+              className="bg-accent-600 hover:bg-accent-500 disabled:opacity-40 text-white font-medium text-sm px-4 py-2 rounded-lg transition-colors"
+            >
+              {startingTrial ? "Starting..." : "Start 14-Day Pro Trial"}
+            </button>
           )}
           {isPro && !isTrialing && (
-            <span className="text-xs text-gray-500">Active subscription</span>
-          )}
-          {!isPro && !isTrialing && (
-            <span className="text-xs text-gray-500">
-              Upgrade to unlock all features
-            </span>
+            <button
+              onClick={handleManageSubscription}
+              disabled={managingSubscription}
+              className="bg-gray-700 hover:bg-gray-600 disabled:opacity-40 text-white font-medium text-sm px-4 py-2 rounded-lg transition-colors"
+            >
+              {managingSubscription ? "Opening..." : "Manage Subscription"}
+            </button>
           )}
         </div>
-        {canStartTrial && (
-          <button
-            onClick={handleStartTrial}
-            disabled={startingTrial}
-            className="bg-accent-600 hover:bg-accent-500 disabled:opacity-40 text-white font-medium text-sm px-4 py-2 rounded-lg transition-colors"
-          >
-            {startingTrial ? "Starting..." : "Start 14-Day Pro Trial"}
-          </button>
-        )}
       </div>
 
       {/* Display Name */}
