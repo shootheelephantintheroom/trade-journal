@@ -5,7 +5,7 @@ export function StatCard({
   value,
   color,
   sub,
-  accent,
+  accent: _accent,
 }: {
   label: string;
   value: string;

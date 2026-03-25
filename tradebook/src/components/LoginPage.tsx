@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { setRememberMe, supabase } from "../lib/supabase";
-import { cn } from "../lib/utils";
+
 
 export default function LoginPage() {
   const { signIn, signUp } = useAuth();
