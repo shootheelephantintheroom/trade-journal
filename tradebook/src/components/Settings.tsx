@@ -228,7 +228,7 @@ export default function Settings() {
         {isPro && !isTrialing && subscription?.current_period_end && (
           <p className="text-sm text-gray-400">
             {subscription.cancel_at_period_end
-              ? `Your subscription will end on ${formatRenewalDate(subscription.current_period_end)}`
+              ? `Your subscription will be cancelled on ${formatRenewalDate(subscription.current_period_end)}`
               : `Your subscription will auto renew on ${formatRenewalDate(subscription.current_period_end)}`}
           </p>
         )}
