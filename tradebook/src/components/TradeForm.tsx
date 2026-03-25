@@ -822,7 +822,7 @@ export default function TradeForm({
       <button
         type="submit"
         disabled={saving}
-        className="w-full rounded-lg bg-brand hover:bg-brand/90 px-4 py-3 text-sm font-medium text-primary disabled:opacity-50 transition-colors"
+        className="w-full rounded-lg bg-brand hover:bg-brand/90 px-4 py-3 text-sm font-medium text-surface-0 disabled:opacity-50 transition-colors"
       >
         {saving ? "Saving..." : editTrade ? "Update Trade" : "Save Trade"}
       </button>

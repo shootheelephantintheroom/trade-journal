@@ -379,7 +379,7 @@ function ComparisonColumn({
         : "text-secondary";
 
   return (
-    <div className="rounded-xl border border-border bg-surface-1 p-4">
+    <div className="rounded-xl bg-surface-1 p-4">
       <p className="text-xs font-semibold text-primary">{title}</p>
       <p className="text-[10px] text-tertiary mb-3">{subtitle}</p>
 

@@ -14,11 +14,11 @@ export function StatCard({
   accent?: "green" | "red" | "neutral";
 }) {
   return (
-    <div className="rounded-xl bg-surface-1 p-5">
+    <div className="rounded-xl bg-surface-1 p-6">
       <p className="text-[11px] font-medium text-tertiary uppercase tracking-wider mb-1.5">
         {label}
       </p>
-      <p className={cn("text-2xl font-semibold", color || "text-primary")}>
+      <p className={cn("text-2xl font-semibold tabular-nums", color || "text-primary")}>
         {value}
       </p>
       {sub && <p className="text-xs text-tertiary mt-1">{sub}</p>}
@@ -38,11 +38,11 @@ export function AmberStatCard({
   sub?: string;
 }) {
   return (
-    <div className="rounded-xl bg-surface-1 p-5">
+    <div className="rounded-xl bg-surface-1 p-6">
       <p className="text-[11px] font-medium text-tertiary uppercase tracking-wider mb-1.5">
         {label}
       </p>
-      <p className={cn("text-2xl font-semibold", color || "text-primary")}>
+      <p className={cn("text-2xl font-semibold tabular-nums", color || "text-primary")}>
         {value}
       </p>
       {sub && <p className="text-xs text-tertiary mt-1">{sub}</p>}

@@ -254,7 +254,7 @@ export default function TradeList({
   if (totalCount === 0 && !hasActiveFilters) {
     return (
       <div className="flex flex-col items-center justify-center py-20 gap-4">
-        <div className="w-16 h-16 rounded-2xl bg-surface-1 border border-border flex items-center justify-center text-3xl">
+        <div className="w-16 h-16 rounded-2xl bg-surface-1 flex items-center justify-center text-3xl">
           📋
         </div>
         <h2 className="text-lg font-semibold text-primary tracking-tight">
@@ -266,7 +266,7 @@ export default function TradeList({
         {onLogTrade && (
           <button
             onClick={onLogTrade}
-            className="btn-submit mt-2 bg-brand hover:bg-brand text-primary font-medium text-sm px-6 py-2.5 rounded-lg"
+            className="mt-2 bg-brand hover:bg-brand/90 text-surface-0 font-medium text-sm px-6 py-2.5 rounded-lg transition-colors"
           >
             Log Your First Trade
           </button>

@@ -60,7 +60,7 @@ export default function PaywallGate({ feature, children }: PaywallGateProps) {
 
   return (
     <div className="flex items-center justify-center py-16 px-4">
-      <div className="w-full max-w-md rounded-xl border border-border bg-surface-1 p-8 text-center">
+      <div className="w-full max-w-md rounded-xl bg-surface-1 p-8 text-center">
         {/* Icon */}
         <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-brand-muted">
           <svg
@@ -174,7 +174,7 @@ export default function PaywallGate({ feature, children }: PaywallGateProps) {
         <button
           onClick={handleUpgrade}
           disabled={loading}
-          className="w-full rounded-xl bg-brand px-6 py-3 text-sm font-medium text-primary transition-all hover:bg-brand/90 active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed"
+          className="w-full rounded-xl bg-brand px-6 py-3 text-sm font-medium text-surface-0 transition-colors hover:bg-brand/90 active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed"
         >
           {loading
             ? "Redirecting..."

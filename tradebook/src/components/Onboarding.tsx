@@ -209,7 +209,7 @@ export default function Onboarding() {
               <button
                 onClick={() => setStep(1)}
                 disabled={styles.length === 0}
-                className="w-full bg-brand hover:bg-brand/90 disabled:opacity-30 disabled:hover:bg-brand text-primary font-medium text-sm py-2.5 rounded-lg transition-colors"
+                className="w-full bg-brand hover:bg-brand/90 disabled:opacity-30 disabled:hover:bg-brand text-surface-0 font-medium text-sm py-2.5 rounded-lg transition-colors"
               >
                 Continue
               </button>
@@ -280,7 +280,7 @@ export default function Onboarding() {
                 </button>
                 <button
                   onClick={() => setStep(2)}
-                  className="flex-1 bg-brand hover:bg-brand/90 text-primary font-medium text-sm py-2.5 rounded-lg transition-colors"
+                  className="flex-1 bg-brand hover:bg-brand/90 text-surface-0 font-medium text-sm py-2.5 rounded-lg transition-colors"
                 >
                   Continue
                 </button>
@@ -317,7 +317,7 @@ export default function Onboarding() {
                       className={cn(
                         "flex-1 py-2.5 rounded-lg text-sm font-semibold transition-all",
                         exampleTrade.side === "long"
-                          ? "bg-brand-muted border border-brand text-brand"
+                          ? "bg-profit-muted border border-profit text-profit"
                           : "bg-surface-2 border border-transparent text-secondary hover:border-border",
                       )}
                     >
@@ -440,7 +440,7 @@ export default function Onboarding() {
                 <button
                   onClick={() => handleFinish(true)}
                   disabled={saving}
-                  className="flex-1 bg-brand hover:bg-brand/90 disabled:opacity-50 text-primary font-medium text-sm py-2.5 rounded-lg transition-colors"
+                  className="flex-1 bg-brand hover:bg-brand/90 disabled:opacity-50 text-surface-0 font-medium text-sm py-2.5 rounded-lg transition-colors"
                 >
                   {saving ? "Saving..." : "Save & Start"}
                 </button>

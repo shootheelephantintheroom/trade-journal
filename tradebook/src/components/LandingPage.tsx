@@ -179,7 +179,7 @@ export default function LandingPage() {
         className={cn(
           "sticky top-0 z-50 border-b transition-all duration-300",
           scrolled
-            ? "bg-surface-0/90 backdrop-blur-md border-border"
+            ? "bg-surface-0/80 backdrop-blur-xl border-border"
             : "bg-surface-0 border-transparent"
         )}
       >
@@ -203,7 +203,7 @@ export default function LandingPage() {
             <Link
               to="/login?mode=signup"
               className={cn(
-                "px-4 py-1.5 rounded-lg text-sm font-semibold bg-brand hover:bg-brand/90 text-primary transition-all duration-300",
+                "px-4 py-1.5 rounded-lg text-sm font-semibold bg-brand hover:bg-brand/90 text-surface-0 transition-all duration-300",
                 scrolled
                   ? "opacity-100 translate-y-0"
                   : "opacity-0 -translate-y-2 pointer-events-none"
@@ -245,7 +245,7 @@ export default function LandingPage() {
             <div className="hero-enter-d2">
               <Link
                 to="/login?mode=signup"
-                className="cta-btn inline-block bg-brand hover:bg-brand/90 text-primary font-semibold text-base sm:text-lg px-10 py-4 rounded-xl"
+                className="cta-btn inline-block bg-brand hover:bg-brand/90 text-surface-0 font-semibold text-base sm:text-lg px-10 py-4 rounded-xl"
               >
                 Start Free — No Credit Card
               </Link>
@@ -425,7 +425,7 @@ export default function LandingPage() {
                 </ul>
                 <Link
                   to="/login?mode=signup"
-                  className="mt-8 block w-full text-center rounded-xl border border-border bg-surface-2/50 px-6 py-3.5 text-sm font-semibold text-primary transition-all hover:border-surface-3 hover:bg-surface-2"
+                  className="mt-8 block w-full text-center rounded-xl border border-border bg-surface-2/50 px-6 py-3.5 text-sm font-semibold text-primary transition-colors hover:border-surface-3 hover:bg-surface-2"
                 >
                   Get Started Free
                 </Link>
@@ -469,7 +469,7 @@ export default function LandingPage() {
                 </ul>
                 <Link
                   to="/login?mode=signup"
-                  className="cta-btn mt-8 block w-full text-center rounded-xl bg-brand hover:bg-brand/90 px-6 py-3.5 text-sm font-semibold text-primary transition-all"
+                  className="cta-btn mt-8 block w-full text-center rounded-xl bg-brand hover:bg-brand/90 px-6 py-3.5 text-sm font-semibold text-surface-0 transition-colors"
                 >
                   Get Started Free
                 </Link>
@@ -558,7 +558,7 @@ export default function LandingPage() {
             </p>
             <Link
               to="/login?mode=signup"
-              className="cta-btn inline-block bg-brand hover:bg-brand/90 text-primary font-semibold text-base px-10 py-4 rounded-xl"
+              className="cta-btn inline-block bg-brand hover:bg-brand/90 text-surface-0 font-semibold text-base px-10 py-4 rounded-xl"
             >
               Start Free — No Credit Card
             </Link>

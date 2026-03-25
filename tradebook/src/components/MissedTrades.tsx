@@ -144,7 +144,7 @@ export default function MissedTrades({
                   className={cn(
                     "flex-1 py-2.5 rounded-lg text-xs font-semibold transition-all",
                     form.side === "long"
-                      ? "bg-brand/15 border border-brand text-profit"
+                      ? "bg-profit-muted border border-profit text-profit"
                       : "bg-surface-2 border border-transparent text-secondary hover:border-border"
                   )}
                 >
@@ -287,7 +287,7 @@ export default function MissedTrades({
         <button
           type="submit"
           disabled={saving}
-          className="w-full bg-brand hover:bg-brand/90 text-primary font-medium text-sm px-4 py-3 rounded-lg transition-colors disabled:opacity-50"
+          className="w-full bg-brand hover:bg-brand/90 text-surface-0 font-medium text-sm px-4 py-3 rounded-lg transition-colors disabled:opacity-50"
         >
           {saving ? "Saving..." : "Save Missed Trade"}
         </button>
@@ -467,7 +467,7 @@ export default function MissedTrades({
                                       {mt.tags.map((tag) => (
                                         <span
                                           key={tag}
-                                          className="px-1.5 py-0.5 rounded-full text-[10px] font-medium bg-brand/10 text-brand/80 border border-brand/20"
+                                          className="px-1.5 py-0.5 rounded-full text-[10px] font-medium bg-brand-muted text-brand border border-brand/20"
                                         >
                                           {tag}
                                         </span>

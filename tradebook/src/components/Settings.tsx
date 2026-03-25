@@ -23,7 +23,7 @@ const TIMEZONES = [
 const inputClass =
   "w-full rounded-lg border border-transparent bg-surface-2 px-3 py-2.5 text-sm text-primary placeholder-tertiary hover:border-border-hover focus:border-brand focus:outline-none transition-colors";
 const labelClass =
-  "block text-[11px] font-medium text-tertiary uppercase tracking-wider mb-1.5";
+  "block text-xs font-medium text-secondary uppercase tracking-wide mb-1.5";
 
 export default function Settings() {
   const { user, signOut } = useAuth();
@@ -215,7 +215,7 @@ export default function Settings() {
       <h2 className="text-xl font-semibold text-primary">Account Settings</h2>
 
       {/* Plan Status */}
-      <div className="rounded-xl bg-surface-1 p-5 space-y-4">
+      <div className="bg-surface-1 rounded-lg p-6 space-y-4">
         <h3 className="text-sm font-semibold text-primary">Current Plan</h3>
         <div className="flex items-center gap-3">
           <span
@@ -257,7 +257,7 @@ export default function Settings() {
             <button
               onClick={handleStartTrial}
               disabled={startingTrial}
-              className="bg-brand hover:bg-brand/90 disabled:opacity-40 text-primary font-medium text-sm px-4 py-2 rounded-lg transition-colors"
+              className="bg-brand hover:bg-brand-hover disabled:opacity-40 text-surface-0 font-medium text-sm px-4 py-2 rounded-md transition-colors"
             >
               {startingTrial ? "Starting..." : "Start 14-Day Pro Trial"}
             </button>
@@ -266,7 +266,7 @@ export default function Settings() {
             <button
               onClick={handleManageSubscription}
               disabled={managingSubscription}
-              className="bg-surface-2 hover:bg-surface-3 disabled:opacity-40 text-primary font-medium text-sm px-4 py-2 rounded-lg transition-colors"
+              className="bg-surface-2 hover:bg-surface-3 disabled:opacity-40 text-primary font-medium text-sm px-4 py-2 rounded-md transition-colors"
             >
               {managingSubscription ? "Opening..." : "Manage Subscription"}
             </button>
@@ -275,7 +275,7 @@ export default function Settings() {
       </div>
 
       {/* Display Name */}
-      <div className="rounded-xl bg-surface-1 p-5 space-y-3">
+      <div className="bg-surface-1 rounded-lg p-6 space-y-3">
         <h3 className="text-sm font-semibold text-primary">Display Name</h3>
         <div>
           <label className={labelClass}>Name</label>
@@ -289,14 +289,14 @@ export default function Settings() {
         <button
           onClick={handleUpdateName}
           disabled={savingName || !displayName.trim()}
-          className="bg-brand hover:bg-brand/90 disabled:opacity-40 text-primary font-medium text-sm px-4 py-2 rounded-lg transition-colors"
+          className="bg-brand hover:bg-brand-hover disabled:opacity-40 text-surface-0 font-medium text-sm px-4 py-2 rounded-md transition-colors"
         >
           {savingName ? "Saving..." : "Save Name"}
         </button>
       </div>
 
       {/* Email */}
-      <div className="rounded-xl bg-surface-1 p-5 space-y-3">
+      <div className="bg-surface-1 rounded-lg p-6 space-y-3">
         <h3 className="text-sm font-semibold text-primary">Email Address</h3>
         <p className="text-xs text-tertiary">
           Current: {user?.email ?? "—"}
@@ -314,14 +314,14 @@ export default function Settings() {
         <button
           onClick={handleUpdateEmail}
           disabled={savingEmail || !newEmail.trim()}
-          className="bg-brand hover:bg-brand/90 disabled:opacity-40 text-primary font-medium text-sm px-4 py-2 rounded-lg transition-colors"
+          className="bg-brand hover:bg-brand-hover disabled:opacity-40 text-surface-0 font-medium text-sm px-4 py-2 rounded-md transition-colors"
         >
           {savingEmail ? "Sending..." : "Change Email"}
         </button>
       </div>
 
       {/* Password */}
-      <div className="rounded-xl bg-surface-1 p-5 space-y-3">
+      <div className="bg-surface-1 rounded-lg p-6 space-y-3">
         <h3 className="text-sm font-semibold text-primary">Password</h3>
         <div>
           <label className={labelClass}>New Password</label>
@@ -346,14 +346,14 @@ export default function Settings() {
         <button
           onClick={handleUpdatePassword}
           disabled={savingPassword || !newPassword}
-          className="bg-brand hover:bg-brand/90 disabled:opacity-40 text-primary font-medium text-sm px-4 py-2 rounded-lg transition-colors"
+          className="bg-brand hover:bg-brand-hover disabled:opacity-40 text-surface-0 font-medium text-sm px-4 py-2 rounded-md transition-colors"
         >
           {savingPassword ? "Updating..." : "Update Password"}
         </button>
       </div>
 
       {/* Timezone */}
-      <div className="rounded-xl bg-surface-1 p-5 space-y-3">
+      <div className="bg-surface-1 rounded-lg p-6 space-y-3">
         <h3 className="text-sm font-semibold text-primary">Timezone</h3>
         <div>
           <label className={labelClass}>Timezone</label>
@@ -375,14 +375,14 @@ export default function Settings() {
         <button
           onClick={handleUpdateTimezone}
           disabled={savingTimezone}
-          className="bg-brand hover:bg-brand/90 disabled:opacity-40 text-primary font-medium text-sm px-4 py-2 rounded-lg transition-colors"
+          className="bg-brand hover:bg-brand-hover disabled:opacity-40 text-surface-0 font-medium text-sm px-4 py-2 rounded-md transition-colors"
         >
           {savingTimezone ? "Saving..." : "Save Timezone"}
         </button>
       </div>
 
       {/* Danger Zone */}
-      <div className="rounded-xl bg-surface-1 border border-loss/20 p-5 space-y-3">
+      <div className="bg-surface-1 rounded-lg p-6 space-y-3">
         <h3 className="text-sm font-semibold text-loss">Danger Zone</h3>
         <p className="text-xs text-tertiary">
           Permanently delete your account and all data. This cannot be undone.
@@ -401,7 +401,7 @@ export default function Settings() {
         <button
           onClick={handleDeleteAccount}
           disabled={deleteConfirm !== "DELETE" || deleting}
-          className="bg-loss hover:bg-loss/90 disabled:opacity-40 text-primary font-medium text-sm px-4 py-2 rounded-lg transition-colors"
+          className="bg-loss hover:bg-loss/90 disabled:opacity-40 text-primary font-medium text-sm px-4 py-2 rounded-md transition-colors"
         >
           {deleting ? "Deleting..." : "Delete Account"}
         </button>

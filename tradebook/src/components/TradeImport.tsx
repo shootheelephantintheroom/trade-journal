@@ -372,7 +372,7 @@ export default function TradeImport({ onImported }: Props) {
               <button
                 onClick={handleImport}
                 disabled={importing}
-                className="bg-brand hover:bg-brand/90 text-primary font-medium text-sm px-4 py-2 rounded-lg transition-colors disabled:opacity-50"
+                className="bg-brand hover:bg-brand/90 text-surface-0 font-medium text-sm px-4 py-2 rounded-lg transition-colors disabled:opacity-50"
               >
                 {importing ? "Importing..." : `Import ${rows.length} Trades`}
               </button>

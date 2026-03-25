@@ -210,7 +210,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading || (mode === "reset" && resetSent)}
-              className="w-full bg-brand hover:bg-brand/90 disabled:opacity-50 text-primary font-medium text-sm py-2 rounded-lg transition-colors"
+              className="w-full bg-brand hover:bg-brand/90 disabled:opacity-50 text-surface-0 font-medium text-sm py-2 rounded-lg transition-colors"
             >
               {loading
                 ? "..."

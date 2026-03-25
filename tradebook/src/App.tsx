@@ -35,7 +35,7 @@ const tabs = [
 
 function navClassName({ isActive }: { isActive: boolean }) {
   return cn(
-    "relative px-3 py-3.5 text-sm font-medium transition-colors",
+    "relative px-3 py-3.5 text-sm font-medium transition-colors duration-150",
     isActive
       ? "text-primary"
       : "text-tertiary hover:text-secondary"
@@ -99,8 +99,8 @@ export default function App() {
   return (
     <div className="min-h-screen bg-surface-0 text-primary">
       {/* Header */}
-      <header className="sticky top-0 z-40 bg-surface-0/80 backdrop-blur-xl border-b border-border">
-        <div className="max-w-5xl mx-auto px-4 py-0 flex items-center justify-between">
+      <header className="sticky top-0 z-40 h-14 bg-surface-0/80 backdrop-blur-xl border-b border-white/[0.06]">
+        <div className="max-w-5xl mx-auto px-4 h-full flex items-center justify-between">
           <h1 className="text-lg font-semibold tracking-tight text-primary">
             MyTradeBook
           </h1>
@@ -121,7 +121,7 @@ export default function App() {
             <div className="relative" ref={menuRef}>
               <button
                 onClick={() => setMenuOpen((o) => !o)}
-                className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium text-secondary hover:text-primary hover:bg-surface-2 transition-colors"
+                className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium text-secondary hover:text-primary hover:bg-surface-2 transition-colors duration-150"
               >
                 {displayName && (
                   <span className="hidden sm:inline">{displayName}</span>
@@ -147,20 +147,20 @@ export default function App() {
                           showToast("Failed to open billing portal", "error");
                         }
                       }}
-                      className="w-full text-left px-3 py-2 text-xs text-secondary hover:bg-surface-2 hover:text-primary transition-colors"
+                      className="w-full text-left px-3 py-2 text-xs text-secondary hover:bg-surface-2 hover:text-primary transition-colors duration-150"
                     >
                       Manage Subscription
                     </button>
                   )}
                   <button
                     onClick={() => { setMenuOpen(false); navigate("/app/settings"); }}
-                    className="w-full text-left px-3 py-2 text-xs text-secondary hover:bg-surface-2 hover:text-primary transition-colors"
+                    className="w-full text-left px-3 py-2 text-xs text-secondary hover:bg-surface-2 hover:text-primary transition-colors duration-150"
                   >
                     Settings
                   </button>
                   <button
                     onClick={() => { setMenuOpen(false); signOut(); }}
-                    className="w-full text-left px-3 py-2 text-xs text-tertiary hover:bg-surface-2 hover:text-loss transition-colors"
+                    className="w-full text-left px-3 py-2 text-xs text-tertiary hover:bg-surface-2 hover:text-loss transition-colors duration-150"
                   >
                     Sign Out
                   </button>
@@ -271,7 +271,7 @@ export default function App() {
       </main>
 
       {/* Mobile bottom tab bar */}
-      <nav className="fixed bottom-0 left-0 right-0 z-40 bg-surface-0/80 backdrop-blur-xl border-t border-border sm:hidden">
+      <nav className="fixed bottom-0 left-0 right-0 z-40 bg-surface-0/80 backdrop-blur-xl border-t border-white/[0.06] sm:hidden">
         <div className="flex justify-around items-center py-1.5">
           {tabs.map((t) => (
             <NavLink
@@ -280,7 +280,7 @@ export default function App() {
               end
               className={({ isActive }) =>
                 cn(
-                  "flex flex-col items-center gap-0.5 px-2 py-1 transition-colors",
+                  "flex flex-col items-center gap-0.5 px-2 py-1 transition-colors duration-150",
                   isActive ? "text-primary" : "text-tertiary"
                 )
               }

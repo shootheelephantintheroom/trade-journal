@@ -28,7 +28,7 @@ function TodaySummary({ trades }: { trades: Trade[] }) {
   const losses = pnls.filter((p) => p < 0).length;
 
   return (
-    <div className="rounded-xl bg-surface-1 p-5 mb-6">
+    <div className="rounded-xl bg-surface-1 p-6 mb-6">
       <div className="flex items-center gap-3 mb-3">
         <div className="w-2 h-2 rounded-full bg-brand animate-ping" />
         <h3 className="text-sm font-semibold text-primary uppercase tracking-wide">
@@ -38,11 +38,11 @@ function TodaySummary({ trades }: { trades: Trade[] }) {
       <div className="grid grid-cols-3 gap-4">
         <div>
           <p className="text-[11px] text-tertiary uppercase tracking-wider">Trades</p>
-          <p className="text-xl font-semibold text-primary">{todayTrades.length}</p>
+          <p className="text-2xl font-semibold tabular-nums text-primary">{todayTrades.length}</p>
         </div>
         <div>
           <p className="text-[11px] text-tertiary uppercase tracking-wider">W / L</p>
-          <p className="text-xl font-semibold">
+          <p className="text-2xl font-semibold tabular-nums">
             <span className="text-profit">{wins}</span>
             <span className="text-tertiary"> / </span>
             <span className="text-loss">{losses}</span>
@@ -52,7 +52,7 @@ function TodaySummary({ trades }: { trades: Trade[] }) {
           <p className="text-[11px] text-tertiary uppercase tracking-wider">P&L</p>
           <p
             className={cn(
-              "text-xl font-semibold font-mono",
+              "text-2xl font-semibold tabular-nums",
               totalPnl >= 0 ? "text-profit" : "text-loss"
             )}
           >
@@ -115,7 +115,7 @@ export default function Dashboard({
   if (trades.length === 0 && missedTrades.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-20 gap-4">
-        <div className="w-16 h-16 rounded-2xl bg-surface-1 border border-border flex items-center justify-center text-3xl">
+        <div className="w-16 h-16 rounded-2xl bg-surface-1 flex items-center justify-center text-3xl">
           📊
         </div>
         <h2 className="text-lg font-semibold text-primary tracking-tight">
@@ -128,7 +128,7 @@ export default function Dashboard({
         {onLogTrade && (
           <button
             onClick={onLogTrade}
-            className="btn-submit mt-2 bg-brand hover:bg-brand text-primary font-medium text-sm px-6 py-2.5 rounded-lg"
+            className="mt-2 bg-brand hover:bg-brand/90 text-surface-0 font-medium text-sm px-6 py-2.5 rounded-lg transition-colors"
           >
             Log Your First Trade
           </button>
@@ -263,7 +263,7 @@ export default function Dashboard({
     .slice(0, 5);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <h2 className="text-xl font-semibold text-primary tracking-tight">
         Dashboard
       </h2>
@@ -550,7 +550,7 @@ export default function Dashboard({
         <div className={cn("grid grid-cols-1 gap-4", proUser && "md:grid-cols-2")}>
           {/* Equity Curve */}
           {equityPoints.length >= 2 && (
-            <div className="rounded-xl bg-surface-1 p-5">
+            <div className="rounded-xl bg-surface-1 p-6">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-xs font-semibold text-secondary uppercase tracking-wider">
                   Equity Curve
@@ -587,7 +587,7 @@ export default function Dashboard({
 
       {/* Trade Calendar */}
       {hasTrades && dailyStats.length > 0 && (
-        <div className="rounded-xl bg-surface-1 p-5 page-enter">
+        <div className="rounded-xl bg-surface-1 p-6 page-enter">
           <h3 className="text-xs font-semibold text-secondary uppercase tracking-wider mb-4">
             Trade Calendar
           </h3>
