@@ -99,6 +99,7 @@ export async function getSubscription(userId: string): Promise<Subscription | nu
     .single();
 
   if (error || !data) return null;
+  console.log("[DEBUG] subscription row:", data);
   return data as Subscription;
 }
 
