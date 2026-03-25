@@ -32,6 +32,7 @@ serve(async (req) => {
 
   const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
 
+  try {
   switch (event.type) {
     case "checkout.session.completed": {
       const session = event.data.object as Stripe.Checkout.Session;
@@ -85,6 +86,12 @@ serve(async (req) => {
 
     case "customer.subscription.updated": {
       const subscription = event.data.object as Stripe.Subscription;
+      console.log("[DEBUG] subscription.updated payload:", {
+        id: subscription.id,
+        status: subscription.status,
+        cancel_at_period_end: subscription.cancel_at_period_end,
+        metadata: subscription.metadata,
+      });
       const customerId =
         typeof subscription.customer === "string"
           ? subscription.customer
@@ -92,7 +99,7 @@ serve(async (req) => {
       const priceId = subscription.items.data[0]?.price?.id ?? null;
       const userId = subscription.metadata?.supabase_user_id ?? null;
 
-      await supabaseAdmin.from("subscriptions").upsert(
+      const upsertResult = await supabaseAdmin.from("subscriptions").upsert(
         {
           stripe_subscription_id: subscription.id,
           stripe_customer_id: customerId,
@@ -110,6 +117,7 @@ serve(async (req) => {
         },
         { onConflict: "stripe_subscription_id" }
       );
+      console.log("[DEBUG] subscription upsert result:", upsertResult);
 
       // Sync profile plan
       if (userId) {
@@ -185,6 +193,13 @@ serve(async (req) => {
       }
       break;
     }
+  }
+  } catch (err) {
+    console.error("[WEBHOOK ERROR]", event.type, err);
+    return new Response(JSON.stringify({ error: String(err) }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
+    });
   }
 
   return new Response(JSON.stringify({ received: true }), {
