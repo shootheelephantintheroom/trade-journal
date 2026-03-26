@@ -1,4 +1,5 @@
 import { cn } from "../../lib/utils";
+import type { LucideIcon } from "lucide-react";
 
 interface TrendBadge {
   direction: "up" | "down" | "flat";
@@ -11,22 +12,29 @@ export function StatCard({
   color,
   sub,
   trend,
+  icon: Icon,
 }: {
   label: string;
   value: string;
   color?: string;
   sub?: string;
   trend?: TrendBadge;
+  icon?: LucideIcon;
 }) {
   return (
-    <div className="rounded-[12px] bg-surface-1 border border-white/[0.06] p-5">
-      <p className="text-[11px] font-medium text-zinc-500 uppercase tracking-widest mb-1.5">
-        {label}
-      </p>
+    <div className="rounded-xl bg-surface-1 border border-white/[0.06] p-5 hover:border-white/[0.1] transition-colors duration-150">
+      <div className="flex items-center gap-2 mb-2">
+        {Icon && (
+          <Icon size={14} strokeWidth={1.8} className="text-zinc-500" />
+        )}
+        <p className="text-[11px] font-medium text-zinc-500 uppercase tracking-widest">
+          {label}
+        </p>
+      </div>
       <div className="flex items-baseline gap-2">
         <p
           className={cn(
-            "text-[28px] font-semibold font-mono tabular-nums leading-tight",
+            "text-2xl font-semibold font-mono tabular-nums leading-tight tracking-tight",
             color || "text-primary"
           )}
         >
@@ -47,7 +55,24 @@ export function StatCard({
           </span>
         )}
       </div>
-      {sub && <p className="text-xs text-tertiary mt-1">{sub}</p>}
+      {sub && <p className="text-[12px] text-zinc-500 mt-1">{sub}</p>}
+    </div>
+  );
+}
+
+export function SectionHeader({
+  title,
+  description,
+}: {
+  title: string;
+  description?: string;
+}) {
+  return (
+    <div className="space-y-1">
+      <h3 className="text-sm font-medium text-zinc-300">{title}</h3>
+      {description && (
+        <p className="text-[12px] text-zinc-500">{description}</p>
+      )}
     </div>
   );
 }

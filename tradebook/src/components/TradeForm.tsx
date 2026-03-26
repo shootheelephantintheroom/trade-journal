@@ -5,6 +5,7 @@ import { calcPnl, calcRR } from "../lib/calc";
 import { useToast } from "./Toast";
 import { todayLocal } from "../lib/date";
 import { cn } from "../lib/utils";
+import { X } from "lucide-react";
 
 const empty: TradeInsert = {
   ticker: "",
@@ -94,26 +95,31 @@ export default function TradeForm({
   }
 
   const inputClass =
-    "w-full h-9 rounded-[10px] border border-white/[0.06] bg-surface-2 px-3 text-sm text-white font-sans placeholder-zinc-500 focus:outline-none focus:shadow-[0_0_0_2px_rgba(59,130,246,0.35)] transition-all";
+    "w-full h-10 rounded-lg border border-white/[0.06] bg-surface-2 px-3 text-sm text-white font-sans placeholder-zinc-600 focus:outline-none focus:border-brand/40 focus:shadow-[0_0_0_2px_rgba(59,130,246,0.15)] transition-all";
 
-  const labelClass = "block text-xs font-medium text-secondary mb-1.5";
+  const labelClass = "block text-[12px] font-medium text-zinc-500 mb-1.5";
 
   return (
     <form
       onSubmit={handleSubmit}
-      className="rounded-[10px] bg-surface-1 p-6 space-y-5"
+      className="rounded-xl bg-surface-1 border border-white/[0.06] p-6 sm:p-8 space-y-6"
     >
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-white tracking-tight">
-          {editTrade ? "Edit Trade" : "Log Trade"}
-        </h2>
+        <div>
+          <h2 className="text-lg font-semibold text-white tracking-tight">
+            {editTrade ? "Edit Trade" : "Log Trade"}
+          </h2>
+          <p className="text-[12px] text-zinc-500 mt-0.5">
+            {editTrade ? "Update the details below" : "Record your latest trade"}
+          </p>
+        </div>
         {editTrade && (
           <button
             type="button"
             onClick={() => onEditDone?.()}
-            className="text-xs text-tertiary hover:text-secondary transition-colors"
+            className="h-8 w-8 rounded-lg flex items-center justify-center text-zinc-500 hover:text-white hover:bg-white/[0.06] transition-colors"
           >
-            Cancel
+            <X size={16} strokeWidth={1.8} />
           </button>
         )}
       </div>
@@ -306,7 +312,7 @@ export default function TradeForm({
       <button
         type="submit"
         disabled={saving}
-        className="w-full h-10 rounded-[10px] bg-[#3b82f6] text-sm font-semibold text-white hover:-translate-y-px hover:brightness-110 active:translate-y-0 disabled:opacity-50 transition-all cursor-pointer"
+        className="w-full h-11 rounded-lg bg-brand hover:bg-brand-hover text-sm font-semibold text-white disabled:opacity-50 transition-colors cursor-pointer"
       >
         {saving ? "Saving..." : editTrade ? "Update Trade" : "Save Trade"}
       </button>

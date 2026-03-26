@@ -6,9 +6,9 @@ export default function EmotionPerformance({
   emotionStats: EmotionStats[];
 }) {
   return (
-    <div className="rounded-xl bg-surface-1 p-5">
-      <h3 className="text-xs font-medium text-tertiary uppercase tracking-wider mb-4">
-        Emotion Performance
+    <div className="rounded-xl bg-surface-1 border border-white/[0.06] p-5">
+      <h3 className="text-[13px] font-medium text-zinc-400 mb-4">
+        By Emotion
       </h3>
       <div className="overflow-x-auto">
         <table className="w-full text-sm text-left">

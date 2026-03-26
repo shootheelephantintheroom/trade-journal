@@ -6,8 +6,8 @@ export default function DailyBreakdown({
   dailyStats: DayStats[];
 }) {
   return (
-    <div className="rounded-xl bg-surface-1 p-5">
-      <h3 className="text-xs font-medium text-tertiary uppercase tracking-wider mb-4">
+    <div className="rounded-xl bg-surface-1 border border-white/[0.06] p-5">
+      <h3 className="text-[13px] font-medium text-zinc-400 mb-4">
         Daily Breakdown
       </h3>
       <div className="overflow-x-auto">

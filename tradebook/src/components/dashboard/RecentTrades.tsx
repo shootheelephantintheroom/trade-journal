@@ -8,10 +8,7 @@ export default function RecentTrades({
   recentTrades: Trade[];
 }) {
   return (
-    <div className="rounded-xl bg-surface-1 p-5">
-      <h3 className="text-xs font-medium text-tertiary uppercase tracking-wider mb-4">
-        Recent Trades
-      </h3>
+    <div className="rounded-xl bg-surface-1 border border-white/[0.06] p-5">
       <div className="overflow-x-auto">
         <table className="w-full text-sm text-left">
           <thead>

@@ -7,7 +7,7 @@ import { calcMissedPnl } from "./MissedTrades";
 import { todayLocal } from "../lib/date";
 import { useToast } from "./Toast";
 import CalendarHeatmap from "./CalendarHeatmap";
-import { StatCard } from "./dashboard/StatCards";
+import { StatCard, SectionHeader } from "./dashboard/StatCards";
 import EquityCurve from "./dashboard/EquityCurve";
 import DailyBreakdown from "./dashboard/DailyBreakdown";
 import SetupPerformance from "./dashboard/SetupPerformance";
@@ -16,6 +16,18 @@ import RecentTrades from "./dashboard/RecentTrades";
 import { buildDailyStats, buildTagStats, buildEmotionStats, calcDrawdownInfo } from "./dashboard/helpers";
 import { useSubscription } from "../contexts/SubscriptionContext";
 import DashboardFilters, { FilterSummary, QuickDatePills, useDashboardFilters, applyFilters } from "./dashboard/DashboardFilters";
+import {
+  TrendingUp,
+  Hash,
+  Target,
+  Zap,
+  DollarSign,
+  TrendingDown,
+  Trophy,
+  AlertTriangle,
+  Shield,
+  Crosshair,
+} from "lucide-react";
 
 function TodaySummary({ trades }: { trades: Trade[] }) {
   const [dismissed, setDismissed] = useState(false);
@@ -47,11 +59,11 @@ function TodaySummary({ trades }: { trades: Trade[] }) {
       tabIndex={0}
       onClick={() => setDismissed(true)}
       onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") setDismissed(true); }}
-      className="relative rounded-xl bg-surface-1 border border-white/[0.06] p-6 mb-6 cursor-pointer
+      className="relative rounded-xl bg-surface-1 border border-white/[0.06] p-6 cursor-pointer
                  animate-slide-down overflow-hidden select-none
                  hover:border-white/[0.1] transition-[border-color] duration-200"
     >
-      {/* Left accent – pulsing blue dot */}
+      {/* Left accent */}
       <div className="absolute left-0 top-0 bottom-0 flex items-center pl-3">
         <span className="relative flex h-2 w-2">
           <span className="absolute inline-flex h-full w-full rounded-full bg-brand animate-ping opacity-75" />
@@ -148,20 +160,20 @@ export default function Dashboard({
   if (trades.length === 0 && missedTrades.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-20 gap-4">
-        <div className="w-16 h-16 rounded-2xl bg-surface-1 flex items-center justify-center text-3xl">
-          📊
+        <div className="w-16 h-16 rounded-2xl bg-surface-1 border border-white/[0.06] flex items-center justify-center">
+          <TrendingUp size={28} strokeWidth={1.5} className="text-zinc-500" />
         </div>
         <h2 className="text-lg font-semibold text-primary tracking-tight">
           No trades logged yet
         </h2>
-        <p className="text-sm text-secondary text-center max-w-xs">
+        <p className="text-sm text-zinc-500 text-center max-w-xs">
           Your dashboard will come alive once you start logging trades — win
           rate, P&L, streaks, and more.
         </p>
         {onLogTrade && (
           <button
             onClick={onLogTrade}
-            className="mt-2 bg-brand hover:bg-brand/90 text-surface-0 font-medium text-sm px-6 py-2.5 rounded-lg transition-colors"
+            className="mt-2 bg-brand hover:bg-brand-hover text-white font-medium text-sm px-6 py-2.5 rounded-lg transition-colors"
           >
             Log Your First Trade
           </button>
@@ -235,14 +247,13 @@ export default function Dashboard({
   // Drawdown
   const drawdownInfo = calcDrawdownInfo(equityPoints);
 
-  // Expectancy: (win_rate × avg_win) + (loss_rate × avg_loss)
-  // avgLoss is already negative so this naturally subtracts
+  // Expectancy
   const expectancy = hasTrades
     ? (wins.length / filteredTrades.length) * avgWin +
       (losses.length / filteredTrades.length) * avgLoss
     : 0;
 
-  // Expectancy per R (only if ≥50% of trades have stop losses)
+  // Expectancy per R
   const tradesWithStops = filteredTrades.filter((t) => t.stop_loss_price).length;
   const hasEnoughStops = hasTrades && tradesWithStops >= filteredTrades.length * 0.5;
   let expectancyR: number | null = null;
@@ -286,7 +297,7 @@ export default function Dashboard({
     }
   }
 
-  // Recent trades (5 most recent by date + time)
+  // Recent trades
   const recentTrades = [...filteredTrades]
     .sort((a, b) => {
       if (a.trade_date !== b.trade_date)
@@ -296,120 +307,145 @@ export default function Dashboard({
     .slice(0, 5);
 
   return (
-    <div className="space-y-8">
-      <h2 className="text-xl font-semibold text-primary tracking-tight">
-        Dashboard
-      </h2>
+    <div className="space-y-10">
+      {/* Page header */}
+      <div>
+        <h2 className="text-xl font-semibold text-white tracking-tight">
+          Dashboard
+        </h2>
+        <p className="text-[13px] text-zinc-500 mt-1">
+          {filteredTrades.length} trade{filteredTrades.length !== 1 ? "s" : ""} across {dailyStats.length} session{dailyStats.length !== 1 ? "s" : ""}
+        </p>
+      </div>
 
-      {/* Quick date range */}
-      <QuickDatePills filters={filters} onUpdate={updateFilters} />
-
-      {/* Filters (Pro-only) */}
-      {proUser && (
-        <>
-          <DashboardFilters trades={trades} filters={filters} onUpdate={updateFilters} />
-          <FilterSummary
-            filtered={filteredTrades.length}
-            total={trades.length}
-            from={filters.from}
-            to={filters.to}
-          />
-        </>
-      )}
+      {/* Filters */}
+      <div className="space-y-3">
+        <QuickDatePills filters={filters} onUpdate={updateFilters} />
+        {proUser && (
+          <>
+            <DashboardFilters trades={trades} filters={filters} onUpdate={updateFilters} />
+            <FilterSummary
+              filtered={filteredTrades.length}
+              total={trades.length}
+              from={filters.from}
+              to={filters.to}
+            />
+          </>
+        )}
+      </div>
 
       {/* Today's Summary */}
       {proUser && hasTrades && <TodaySummary trades={filteredTrades} />}
 
       {hasTrades && (
         <>
-          {/* Overview */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            <StatCard
-              label="Total P&L"
-              value={`${totalPnl >= 0 ? "+" : ""}$${totalPnl.toFixed(2)}`}
-              color={totalPnl >= 0 ? "text-profit" : "text-loss"}
-            />
-            <StatCard
-              label="Total Trades"
-              value={String(filteredTrades.length)}
-            />
-            <StatCard
-              label="Win Rate"
-              value={`${winRate.toFixed(1)}%`}
-              color={winRate >= 50 ? "text-profit" : "text-loss"}
-              sub={`${wins.length}W / ${losses.length}L`}
-            />
-            <StatCard
-              label="Streak"
-              value={
-                streak.type === "none"
-                  ? "—"
-                  : `${streak.count}${streak.type === "win" ? "W" : "L"}`
-              }
-              color={
-                streak.type === "win"
-                  ? "text-profit"
-                  : streak.type === "loss"
-                    ? "text-loss"
-                    : undefined
-              }
-            />
-          </div>
-
-          {/* Performance (Pro only) */}
-          {proUser && (
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+          {/* ── Overview ── */}
+          <section className="space-y-4">
+            <SectionHeader title="Overview" />
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
               <StatCard
-                label="Avg Win"
-                value={`+$${avgWin.toFixed(2)}`}
-                color="text-profit"
+                label="Total P&L"
+                value={`${totalPnl >= 0 ? "+" : ""}$${totalPnl.toFixed(2)}`}
+                color={totalPnl >= 0 ? "text-profit" : "text-loss"}
+                icon={DollarSign}
               />
               <StatCard
-                label="Avg Loss"
-                value={`-$${Math.abs(avgLoss).toFixed(2)}`}
-                color="text-loss"
-              />
-              {avgRR !== null && (
-                <StatCard
-                  label="Avg R:R"
-                  value={`${avgRR.toFixed(2)}R`}
-                  color={avgRR >= 1 ? "text-profit" : "text-loss"}
-                />
-              )}
-              {profitFactor !== null && (
-                <StatCard
-                  label="Profit Factor"
-                  value={profitFactor.toFixed(2)}
-                  color={profitFactor >= 1 ? "text-profit" : "text-loss"}
-                />
-              )}
-              <StatCard
-                label="Best Trade"
-                value={bestPnl > 0 ? `+$${bestPnl.toFixed(2)}` : "—"}
-                color={bestPnl > 0 ? "text-profit" : "text-tertiary"}
-                sub={bestPnl > 0 && bestTrade ? bestTrade.ticker : undefined}
+                label="Total Trades"
+                value={String(filteredTrades.length)}
+                icon={Hash}
               />
               <StatCard
-                label="Worst Trade"
-                value={worstPnl < 0 ? `-$${Math.abs(worstPnl).toFixed(2)}` : "—"}
-                color={worstPnl < 0 ? "text-loss" : "text-tertiary"}
-                sub={worstPnl < 0 && worstTrade ? worstTrade.ticker : undefined}
+                label="Win Rate"
+                value={`${winRate.toFixed(1)}%`}
+                color={winRate >= 50 ? "text-profit" : "text-loss"}
+                sub={`${wins.length}W / ${losses.length}L`}
+                icon={Target}
+              />
+              <StatCard
+                label="Streak"
+                value={
+                  streak.type === "none"
+                    ? "\u2014"
+                    : `${streak.count}${streak.type === "win" ? "W" : "L"}`
+                }
+                color={
+                  streak.type === "win"
+                    ? "text-profit"
+                    : streak.type === "loss"
+                      ? "text-loss"
+                      : undefined
+                }
+                icon={Zap}
               />
             </div>
+          </section>
+
+          {/* ── Performance ── */}
+          {proUser && (
+            <section className="space-y-4">
+              <SectionHeader
+                title="Performance"
+                description="Average metrics across your filtered trades"
+              />
+              <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
+                <StatCard
+                  label="Avg Win"
+                  value={`+$${avgWin.toFixed(2)}`}
+                  color="text-profit"
+                  icon={TrendingUp}
+                />
+                <StatCard
+                  label="Avg Loss"
+                  value={`-$${Math.abs(avgLoss).toFixed(2)}`}
+                  color="text-loss"
+                  icon={TrendingDown}
+                />
+                {avgRR !== null && (
+                  <StatCard
+                    label="Avg R:R"
+                    value={`${avgRR.toFixed(2)}R`}
+                    color={avgRR >= 1 ? "text-profit" : "text-loss"}
+                  />
+                )}
+                {profitFactor !== null && (
+                  <StatCard
+                    label="Profit Factor"
+                    value={profitFactor.toFixed(2)}
+                    color={profitFactor >= 1 ? "text-profit" : "text-loss"}
+                  />
+                )}
+                <StatCard
+                  label="Best Trade"
+                  value={bestPnl > 0 ? `+$${bestPnl.toFixed(2)}` : "\u2014"}
+                  color={bestPnl > 0 ? "text-profit" : "text-tertiary"}
+                  sub={bestPnl > 0 && bestTrade ? bestTrade.ticker : undefined}
+                  icon={Trophy}
+                />
+                <StatCard
+                  label="Worst Trade"
+                  value={worstPnl < 0 ? `-$${Math.abs(worstPnl).toFixed(2)}` : "\u2014"}
+                  color={worstPnl < 0 ? "text-loss" : "text-tertiary"}
+                  sub={worstPnl < 0 && worstTrade ? worstTrade.ticker : undefined}
+                  icon={AlertTriangle}
+                />
+              </div>
+            </section>
           )}
 
-          {/* Risk Metrics (Pro only) */}
+          {/* ── Risk Metrics ── */}
           {proUser && (
-            <>
-              <h3 className="text-xs font-semibold text-secondary uppercase tracking-wider">
-                Risk Metrics
-              </h3>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+            <section className="space-y-4">
+              <SectionHeader
+                title="Risk Metrics"
+                description="Drawdown, expectancy, and risk-adjusted returns"
+              />
+              <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
                 <StatCard
                   label="Expectancy"
                   value={`${expectancy >= 0 ? "+" : "-"}$${Math.abs(expectancy).toFixed(2)}`}
                   color={expectancy >= 0 ? "text-profit" : "text-loss"}
                   sub="per trade"
+                  icon={Shield}
                 />
                 {expectancyR !== null && (
                   <StatCard
@@ -423,7 +459,7 @@ export default function Dashboard({
                   value={
                     drawdownInfo.maxDrawdown > 0
                       ? `-$${drawdownInfo.maxDrawdown.toFixed(2)}`
-                      : "—"
+                      : "\u2014"
                   }
                   color={drawdownInfo.maxDrawdown > 0 ? "text-loss" : "text-tertiary"}
                   sub={
@@ -461,22 +497,24 @@ export default function Dashboard({
                   />
                 )}
               </div>
-            </>
+            </section>
           )}
         </>
       )}
 
-      {/* Missed Opportunities (Pro only) */}
+      {/* ── Missed Opportunities ── */}
       {proUser && missedTrades.length > 0 && (
-        <>
-          <h3 className="text-xs font-semibold text-secondary uppercase tracking-wider">
-            Missed Opportunities
-          </h3>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <section className="space-y-4">
+          <SectionHeader
+            title="Missed Opportunities"
+            description="Trades you identified but didn't take"
+          />
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
             <StatCard
               label="Missed Trades"
               value={String(missedTrades.length)}
               color="text-amber"
+              icon={Crosshair}
             />
             {(() => {
               const missedPnls = missedTrades
@@ -492,7 +530,7 @@ export default function Dashboard({
                   value={
                     totalMissedPnl !== null
                       ? `${totalMissedPnl >= 0 ? "+" : ""}$${totalMissedPnl.toFixed(2)}`
-                      : "—"
+                      : "\u2014"
                   }
                   color={
                     totalMissedPnl === null
@@ -522,7 +560,7 @@ export default function Dashboard({
               return (
                 <StatCard
                   label="Top Missed Setup"
-                  value={topSetup || "—"}
+                  value={topSetup || "\u2014"}
                   color={topSetup ? "text-amber" : "text-tertiary"}
                   sub={topSetup ? `${topCount}x` : undefined}
                 />
@@ -546,79 +584,86 @@ export default function Dashboard({
               return (
                 <StatCard
                   label="Top Hesitation"
-                  value={topReason || "—"}
+                  value={topReason || "\u2014"}
                   color={topReason ? "text-amber" : "text-tertiary"}
                   sub={topReason ? `${topCount}x` : undefined}
                 />
               );
             })()}
           </div>
-        </>
+        </section>
       )}
 
-      {/* Equity Curve & Daily Breakdown */}
+      {/* ── Charts ── */}
       {hasTrades && (
-        <div className={cn("grid grid-cols-1 gap-4", proUser && "md:grid-cols-2")}>
-          {/* Equity Curve */}
-          {equityPoints.length >= 2 && (
-            <div className="rounded-xl bg-surface-1 p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-xs font-semibold text-secondary uppercase tracking-wider">
-                  Equity Curve
-                </h3>
-                <span
-                  className={cn(
-                    "text-xs font-semibold font-mono px-2.5 py-1 rounded-md",
-                    totalPnl >= 0
-                      ? "text-profit bg-profit-muted border border-profit-muted"
-                      : "text-loss bg-loss-muted border border-loss-muted"
-                  )}
-                >
-                  {totalPnl >= 0 ? "+" : ""}${totalPnl.toFixed(2)}
-                </span>
+        <section className="space-y-4">
+          <SectionHeader title="Charts" />
+          <div className={cn("grid grid-cols-1 gap-4", proUser && "lg:grid-cols-2")}>
+            {equityPoints.length >= 2 && (
+              <div className="rounded-xl bg-surface-1 border border-white/[0.06] p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-[13px] font-medium text-zinc-400">
+                    Equity Curve
+                  </h3>
+                  <span
+                    className={cn(
+                      "text-xs font-semibold font-mono px-2.5 py-1 rounded-md",
+                      totalPnl >= 0
+                        ? "text-profit bg-profit-muted"
+                        : "text-loss bg-loss-muted"
+                    )}
+                  >
+                    {totalPnl >= 0 ? "+" : ""}${totalPnl.toFixed(2)}
+                  </span>
+                </div>
+                <EquityCurve
+                  points={equityPoints}
+                  drawdownRegion={
+                    drawdownInfo.maxDrawdown > 0
+                      ? {
+                          peakIdx: drawdownInfo.maxDdPeakIdx,
+                          troughIdx: drawdownInfo.maxDdTroughIdx,
+                        }
+                      : undefined
+                  }
+                />
               </div>
-              <EquityCurve
-                points={equityPoints}
-                drawdownRegion={
-                  drawdownInfo.maxDrawdown > 0
-                    ? {
-                        peakIdx: drawdownInfo.maxDdPeakIdx,
-                        troughIdx: drawdownInfo.maxDdTroughIdx,
-                      }
-                    : undefined
-                }
-              />
-            </div>
-          )}
-
-          {/* Daily Breakdown (Pro only) */}
-          {proUser && <DailyBreakdown dailyStats={dailyStats} />}
-        </div>
+            )}
+            {proUser && <DailyBreakdown dailyStats={dailyStats} />}
+          </div>
+        </section>
       )}
 
-      {/* Trade Calendar */}
+      {/* ── Calendar ── */}
       {hasTrades && dailyStats.length > 0 && (
-        <div className="rounded-xl bg-surface-1 p-6 page-enter">
-          <h3 className="text-xs font-semibold text-secondary uppercase tracking-wider mb-4">
-            Trade Calendar
-          </h3>
-          <CalendarHeatmap dailyStats={dailyStats} />
-        </div>
+        <section className="space-y-4">
+          <SectionHeader title="Trade Calendar" />
+          <div className="rounded-xl bg-surface-1 border border-white/[0.06] p-6">
+            <CalendarHeatmap dailyStats={dailyStats} />
+          </div>
+        </section>
       )}
 
-      {/* Setup Performance */}
-      {hasTrades && tagStats.length > 0 && (
-        <SetupPerformance tagStats={tagStats} />
+      {/* ── Breakdowns ── */}
+      {hasTrades && (tagStats.length > 0 || emotionStats.length > 0) && (
+        <section className="space-y-4">
+          <SectionHeader
+            title="Breakdowns"
+            description="Performance by setup and emotional state"
+          />
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            {tagStats.length > 0 && <SetupPerformance tagStats={tagStats} />}
+            {emotionStats.length > 0 && <EmotionPerformance emotionStats={emotionStats} />}
+          </div>
+        </section>
       )}
 
-      {/* Emotion Performance */}
-      {hasTrades && emotionStats.length > 0 && (
-        <EmotionPerformance emotionStats={emotionStats} />
-      )}
-
-      {/* Recent Trades */}
+      {/* ── Recent Trades ── */}
       {hasTrades && (
-        <RecentTrades recentTrades={recentTrades} />
+        <section className="space-y-4">
+          <SectionHeader title="Recent Trades" />
+          <RecentTrades recentTrades={recentTrades} />
+        </section>
       )}
     </div>
   );
