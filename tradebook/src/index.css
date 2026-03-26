@@ -52,30 +52,215 @@
   --font-sans: 'Geist Sans', system-ui, -apple-system, sans-serif;
   --font-mono: 'Geist Mono', ui-monospace, monospace;
 
+  /* ── Radius ── */
+  --radius-sm: 8px;
+  --radius: 10px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-full: 9999px;
+
+  /* ── Shadows ── */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.6);
+  --shadow-glow-brand: 0 0 20px rgba(59, 130, 246, 0.15);
+  --shadow-glow-profit: 0 0 20px rgba(34, 197, 94, 0.1);
+  --shadow-glow-loss: 0 0 20px rgba(239, 68, 68, 0.1);
+
+  /* ── Spacing scale ── */
+  --space-px: 1px;
+  --space-0: 0px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+
+  /* ── Easing ── */
+  --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+
+  /* ── Transitions ── */
+  --transition-fast: 150ms var(--ease-spring);
+  --transition-base: 200ms var(--ease-spring);
+  --transition-slow: 350ms var(--ease-spring);
+
   /* ── Animations ── */
   --animate-fade-in: fade-in 0.2s ease-out;
-  --animate-page-enter: page-enter 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  --animate-slide-up: slide-up 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  --animate-expand: expand 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  --animate-page-enter: page-enter 0.3s var(--ease-spring) forwards;
+  --animate-slide-up: slide-up 0.35s var(--ease-spring) forwards;
+  --animate-expand: expand 0.3s var(--ease-spring) forwards;
 }
 
 /* ── Base ── */
+*, *::before, *::after {
+  border-color: var(--color-border);
+}
+
 html {
   scroll-behavior: smooth;
   scrollbar-color: #27272a transparent;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
 }
 
 body {
   background-color: var(--color-surface-0);
   color: var(--color-primary);
+  font-family: var(--font-sans);
+  line-height: 1.5;
+  letter-spacing: -0.011em;
 }
 
-::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: #27272a; border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: #3f3f46; }
+
+/* ── Selection ── */
+::selection {
+  background: rgba(59, 130, 246, 0.25);
+  color: #fafafa;
+}
+
+/* ── Typography ── */
+h1, h2, h3, h4, h5, h6 {
+  letter-spacing: -0.025em;
+  font-weight: 600;
+}
+
+code, kbd, pre {
+  font-family: var(--font-mono);
+}
+
+/* ── Base component styles ── */
+button, [role="button"] {
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+button:active, [role="button"]:active {
+  transform: scale(0.98);
+}
+
+input, select, textarea {
+  border-radius: var(--radius);
+  background-color: var(--color-surface-1);
+  border: 1px solid var(--color-border);
+  color: var(--color-primary);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+input::placeholder, textarea::placeholder {
+  color: var(--color-tertiary);
+}
+
+input:hover, select:hover, textarea:hover {
+  border-color: var(--color-border-hover);
+}
+
+/* ── Card pattern ── */
+.card {
+  background: var(--color-surface-1);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  transition: border-color var(--transition-base), box-shadow var(--transition-base);
+}
+
+.card:hover {
+  border-color: var(--color-border-hover);
+}
+
+.card-raised {
+  background: var(--color-surface-1);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  transition: border-color var(--transition-base), box-shadow var(--transition-base), transform var(--transition-base);
+}
+
+.card-raised:hover {
+  border-color: var(--color-border-hover);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+
+/* ── Pill / badge ── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.5;
+  font-family: var(--font-mono);
+}
+
+.badge-profit {
+  background: var(--color-profit-muted);
+  color: var(--color-profit);
+}
+
+.badge-loss {
+  background: var(--color-loss-muted);
+  color: var(--color-loss);
+}
+
+.badge-brand {
+  background: var(--color-brand-muted);
+  color: var(--color-brand);
+}
+
+/* ── Divider ── */
+.divider {
+  height: 1px;
+  background: var(--color-border);
+}
+
+/* ── Kbd tag ── */
+kbd {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1px 5px;
+  font-size: 11px;
+  line-height: 1.5;
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+/* ── Table base ── */
+table {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+th {
+  color: var(--color-secondary);
+  font-weight: 500;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+tr {
+  transition: background-color var(--transition-fast);
+}
+
+tbody tr:hover {
+  background-color: var(--color-surface-1);
+}
 
 /* ── Keyframes ── */
 @keyframes fade-in {
@@ -145,27 +330,27 @@ body {
 
 /* ── Utility animation classes ── */
 .animate-fade-in   { animation: fade-in 0.2s ease-out; }
-.animate-page-enter { animation: page-enter 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-.animate-slide-up  { animation: slide-up 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-.animate-ping      { animation: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite; }
+.animate-page-enter { animation: page-enter 0.3s var(--ease-spring) forwards; }
+.animate-slide-up  { animation: slide-up 0.35s var(--ease-spring) forwards; }
+.animate-ping      { animation: ping 1s var(--ease-out) infinite; }
 
 /* Landing page animations */
-.hero-enter    { animation: hero-up 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-.hero-enter-d1 { opacity: 0; animation: hero-up 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.12s forwards; }
-.hero-enter-d2 { opacity: 0; animation: hero-up 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.28s forwards; }
+.hero-enter    { animation: hero-up 0.9s var(--ease-spring) forwards; }
+.hero-enter-d1 { opacity: 0; animation: hero-up 0.9s var(--ease-spring) 0.12s forwards; }
+.hero-enter-d2 { opacity: 0; animation: hero-up 0.9s var(--ease-spring) 0.28s forwards; }
 .hero-glow     { animation: glow-pulse 5s ease-in-out infinite; }
 .hero-orb-1    { animation: orb-drift-1 12s ease-in-out infinite; }
 .hero-orb-2    { animation: orb-drift-2 15s ease-in-out infinite; }
 .hero-orb-3    { animation: orb-drift-3 18s ease-in-out infinite; }
 
 .reveal { opacity: 0; }
-.reveal.visible { animation: reveal-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+.reveal.visible { animation: reveal-up 0.7s var(--ease-spring) forwards; }
 
 .step-connector {
   opacity: 0;
   transform: scaleX(0);
   transform-origin: left center;
-  transition: opacity 0.5s ease, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: opacity 0.5s ease, transform 0.6s var(--ease-spring);
 }
 .reveal.visible .step-connector { opacity: 1; transform: scaleX(1); }
 .step-connector-2 { transition-delay: 0.2s; }
@@ -183,13 +368,13 @@ body {
 .dashboard-wrapper { perspective: 1200px; }
 .dashboard-float {
   transform: rotateX(3deg) rotateY(-1.5deg);
-  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 0.6s var(--ease-spring);
 }
 .dashboard-float:hover { transform: rotateX(0) rotateY(0); }
 
 /* Feature card hover */
 .feature-card {
-  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.35s ease;
+  transition: transform 0.35s var(--ease-spring), border-color 0.35s ease;
 }
 .feature-card:hover {
   transform: translateY(-3px);
@@ -198,7 +383,7 @@ body {
 
 /* CTA button */
 .cta-btn {
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.3s var(--ease-spring);
 }
 .cta-btn:hover {
   transform: translateY(-1px);
@@ -208,15 +393,15 @@ body {
 .equity-line {
   stroke-dasharray: var(--line-length, 2000);
   stroke-dashoffset: 0;
-  animation: draw-line 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: draw-line 1.2s var(--ease-spring) forwards;
 }
 .equity-area {
-  animation: fade-area 0.8s 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: fade-area 0.8s 0.4s var(--ease-spring) both;
 }
 
 /* ── Expand row ── */
 .trade-expand {
-  animation: expand 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: expand 0.3s var(--ease-spring) forwards;
   overflow: hidden;
 }
 
