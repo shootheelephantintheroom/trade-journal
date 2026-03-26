@@ -17,7 +17,7 @@
 @theme {
   /* ── Surfaces ── */
   --color-surface-0: #09090b;
-  --color-surface-1: #111113;
+  --color-surface-1: #0d0d0f;
   --color-surface-2: #18181b;
   --color-surface-3: #1f1f23;
 
@@ -42,30 +42,27 @@
   --color-amber-muted: rgba(245, 158, 11, 0.12);
 
   /* ── Borders ── */
-  --color-border: rgba(255, 255, 255, 0.06);
-  --color-border-hover: rgba(255, 255, 255, 0.1);
+  --color-border: rgba(255, 255, 255, 0.04);
+  --color-border-hover: rgba(255, 255, 255, 0.08);
 
   /* ── Ring / Focus ── */
-  --color-ring: rgba(59, 130, 246, 0.35);
+  --color-ring: rgba(255, 255, 255, 0.12);
 
   /* ── Fonts ── */
   --font-sans: 'Geist Sans', system-ui, -apple-system, sans-serif;
   --font-mono: 'Geist Mono', ui-monospace, monospace;
 
   /* ── Radius ── */
-  --radius-sm: 8px;
-  --radius: 10px;
-  --radius-lg: 12px;
-  --radius-xl: 16px;
+  --radius-sm: 4px;
+  --radius: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 10px;
   --radius-full: 9999px;
 
   /* ── Shadows ── */
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
-  --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.5);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 2px 4px rgba(0, 0, 0, 0.3);
   --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.6);
-  --shadow-glow-brand: 0 0 20px rgba(59, 130, 246, 0.15);
-  --shadow-glow-profit: 0 0 20px rgba(34, 197, 94, 0.1);
-  --shadow-glow-loss: 0 0 20px rgba(239, 68, 68, 0.1);
 
   /* ── Spacing scale ── */
   --space-px: 1px;
@@ -75,9 +72,9 @@
   --space-3: 12px;
   --space-4: 16px;
   --space-5: 20px;
-  --space-6: 24px;
-  --space-8: 32px;
-  --space-10: 40px;
+  --space-6: 20px;
+  --space-8: 28px;
+  --space-10: 36px;
   --space-12: 48px;
 
   /* ── Easing ── */
@@ -152,10 +149,10 @@ button:active, [role="button"]:active {
 
 input, select, textarea {
   border-radius: var(--radius);
-  background-color: var(--color-surface-1);
+  background-color: transparent;
   border: 1px solid var(--color-border);
   color: var(--color-primary);
-  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  transition: border-color var(--transition-fast);
 }
 
 input::placeholder, textarea::placeholder {
@@ -170,8 +167,8 @@ input:hover, select:hover, textarea:hover {
 .card {
   background: var(--color-surface-1);
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  transition: border-color var(--transition-base), box-shadow var(--transition-base);
+  border-radius: var(--radius);
+  transition: border-color var(--transition-base);
 }
 
 .card:hover {
@@ -181,15 +178,12 @@ input:hover, select:hover, textarea:hover {
 .card-raised {
   background: var(--color-surface-1);
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-sm);
-  transition: border-color var(--transition-base), box-shadow var(--transition-base), transform var(--transition-base);
+  border-radius: var(--radius);
+  transition: border-color var(--transition-base);
 }
 
 .card-raised:hover {
   border-color: var(--color-border-hover);
-  box-shadow: var(--shadow-md);
-  transform: translateY(-1px);
 }
 
 /* ── Pill / badge ── */
@@ -283,37 +277,6 @@ tbody tr:hover {
   to   { opacity: 1; max-height: 500px; }
 }
 
-@keyframes hero-up {
-  from { opacity: 0; transform: translateY(24px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes reveal-up {
-  from { opacity: 0; transform: translateY(32px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes glow-pulse {
-  0%, 100% { opacity: 0.2; transform: scale(1); }
-  50%      { opacity: 0.35; transform: scale(1.08); }
-}
-
-@keyframes orb-drift-1 {
-  0%, 100% { transform: translate(0, 0); }
-  33% { transform: translate(40px, -30px); }
-  66% { transform: translate(-20px, 20px); }
-}
-@keyframes orb-drift-2 {
-  0%, 100% { transform: translate(0, 0); }
-  33% { transform: translate(-30px, 40px); }
-  66% { transform: translate(25px, -15px); }
-}
-@keyframes orb-drift-3 {
-  0%, 100% { transform: translate(0, 0); }
-  33% { transform: translate(20px, 25px); }
-  66% { transform: translate(-35px, -20px); }
-}
-
 @keyframes draw-line {
   from { stroke-dashoffset: var(--line-length, 2000); }
   to   { stroke-dashoffset: 0; }
@@ -340,61 +303,6 @@ tbody tr:hover {
 .animate-ping      { animation: ping 1s var(--ease-out) infinite; }
 .animate-slide-down { animation: slide-down 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
 
-/* Landing page animations */
-.hero-enter    { animation: hero-up 0.9s var(--ease-spring) forwards; }
-.hero-enter-d1 { opacity: 0; animation: hero-up 0.9s var(--ease-spring) 0.12s forwards; }
-.hero-enter-d2 { opacity: 0; animation: hero-up 0.9s var(--ease-spring) 0.28s forwards; }
-.hero-glow     { animation: glow-pulse 5s ease-in-out infinite; }
-.hero-orb-1    { animation: orb-drift-1 12s ease-in-out infinite; }
-.hero-orb-2    { animation: orb-drift-2 15s ease-in-out infinite; }
-.hero-orb-3    { animation: orb-drift-3 18s ease-in-out infinite; }
-
-.reveal { opacity: 0; }
-.reveal.visible { animation: reveal-up 0.7s var(--ease-spring) forwards; }
-
-.step-connector {
-  opacity: 0;
-  transform: scaleX(0);
-  transform-origin: left center;
-  transition: opacity 0.5s ease, transform 0.6s var(--ease-spring);
-}
-.reveal.visible .step-connector { opacity: 1; transform: scaleX(1); }
-.step-connector-2 { transition-delay: 0.2s; }
-
-/* Section divider */
-.section-divider {
-  height: 1px;
-  max-width: 320px;
-  margin: 0 auto;
-  background: linear-gradient(90deg, transparent, var(--color-brand), transparent);
-  opacity: 0.15;
-}
-
-/* Dashboard preview tilt */
-.dashboard-wrapper { perspective: 1200px; }
-.dashboard-float {
-  transform: rotateX(3deg) rotateY(-1.5deg);
-  transition: transform 0.6s var(--ease-spring);
-}
-.dashboard-float:hover { transform: rotateX(0) rotateY(0); }
-
-/* Feature card hover */
-.feature-card {
-  transition: transform 0.35s var(--ease-spring), border-color 0.35s ease;
-}
-.feature-card:hover {
-  transform: translateY(-3px);
-  border-color: rgba(59, 130, 246, 0.2);
-}
-
-/* CTA button */
-.cta-btn {
-  transition: all 0.3s var(--ease-spring);
-}
-.cta-btn:hover {
-  transform: translateY(-1px);
-}
-
 /* ── Equity curve ── */
 .equity-line {
   stroke-dasharray: var(--line-length, 2000);
@@ -413,7 +321,9 @@ tbody tr:hover {
 
 /* ── Focus ring ── */
 input:focus, select:focus, textarea:focus {
-  box-shadow: 0 0 0 2px var(--color-ring);
+  border-color: var(--color-border-hover);
+  box-shadow: none;
+  outline: none;
 }
 
 /* ── Date / time input icons ── */

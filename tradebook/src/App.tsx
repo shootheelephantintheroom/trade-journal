@@ -111,7 +111,7 @@ export default function App() {
     <>
       {/* Logo */}
       <div className="flex items-center gap-3 px-4 h-14 shrink-0">
-        <div className="h-8 w-8 rounded-lg bg-brand/10 flex items-center justify-center">
+        <div className="h-8 w-8 rounded-md bg-brand/10 flex items-center justify-center">
           <span className="text-brand font-bold text-sm">M</span>
         </div>
         {!sidebarCollapsed && (
@@ -130,7 +130,7 @@ export default function App() {
             end
             className={({ isActive }) =>
               cn(
-                "group flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-medium transition-colors duration-150",
+                "group flex items-center gap-3 px-3 py-1.5 rounded-md text-[13px] font-medium transition-colors duration-150",
                 sidebarCollapsed && "justify-center px-2",
                 isActive
                   ? "bg-white/[0.08] text-white"
@@ -153,7 +153,7 @@ export default function App() {
         {/* Collapse toggle - desktop only */}
         <button
           onClick={() => setSidebarCollapsed((c) => !c)}
-          className="hidden sm:flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-medium text-zinc-500 hover:text-zinc-300 hover:bg-white/[0.04] transition-colors duration-150 w-full"
+          className="hidden sm:flex items-center gap-3 px-3 py-1.5 rounded-md text-[13px] font-medium text-zinc-500 hover:text-zinc-300 hover:bg-white/[0.04] transition-colors duration-150 w-full"
         >
           <ChevronLeft
             size={18}
@@ -167,18 +167,18 @@ export default function App() {
         </button>
 
         {/* Divider */}
-        <div className="h-px bg-white/[0.06] mx-2 my-1" />
+        <div className="h-px bg-white/[0.04] mx-2 my-1" />
 
         {/* User menu */}
         <div className="relative" ref={menuRef}>
           <button
             onClick={() => setMenuOpen((o) => !o)}
             className={cn(
-              "flex items-center gap-3 px-3 py-2 rounded-lg w-full hover:bg-white/[0.04] transition-colors duration-150",
+              "flex items-center gap-3 px-3 py-1.5 rounded-md w-full hover:bg-white/[0.04] transition-colors duration-150",
               sidebarCollapsed && "justify-center px-2"
             )}
           >
-            <div className="h-7 w-7 rounded-full bg-surface-3 border border-white/[0.08] flex items-center justify-center text-[11px] font-medium text-zinc-300 shrink-0">
+            <div className="h-7 w-7 rounded-full bg-surface-3 border border-white/[0.04] flex items-center justify-center text-[11px] font-medium text-zinc-300 shrink-0">
               {displayName ? displayName.charAt(0).toUpperCase() : "?"}
             </div>
             {!sidebarCollapsed && (
@@ -191,7 +191,7 @@ export default function App() {
           {menuOpen && (
             <div
               className={cn(
-                "absolute bottom-full mb-1 w-48 rounded-lg border border-white/[0.08] bg-surface-1 py-1 z-50 shadow-lg",
+                "absolute bottom-full mb-1 w-48 rounded-md border border-white/[0.04] bg-surface-1 py-1 z-50",
                 sidebarCollapsed ? "left-full ml-2" : "left-2"
               )}
             >
@@ -242,7 +242,7 @@ export default function App() {
       {/* Desktop sidebar */}
       <aside
         className={cn(
-          "hidden sm:flex flex-col border-r border-white/[0.06] bg-surface-0 shrink-0 transition-[width] duration-200 ease-[cubic-bezier(0.16,1,0.3,1)]",
+          "hidden sm:flex flex-col border-r border-white/[0.04] bg-surface-0 shrink-0 transition-[width] duration-200 ease-[cubic-bezier(0.16,1,0.3,1)]",
           sidebarCollapsed ? "w-[60px]" : "w-[220px]"
         )}
       >
@@ -258,7 +258,7 @@ export default function App() {
       )}
       <aside
         className={cn(
-          "fixed top-0 left-0 bottom-0 z-50 w-[220px] flex flex-col border-r border-white/[0.06] bg-surface-0 transition-transform duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] sm:hidden",
+          "fixed top-0 left-0 bottom-0 z-50 w-[220px] flex flex-col border-r border-white/[0.04] bg-surface-0 transition-transform duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] sm:hidden",
           mobileOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
