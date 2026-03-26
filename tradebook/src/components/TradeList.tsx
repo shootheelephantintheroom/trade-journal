@@ -93,22 +93,6 @@ function sortTrades(
   return sorted;
 }
 
-function gradeClasses(grade: string): string {
-  switch (grade) {
-    case "A":
-      return "bg-profit-muted text-profit";
-    case "B":
-      return "bg-brand-muted text-brand";
-    case "C":
-      return "bg-amber-muted text-amber";
-    case "D":
-    case "F":
-      return "bg-loss-muted text-loss";
-    default:
-      return "bg-surface-2 text-secondary";
-  }
-}
-
 export default function TradeList({
   onLogTrade,
   onEdit,
