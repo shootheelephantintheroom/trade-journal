@@ -7,7 +7,7 @@ import { calcMissedPnl } from "./MissedTrades";
 import { todayLocal } from "../lib/date";
 import { useToast } from "./Toast";
 import CalendarHeatmap from "./CalendarHeatmap";
-import { StatCard, AmberStatCard } from "./dashboard/StatCards";
+import { StatCard } from "./dashboard/StatCards";
 import EquityCurve from "./dashboard/EquityCurve";
 import DailyBreakdown from "./dashboard/DailyBreakdown";
 import SetupPerformance from "./dashboard/SetupPerformance";
@@ -295,19 +295,16 @@ export default function Dashboard({
               label="Total P&L"
               value={`${totalPnl >= 0 ? "+" : ""}$${totalPnl.toFixed(2)}`}
               color={totalPnl >= 0 ? "text-profit" : "text-loss"}
-              accent={totalPnl >= 0 ? "green" : "red"}
             />
             <StatCard
               label="Total Trades"
               value={String(filteredTrades.length)}
-              accent="neutral"
             />
             <StatCard
               label="Win Rate"
               value={`${winRate.toFixed(1)}%`}
               color={winRate >= 50 ? "text-profit" : "text-loss"}
               sub={`${wins.length}W / ${losses.length}L`}
-              accent={winRate >= 50 ? "green" : "red"}
             />
             <StatCard
               label="Streak"
@@ -323,13 +320,6 @@ export default function Dashboard({
                     ? "text-loss"
                     : undefined
               }
-              accent={
-                streak.type === "win"
-                  ? "green"
-                  : streak.type === "loss"
-                    ? "red"
-                    : "neutral"
-              }
             />
           </div>
 
@@ -340,20 +330,17 @@ export default function Dashboard({
                 label="Avg Win"
                 value={`+$${avgWin.toFixed(2)}`}
                 color="text-profit"
-                accent="green"
               />
               <StatCard
                 label="Avg Loss"
                 value={`-$${Math.abs(avgLoss).toFixed(2)}`}
                 color="text-loss"
-                accent="red"
               />
               {avgRR !== null && (
                 <StatCard
                   label="Avg R:R"
                   value={`${avgRR.toFixed(2)}R`}
                   color={avgRR >= 1 ? "text-profit" : "text-loss"}
-                  accent={avgRR >= 1 ? "green" : "red"}
                 />
               )}
               {profitFactor !== null && (
@@ -361,7 +348,6 @@ export default function Dashboard({
                   label="Profit Factor"
                   value={profitFactor.toFixed(2)}
                   color={profitFactor >= 1 ? "text-profit" : "text-loss"}
-                  accent={profitFactor >= 1 ? "green" : "red"}
                 />
               )}
               <StatCard
@@ -369,14 +355,12 @@ export default function Dashboard({
                 value={bestPnl > 0 ? `+$${bestPnl.toFixed(2)}` : "—"}
                 color={bestPnl > 0 ? "text-profit" : "text-tertiary"}
                 sub={bestPnl > 0 && bestTrade ? bestTrade.ticker : undefined}
-                accent={bestPnl > 0 ? "green" : "neutral"}
               />
               <StatCard
                 label="Worst Trade"
                 value={worstPnl < 0 ? `-$${Math.abs(worstPnl).toFixed(2)}` : "—"}
                 color={worstPnl < 0 ? "text-loss" : "text-tertiary"}
                 sub={worstPnl < 0 && worstTrade ? worstTrade.ticker : undefined}
-                accent={worstPnl < 0 ? "red" : "neutral"}
               />
             </div>
           )}
@@ -393,14 +377,12 @@ export default function Dashboard({
                   value={`${expectancy >= 0 ? "+" : "-"}$${Math.abs(expectancy).toFixed(2)}`}
                   color={expectancy >= 0 ? "text-profit" : "text-loss"}
                   sub="per trade"
-                  accent={expectancy >= 0 ? "green" : "red"}
                 />
                 {expectancyR !== null && (
                   <StatCard
                     label="Expectancy / R"
                     value={`${expectancyR >= 0 ? "+" : ""}${expectancyR.toFixed(2)}R`}
                     color={expectancyR >= 0 ? "text-profit" : "text-loss"}
-                    accent={expectancyR >= 0 ? "green" : "red"}
                   />
                 )}
                 <StatCard
@@ -416,7 +398,6 @@ export default function Dashboard({
                       ? `${drawdownInfo.maxDrawdownPct.toFixed(1)}% of peak`
                       : undefined
                   }
-                  accent={drawdownInfo.maxDrawdown > 0 ? "red" : "neutral"}
                 />
                 <StatCard
                   label="Current Drawdown"
@@ -430,14 +411,12 @@ export default function Dashboard({
                       ? "text-loss"
                       : "text-profit"
                   }
-                  accent={drawdownInfo.currentDrawdown > 0 ? "red" : "green"}
                 />
                 {recoveryFactor !== null && (
                   <StatCard
                     label="Recovery Factor"
                     value={recoveryFactor.toFixed(2)}
                     color={recoveryFactor >= 1 ? "text-profit" : "text-loss"}
-                    accent={recoveryFactor >= 1 ? "green" : "red"}
                   />
                 )}
                 {sharpe !== null && (
@@ -446,7 +425,6 @@ export default function Dashboard({
                     value={sharpe.toFixed(2)}
                     color={sharpe >= 0 ? "text-profit" : "text-loss"}
                     sub="annualized"
-                    accent={sharpe >= 0 ? "green" : "red"}
                   />
                 )}
               </div>
@@ -462,7 +440,7 @@ export default function Dashboard({
             Missed Opportunities
           </h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            <AmberStatCard
+            <StatCard
               label="Missed Trades"
               value={String(missedTrades.length)}
               color="text-amber"
@@ -476,7 +454,7 @@ export default function Dashboard({
                   ? missedPnls.reduce((a, b) => a + b, 0)
                   : null;
               return (
-                <AmberStatCard
+                <StatCard
                   label="Missed P&L"
                   value={
                     totalMissedPnl !== null
@@ -509,7 +487,7 @@ export default function Dashboard({
                 }
               }
               return (
-                <AmberStatCard
+                <StatCard
                   label="Top Missed Setup"
                   value={topSetup || "—"}
                   color={topSetup ? "text-amber" : "text-tertiary"}
@@ -533,7 +511,7 @@ export default function Dashboard({
                 }
               }
               return (
-                <AmberStatCard
+                <StatCard
                   label="Top Hesitation"
                   value={topReason || "—"}
                   color={topReason ? "text-amber" : "text-tertiary"}
