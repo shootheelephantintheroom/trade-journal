@@ -79,7 +79,7 @@ export default function PaywallGate({ feature, children }: PaywallGateProps) {
         </div>
 
         {/* Heading */}
-        <h3 className="text-lg font-semibold text-primary mb-1">
+        <h3 className="text-base font-medium text-primary mb-1">
           Unlock {feature}
         </h3>
         <p className="text-sm text-secondary mb-1">

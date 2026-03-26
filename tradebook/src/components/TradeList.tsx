@@ -241,7 +241,7 @@ export default function TradeList({
         <div className="w-16 h-16 rounded-2xl bg-surface-1 flex items-center justify-center text-3xl">
           📋
         </div>
-        <h2 className="text-lg font-semibold text-primary tracking-tight">
+        <h2 className="text-base font-medium text-primary tracking-tight">
           No trades yet
         </h2>
         <p className="text-sm text-secondary text-center max-w-xs">
@@ -296,7 +296,7 @@ export default function TradeList({
       {/* Header bar */}
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div className="flex items-center gap-4">
-          <h2 className="text-xl font-semibold text-primary tracking-tight">
+          <h2 className="text-base font-medium text-primary tracking-tight">
             Trade History
           </h2>
           <div className="flex items-center gap-1.5 text-xs">
@@ -362,7 +362,7 @@ export default function TradeList({
       <div className="rounded-xl bg-surface-1 p-3">
         <div className="flex flex-wrap items-end gap-3">
           <div>
-            <label className="block text-[11px] text-tertiary uppercase tracking-wider font-semibold mb-1">
+            <label className="block text-[13px] font-medium text-secondary mb-1">
               From
             </label>
             <input
@@ -376,7 +376,7 @@ export default function TradeList({
             />
           </div>
           <div>
-            <label className="block text-[11px] text-tertiary uppercase tracking-wider font-semibold mb-1">
+            <label className="block text-[13px] font-medium text-secondary mb-1">
               To
             </label>
             <input
@@ -390,7 +390,7 @@ export default function TradeList({
             />
           </div>
           <div>
-            <label className="block text-[11px] text-tertiary uppercase tracking-wider font-semibold mb-1">
+            <label className="block text-[13px] font-medium text-secondary mb-1">
               Ticker
             </label>
             <input
@@ -402,7 +402,7 @@ export default function TradeList({
             />
           </div>
           <div>
-            <label className="block text-[11px] text-tertiary uppercase tracking-wider font-semibold mb-1">
+            <label className="block text-[13px] font-medium text-secondary mb-1">
               Side
             </label>
             <div className="flex gap-1">
@@ -430,7 +430,7 @@ export default function TradeList({
             </div>
           </div>
           <div>
-            <label className="block text-[11px] text-tertiary uppercase tracking-wider font-semibold mb-1">
+            <label className="block text-[13px] font-medium text-secondary mb-1">
               Grade
             </label>
             <div className="flex gap-1">
@@ -484,59 +484,59 @@ export default function TradeList({
               <thead>
                 <tr>
                   <th
-                    className="text-[11px] font-medium text-zinc-500 uppercase tracking-wider px-4 py-3 cursor-pointer hover:text-secondary transition-colors"
-                    style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}
+                    className="text-[13px] font-medium text-secondary px-4 py-3 cursor-pointer hover:text-secondary transition-colors"
+                    style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}
                     onClick={() => toggleSort("date")}
                   >
                     Date <SortIcon col="date" />
                   </th>
                   <th
-                    className="text-[11px] font-medium text-zinc-500 uppercase tracking-wider px-4 py-3 cursor-pointer hover:text-secondary transition-colors"
-                    style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}
+                    className="text-[13px] font-medium text-secondary px-4 py-3 cursor-pointer hover:text-secondary transition-colors"
+                    style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}
                     onClick={() => toggleSort("ticker")}
                   >
                     Ticker <SortIcon col="ticker" />
                   </th>
                   <th
-                    className="text-[11px] font-medium text-zinc-500 uppercase tracking-wider px-4 py-3"
-                    style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}
+                    className="text-[13px] font-medium text-secondary px-4 py-3"
+                    style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}
                   >
                     Direction
                   </th>
                   <th
-                    className="text-[11px] font-medium text-zinc-500 uppercase tracking-wider px-4 py-3 text-right"
-                    style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}
+                    className="text-[13px] font-medium text-secondary px-4 py-3 text-right"
+                    style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}
                   >
                     Entry
                   </th>
                   <th
-                    className="text-[11px] font-medium text-zinc-500 uppercase tracking-wider px-4 py-3 text-right"
-                    style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}
+                    className="text-[13px] font-medium text-secondary px-4 py-3 text-right"
+                    style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}
                   >
                     Exit
                   </th>
                   <th
-                    className="text-[11px] font-medium text-zinc-500 uppercase tracking-wider px-4 py-3 text-right"
-                    style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}
+                    className="text-[13px] font-medium text-secondary px-4 py-3 text-right"
+                    style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}
                   >
                     Size
                   </th>
                   <th
-                    className="text-[11px] font-medium text-zinc-500 uppercase tracking-wider px-4 py-3 text-right cursor-pointer hover:text-secondary transition-colors"
-                    style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}
+                    className="text-[13px] font-medium text-secondary px-4 py-3 text-right cursor-pointer hover:text-secondary transition-colors"
+                    style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}
                     onClick={() => toggleSort("pnl")}
                   >
                     P&L <SortIcon col="pnl" />
                   </th>
                   <th
-                    className="text-[11px] font-medium text-zinc-500 uppercase tracking-wider px-4 py-3 text-right"
-                    style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}
+                    className="text-[13px] font-medium text-secondary px-4 py-3 text-right"
+                    style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}
                   >
                     R:R
                   </th>
                   <th
-                    className="text-[11px] font-medium text-zinc-500 uppercase tracking-wider px-4 py-3"
-                    style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}
+                    className="text-[13px] font-medium text-secondary px-4 py-3"
+                    style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}
                   >
                     Setup
                   </th>
@@ -615,7 +615,7 @@ export default function TradeList({
                             <div className="trade-expand px-4 py-4 grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
                               {t.entry_time && (
                                 <div>
-                                  <span className="text-tertiary uppercase tracking-wider text-[10px] font-semibold">
+                                  <span className="text-[13px] font-medium text-secondary">
                                     Time
                                   </span>
                                   <p className="text-secondary mt-0.5">
@@ -626,7 +626,7 @@ export default function TradeList({
                               )}
                               {t.premarket_plan && (
                                 <div>
-                                  <span className="text-tertiary uppercase tracking-wider text-[10px] font-semibold">
+                                  <span className="text-[13px] font-medium text-secondary">
                                     Pre-market Plan
                                   </span>
                                   <p className="text-secondary mt-0.5">
@@ -636,7 +636,7 @@ export default function TradeList({
                               )}
                               {t.notes && (
                                 <div className="md:col-span-2">
-                                  <span className="text-tertiary uppercase tracking-wider text-[10px] font-semibold">
+                                  <span className="text-[13px] font-medium text-secondary">
                                     Notes
                                   </span>
                                   <p className="text-secondary mt-0.5 whitespace-pre-wrap">
@@ -646,7 +646,7 @@ export default function TradeList({
                               )}
                               {t.emotions && (
                                 <div>
-                                  <span className="text-tertiary uppercase tracking-wider text-[10px] font-semibold">
+                                  <span className="text-[13px] font-medium text-secondary">
                                     Emotions
                                   </span>
                                   <div className="flex flex-wrap gap-1 mt-1">
@@ -663,7 +663,7 @@ export default function TradeList({
                               )}
                               {t.stop_loss_price != null && (
                                 <div>
-                                  <span className="text-tertiary uppercase tracking-wider text-[10px] font-semibold">
+                                  <span className="text-[13px] font-medium text-secondary">
                                     Stop Loss
                                   </span>
                                   <p className="text-amber font-medium font-mono mt-0.5">
@@ -673,7 +673,7 @@ export default function TradeList({
                               )}
                               {t.screenshot_url && (
                                 <div className="md:col-span-2">
-                                  <span className="text-tertiary uppercase tracking-wider text-[10px] font-semibold">
+                                  <span className="text-[13px] font-medium text-secondary">
                                     Chart Screenshot
                                   </span>
                                   <a

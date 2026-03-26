@@ -239,7 +239,7 @@ export default function HoldTimeAnalysis({ trades }: Props) {
     <div className="space-y-8">
       {/* ── Scatter plot ──────────────────────────────────────── */}
       <div className="bg-surface-1 rounded-lg p-6">
-        <h3 className="text-[11px] font-semibold text-secondary uppercase tracking-wider mb-4">
+        <h3 className="text-[13px] font-medium text-secondary mb-4">
           Hold Time vs P&L
         </h3>
 
@@ -412,7 +412,7 @@ export default function HoldTimeAnalysis({ trades }: Props) {
 
       {/* ── Bucketed stats ────────────────────────────────────── */}
       <div className="bg-surface-1 rounded-lg p-6">
-        <h3 className="text-[11px] font-semibold text-secondary uppercase tracking-wider mb-4">
+        <h3 className="text-[13px] font-medium text-secondary mb-4">
           Hold Time Breakdown
         </h3>
 
@@ -425,7 +425,7 @@ export default function HoldTimeAnalysis({ trades }: Props) {
                     <th
                       key={h}
                       className={cn(
-                        "text-[10px] text-tertiary uppercase font-semibold tracking-wider pb-2",
+                        "text-[13px] font-medium text-secondary pb-2",
                         i > 0 && "text-right",
                       )}
                     >
@@ -504,14 +504,14 @@ export default function HoldTimeAnalysis({ trades }: Props) {
 
       {/* ── Auto-insights ─────────────────────────────────────── */}
       <div className="bg-surface-1 rounded-lg p-6">
-        <h3 className="text-[11px] font-semibold text-secondary uppercase tracking-wider mb-3">
+        <h3 className="text-[13px] font-medium text-secondary mb-3">
           Hold Time Insights
         </h3>
 
         <div className="space-y-2.5">
           {sweetSpot && (
             <div className="flex items-baseline gap-2">
-              <span className="text-[11px] font-semibold uppercase tracking-wider shrink-0 text-profit">
+              <span className="text-[13px] font-medium shrink-0 text-profit">
                 Optimal hold
               </span>
               <span className="text-xs text-secondary">
@@ -527,7 +527,7 @@ export default function HoldTimeAnalysis({ trades }: Props) {
 
           {insights.cutWinnersInsight && (
             <div className="flex items-baseline gap-2">
-              <span className="text-[11px] font-semibold uppercase tracking-wider shrink-0 text-amber">
+              <span className="text-[13px] font-medium shrink-0 text-amber">
                 Cutting winners
               </span>
               <span className="text-xs text-secondary">

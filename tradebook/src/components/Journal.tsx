@@ -23,9 +23,9 @@ const GRADES = [
 ];
 
 const inputClass =
-  "w-full rounded-lg border border-transparent bg-surface-2 px-3 py-2.5 text-sm text-primary placeholder-tertiary hover:border-border-hover focus:border-brand focus:outline-none transition-colors duration-150 resize-none";
+  "w-full rounded-md border border-white/[0.04] bg-transparent px-3 py-2.5 text-sm text-primary placeholder-tertiary hover:border-white/[0.08] focus:border-white/[0.08] focus:outline-none transition-colors duration-150 resize-none";
 const labelClass =
-  "block text-xs text-tertiary uppercase tracking-wider mb-1.5";
+  "block text-[13px] font-medium text-secondary mb-1.5";
 
 export default function Journal() {
   const { showToast } = useToast();
@@ -306,16 +306,16 @@ export default function Journal() {
         {/* Trades summary */}
         {tradeCount > 0 && (
           <div className="bg-surface-1 rounded-lg p-6 flex flex-wrap gap-x-6 gap-y-1.5">
-            <span className="text-xs text-tertiary uppercase tracking-wider">
+            <span className="text-[13px] font-medium text-secondary">
               Trades <span className="text-sm font-medium text-primary ml-1">{tradeCount}</span>
             </span>
-            <span className="text-xs text-tertiary uppercase tracking-wider">
+            <span className="text-[13px] font-medium text-secondary">
               P&L{" "}
               <span className={cn("text-sm font-medium font-mono ml-1", totalPnl >= 0 ? "text-profit" : "text-loss")}>
                 {totalPnl >= 0 ? "+" : ""}${totalPnl.toFixed(2)}
               </span>
             </span>
-            <span className="text-xs text-tertiary uppercase tracking-wider">
+            <span className="text-[13px] font-medium text-secondary">
               Win Rate <span className="text-sm font-medium text-primary ml-1">{winRate}%</span>
             </span>
           </div>

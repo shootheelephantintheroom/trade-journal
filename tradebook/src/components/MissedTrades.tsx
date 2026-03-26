@@ -107,9 +107,9 @@ export default function MissedTrades({
   }
 
   const inputClass =
-    "w-full rounded-lg border border-transparent bg-surface-2 px-3 py-2.5 text-sm text-primary placeholder-tertiary hover:border-border-hover focus:border-brand focus:outline-none transition-colors duration-150";
+    "w-full rounded-md border border-white/[0.04] bg-transparent px-3 py-2.5 text-sm text-primary placeholder-tertiary hover:border-white/[0.08] focus:border-white/[0.08] focus:outline-none transition-colors duration-150";
   const labelClass =
-    "block text-xs text-tertiary uppercase tracking-wider mb-1.5";
+    "block text-[13px] font-medium text-secondary mb-1.5";
 
   return (
     <div className="space-y-8">
@@ -179,7 +179,7 @@ export default function MissedTrades({
 
         {/* Estimated Entry, Exit, Shares */}
         <div className="bg-surface-1 rounded-lg p-6">
-          <p className="text-xs text-tertiary uppercase tracking-widest mb-3">
+          <p className="text-[13px] font-medium text-secondary mb-3">
             Estimated Position
           </p>
           <div className="grid grid-cols-3 gap-3">
@@ -230,7 +230,7 @@ export default function MissedTrades({
         {/* Estimated P&L preview */}
         {estimatedPnl !== null && (
           <div className="bg-surface-1 rounded-lg p-6">
-            <span className="text-xs text-tertiary uppercase tracking-wider">
+            <span className="text-[13px] font-medium text-secondary">
               Est. P&L{" "}
               <span
                 className={cn(
@@ -264,7 +264,7 @@ export default function MissedTrades({
 
         {/* Why I Hesitated */}
         <div className="bg-surface-1 rounded-lg p-6">
-          <label className="block text-xs text-tertiary uppercase tracking-wider mb-2">
+          <label className="block text-[13px] font-medium text-secondary mb-2">
             Why I Hesitated
           </label>
           <HesitationSelect
@@ -316,7 +316,7 @@ export default function MissedTrades({
         return (
         <div>
           <div className="flex items-center gap-3 mb-3">
-            <h3 className="text-xs text-tertiary uppercase tracking-wider">
+            <h3 className="text-[13px] font-medium text-secondary">
               Missed Trades Log
             </h3>
             <span className="text-xs bg-brand-muted text-brand px-2 py-0.5 rounded-full font-medium">
@@ -328,25 +328,25 @@ export default function MissedTrades({
               <table className="w-full text-sm text-left">
                 <thead>
                   <tr className="border-b border-border">
-                    <th className="px-4 py-3 text-[10px] text-tertiary uppercase font-medium tracking-wider">
+                    <th className="px-4 py-3 text-[13px] font-medium text-secondary">
                       Date
                     </th>
-                    <th className="px-4 py-3 text-[10px] text-tertiary uppercase font-medium tracking-wider">
+                    <th className="px-4 py-3 text-[13px] font-medium text-secondary">
                       Ticker
                     </th>
-                    <th className="px-4 py-3 text-[10px] text-tertiary uppercase font-medium tracking-wider">
+                    <th className="px-4 py-3 text-[13px] font-medium text-secondary">
                       Side
                     </th>
-                    <th className="px-4 py-3 text-[10px] text-tertiary uppercase font-medium tracking-wider">
+                    <th className="px-4 py-3 text-[13px] font-medium text-secondary">
                       Est. Entry
                     </th>
-                    <th className="px-4 py-3 text-[10px] text-tertiary uppercase font-medium tracking-wider">
+                    <th className="px-4 py-3 text-[13px] font-medium text-secondary">
                       Est. Exit
                     </th>
-                    <th className="px-4 py-3 text-[10px] text-tertiary uppercase font-medium tracking-wider">
+                    <th className="px-4 py-3 text-[13px] font-medium text-secondary">
                       Est. P&L
                     </th>
-                    <th className="px-4 py-3 text-[10px] text-tertiary uppercase font-medium tracking-wider">
+                    <th className="px-4 py-3 text-[13px] font-medium text-secondary">
                       Hesitation
                     </th>
                   </tr>
@@ -450,7 +450,7 @@ export default function MissedTrades({
                               <div className="py-4 grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
                                 {mt.setup && (
                                   <div>
-                                    <span className="text-xs text-tertiary uppercase tracking-wider">
+                                    <span className="text-[13px] font-medium text-secondary">
                                       Setup
                                     </span>
                                     <p className="text-sm text-secondary mt-0.5">
@@ -460,7 +460,7 @@ export default function MissedTrades({
                                 )}
                                 {mt.tags && mt.tags.length > 0 && (
                                   <div>
-                                    <span className="text-xs text-tertiary uppercase tracking-wider">
+                                    <span className="text-[13px] font-medium text-secondary">
                                       Tags
                                     </span>
                                     <div className="flex flex-wrap gap-1 mt-1">
@@ -478,7 +478,7 @@ export default function MissedTrades({
                                 {mt.hesitation_reasons &&
                                   mt.hesitation_reasons.length > 0 && (
                                     <div>
-                                      <span className="text-xs text-tertiary uppercase tracking-wider">
+                                      <span className="text-[13px] font-medium text-secondary">
                                         Why I Hesitated
                                       </span>
                                       <div className="flex flex-wrap gap-1 mt-1">
@@ -495,7 +495,7 @@ export default function MissedTrades({
                                   )}
                                 {mt.reason && (
                                   <div>
-                                    <span className="text-xs text-tertiary uppercase tracking-wider">
+                                    <span className="text-[13px] font-medium text-secondary">
                                       Why I Passed
                                     </span>
                                     <p className="text-sm text-secondary mt-0.5">

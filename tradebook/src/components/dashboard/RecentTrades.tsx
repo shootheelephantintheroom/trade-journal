@@ -13,22 +13,22 @@ export default function RecentTrades({
         <table className="w-full text-sm text-left">
           <thead>
             <tr className="border-b border-border">
-              <th className="pb-2.5 text-[10px] text-tertiary uppercase font-medium tracking-wider">
+              <th className="pb-2.5 text-[13px] font-medium text-secondary">
                 Time
               </th>
-              <th className="pb-2.5 text-[10px] text-tertiary uppercase font-medium tracking-wider">
+              <th className="pb-2.5 text-[13px] font-medium text-secondary">
                 Ticker
               </th>
-              <th className="pb-2.5 text-[10px] text-tertiary uppercase font-medium tracking-wider">
+              <th className="pb-2.5 text-[13px] font-medium text-secondary">
                 Side
               </th>
-              <th className="pb-2.5 text-[10px] text-tertiary uppercase font-medium tracking-wider">
+              <th className="pb-2.5 text-[13px] font-medium text-secondary">
                 Entry / Exit
               </th>
-              <th className="pb-2.5 text-[10px] text-tertiary uppercase font-medium tracking-wider">
+              <th className="pb-2.5 text-[13px] font-medium text-secondary">
                 Grade
               </th>
-              <th className="pb-2.5 text-[10px] text-tertiary uppercase font-medium tracking-wider text-right">
+              <th className="pb-2.5 text-[13px] font-medium text-secondary text-right">
                 P&L
               </th>
             </tr>

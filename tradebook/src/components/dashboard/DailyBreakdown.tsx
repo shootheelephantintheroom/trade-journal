@@ -14,19 +14,19 @@ export default function DailyBreakdown({
         <table className="w-full text-sm text-left">
           <thead>
             <tr className="border-b border-border">
-              <th className="pb-2.5 text-[10px] text-tertiary uppercase font-medium tracking-wider">
+              <th className="pb-2.5 text-[13px] font-medium text-secondary">
                 Date
               </th>
-              <th className="pb-2.5 text-[10px] text-tertiary uppercase font-medium tracking-wider">
+              <th className="pb-2.5 text-[13px] font-medium text-secondary">
                 Trades
               </th>
-              <th className="pb-2.5 text-[10px] text-tertiary uppercase font-medium tracking-wider">
+              <th className="pb-2.5 text-[13px] font-medium text-secondary">
                 W / L
               </th>
-              <th className="pb-2.5 text-[10px] text-tertiary uppercase font-medium tracking-wider">
+              <th className="pb-2.5 text-[13px] font-medium text-secondary">
                 Win Rate
               </th>
-              <th className="pb-2.5 text-[10px] text-tertiary uppercase font-medium tracking-wider text-right">
+              <th className="pb-2.5 text-[13px] font-medium text-secondary text-right">
                 P&L
               </th>
             </tr>

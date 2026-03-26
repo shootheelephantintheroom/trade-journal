@@ -30,7 +30,7 @@ function Section({
         onClick={() => setOpen((o) => !o)}
         className="w-full flex items-center justify-between group"
       >
-        <h3 className="text-xs font-semibold text-secondary uppercase tracking-wider">
+        <h3 className="text-[13px] font-medium text-secondary">
           {title}
         </h3>
         <svg
@@ -119,19 +119,19 @@ function CatalystPerformance({ trades }: { trades: Trade[] }) {
       <table className="w-full text-sm text-left">
         <thead>
           <tr className="border-b border-border">
-            <th className="pb-2.5 text-[10px] text-tertiary uppercase font-semibold tracking-wider">
+            <th className="pb-2.5 text-[13px] font-medium text-secondary">
               Catalyst
             </th>
-            <th className="pb-2.5 text-[10px] text-tertiary uppercase font-semibold tracking-wider">
+            <th className="pb-2.5 text-[13px] font-medium text-secondary">
               Trades
             </th>
-            <th className="pb-2.5 text-[10px] text-tertiary uppercase font-semibold tracking-wider">
+            <th className="pb-2.5 text-[13px] font-medium text-secondary">
               Win Rate
             </th>
-            <th className="pb-2.5 text-[10px] text-tertiary uppercase font-semibold tracking-wider text-right">
+            <th className="pb-2.5 text-[13px] font-medium text-secondary text-right">
               Avg P&L
             </th>
-            <th className="pb-2.5 text-[10px] text-tertiary uppercase font-semibold tracking-wider text-right">
+            <th className="pb-2.5 text-[13px] font-medium text-secondary text-right">
               Total P&L
             </th>
           </tr>
@@ -248,19 +248,19 @@ function FloatSizePerformance({ trades }: { trades: Trade[] }) {
       <table className="w-full text-sm text-left">
         <thead>
           <tr className="border-b border-border">
-            <th className="pb-2.5 text-[10px] text-tertiary uppercase font-semibold tracking-wider">
+            <th className="pb-2.5 text-[13px] font-medium text-secondary">
               Float Size
             </th>
-            <th className="pb-2.5 text-[10px] text-tertiary uppercase font-semibold tracking-wider">
+            <th className="pb-2.5 text-[13px] font-medium text-secondary">
               Trades
             </th>
-            <th className="pb-2.5 text-[10px] text-tertiary uppercase font-semibold tracking-wider">
+            <th className="pb-2.5 text-[13px] font-medium text-secondary">
               Win Rate
             </th>
-            <th className="pb-2.5 text-[10px] text-tertiary uppercase font-semibold tracking-wider text-right">
+            <th className="pb-2.5 text-[13px] font-medium text-secondary text-right">
               Avg P&L
             </th>
-            <th className="pb-2.5 text-[10px] text-tertiary uppercase font-semibold tracking-wider text-right">
+            <th className="pb-2.5 text-[13px] font-medium text-secondary text-right">
               Total P&L
             </th>
           </tr>
@@ -352,7 +352,7 @@ export default function Analytics() {
     <div className="space-y-8">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-semibold text-primary tracking-tight">
+        <h2 className="text-base font-medium text-primary tracking-tight">
           Analytics
         </h2>
       </div>

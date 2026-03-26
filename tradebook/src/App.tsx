@@ -8,12 +8,6 @@ import {
   useLocation,
 } from "react-router-dom";
 import {
-  LayoutDashboard,
-  PenLine,
-  History,
-  Crosshair,
-  BookOpen,
-  BarChart3,
   Settings as SettingsIcon,
   LogOut,
   CreditCard,
@@ -38,12 +32,12 @@ import { useToast } from "./components/Toast";
 import { cn } from "./lib/utils";
 
 const navItems = [
-  { to: "/app/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { to: "/app/log", label: "Log Trade", icon: PenLine },
-  { to: "/app/trades", label: "History", icon: History },
-  { to: "/app/missed", label: "Missed", icon: Crosshair },
-  { to: "/app/journal", label: "Journal", icon: BookOpen },
-  { to: "/app/analytics", label: "Analytics", icon: BarChart3 },
+  { to: "/app/dashboard", label: "Dashboard" },
+  { to: "/app/log", label: "Log Trade" },
+  { to: "/app/trades", label: "History" },
+  { to: "/app/missed", label: "Missed" },
+  { to: "/app/journal", label: "Journal" },
+  { to: "/app/analytics", label: "Analytics" },
 ];
 
 export default function App() {
@@ -138,12 +132,7 @@ export default function App() {
               )
             }
           >
-            <item.icon
-              size={18}
-              strokeWidth={1.8}
-              className="shrink-0"
-            />
-            {!sidebarCollapsed && <span>{item.label}</span>}
+            <span>{item.label}</span>
           </NavLink>
         ))}
       </nav>
@@ -268,7 +257,7 @@ export default function App() {
       {/* Main content */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         {/* Top bar - mobile only for hamburger + minimal info, desktop for breadcrumb area */}
-        <header className="h-12 flex items-center gap-3 px-4 sm:px-6 border-b border-white/[0.06] shrink-0">
+        <header className="h-12 flex items-center gap-3 px-4 sm:px-6 border-b border-white/[0.04] shrink-0">
           <button
             onClick={() => setMobileOpen(true)}
             className="sm:hidden p-1 -ml-1 text-zinc-400 hover:text-white transition-colors"
@@ -382,7 +371,7 @@ export default function App() {
       </div>
 
       {/* Mobile bottom tab bar */}
-      <nav className="fixed bottom-0 left-0 right-0 z-40 bg-surface-0/80 backdrop-blur-xl border-t border-white/[0.06] sm:hidden">
+      <nav className="fixed bottom-0 left-0 right-0 z-40 bg-surface-0/80 backdrop-blur-xl border-t border-white/[0.04] sm:hidden">
         <div className="flex justify-around items-center py-1.5">
           {navItems.slice(0, 5).map((t) => (
             <NavLink
@@ -391,13 +380,12 @@ export default function App() {
               end
               className={({ isActive }) =>
                 cn(
-                  "flex flex-col items-center gap-0.5 px-2 py-1 transition-colors duration-150",
+                  "flex items-center px-2 py-1.5 text-[13px] font-medium transition-colors duration-150",
                   isActive ? "text-white" : "text-zinc-600"
                 )
               }
             >
-              <t.icon size={18} strokeWidth={1.8} />
-              <span className="text-[10px] leading-tight">{t.label}</span>
+              <span>{t.label}</span>
             </NavLink>
           ))}
         </div>

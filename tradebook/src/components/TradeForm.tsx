@@ -95,18 +95,18 @@ export default function TradeForm({
   }
 
   const inputClass =
-    "w-full h-10 rounded-lg border border-white/[0.06] bg-surface-2 px-3 text-sm text-white font-sans placeholder-zinc-600 focus:outline-none focus:border-brand/40 focus:shadow-[0_0_0_2px_rgba(59,130,246,0.15)] transition-all";
+    "w-full h-10 rounded-md border border-white/[0.04] bg-transparent px-3 text-sm text-white font-sans placeholder-tertiary focus:outline-none focus:border-white/[0.08] transition-all";
 
-  const labelClass = "block text-[12px] font-medium text-zinc-500 mb-1.5";
+  const labelClass = "block text-[13px] font-medium text-secondary mb-1.5";
 
   return (
     <form
       onSubmit={handleSubmit}
-      className="rounded-xl bg-surface-1 border border-white/[0.06] p-6 sm:p-8 space-y-6"
+      className="rounded-md bg-surface-1 border border-white/[0.04] p-4 sm:p-6 space-y-5"
     >
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-lg font-semibold text-white tracking-tight">
+          <h2 className="text-base font-medium text-white tracking-tight">
             {editTrade ? "Edit Trade" : "Log Trade"}
           </h2>
           <p className="text-[12px] text-zinc-500 mt-0.5">
@@ -242,9 +242,9 @@ export default function TradeForm({
 
       {/* Live P&L / R:R */}
       {pnl !== null && (
-        <div className="flex items-center gap-6 rounded-[10px] border border-white/[0.06] bg-surface-2 px-4 py-3">
+        <div className="flex items-center gap-6 rounded-md border border-white/[0.04] bg-surface-2 px-4 py-3">
           <div>
-            <span className="text-[10px] uppercase tracking-wider text-zinc-500">
+            <span className="text-[13px] font-medium text-secondary">
               P&L
             </span>
             <p
@@ -258,7 +258,7 @@ export default function TradeForm({
           </div>
           {rr !== null && (
             <div>
-              <span className="text-[10px] uppercase tracking-wider text-zinc-500">
+              <span className="text-[13px] font-medium text-secondary">
                 R:R
               </span>
               <p

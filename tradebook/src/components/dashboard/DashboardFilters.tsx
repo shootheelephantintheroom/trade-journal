@@ -141,9 +141,9 @@ const pillInactive =
   "text-tertiary border-transparent hover:text-secondary hover:border-border-hover";
 
 const inputClass =
-  "w-full rounded-lg border border-transparent bg-surface-2 px-3 py-2 text-sm text-primary placeholder-tertiary hover:border-border-hover focus:border-brand focus:outline-none transition-colors";
+  "w-full rounded-md border border-white/[0.04] bg-transparent px-3 py-2 text-sm text-primary placeholder-tertiary hover:border-white/[0.08] focus:border-white/[0.08] focus:outline-none transition-colors";
 const labelClass =
-  "block text-[11px] font-medium text-tertiary uppercase tracking-wider mb-1.5";
+  "block text-[13px] font-medium text-secondary mb-1.5";
 
 export default function DashboardFilters({
   trades,

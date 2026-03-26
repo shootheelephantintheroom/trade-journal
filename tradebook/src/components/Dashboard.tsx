@@ -73,7 +73,7 @@ function TodaySummary({ trades }: { trades: Trade[] }) {
 
       <div className="pl-4">
         <div className="flex items-center justify-between mb-3">
-          <h3 className="text-sm font-semibold text-primary uppercase tracking-wide">
+          <h3 className="text-[13px] font-medium text-primary">
             Today's Session
           </h3>
           <span className="text-[11px] text-tertiary">click to dismiss</span>
@@ -81,11 +81,11 @@ function TodaySummary({ trades }: { trades: Trade[] }) {
 
         <div className="grid grid-cols-3 gap-4">
           <div>
-            <p className="text-[11px] text-tertiary uppercase tracking-wider">Trades</p>
+            <p className="text-[13px] font-medium text-secondary">Trades</p>
             <p className="text-2xl font-semibold tabular-nums text-primary">{todayTrades.length}</p>
           </div>
           <div>
-            <p className="text-[11px] text-tertiary uppercase tracking-wider">W / L</p>
+            <p className="text-[13px] font-medium text-secondary">W / L</p>
             <p className="text-2xl font-semibold tabular-nums">
               <span className="text-profit">{wins}</span>
               <span className="text-tertiary"> / </span>
@@ -93,7 +93,7 @@ function TodaySummary({ trades }: { trades: Trade[] }) {
             </p>
           </div>
           <div>
-            <p className="text-[11px] text-tertiary uppercase tracking-wider">P&L</p>
+            <p className="text-[13px] font-medium text-secondary">P&L</p>
             <p
               className={cn(
                 "text-2xl font-semibold tabular-nums",
@@ -163,7 +163,7 @@ export default function Dashboard({
         <div className="w-16 h-16 rounded-2xl bg-surface-1 border border-white/[0.06] flex items-center justify-center">
           <TrendingUp size={28} strokeWidth={1.5} className="text-zinc-500" />
         </div>
-        <h2 className="text-lg font-semibold text-primary tracking-tight">
+        <h2 className="text-base font-medium text-primary tracking-tight">
           No trades logged yet
         </h2>
         <p className="text-sm text-zinc-500 text-center max-w-xs">
@@ -310,7 +310,7 @@ export default function Dashboard({
     <div className="space-y-10">
       {/* Page header */}
       <div>
-        <h2 className="text-xl font-semibold text-white tracking-tight">
+        <h2 className="text-base font-medium text-white tracking-tight">
           Dashboard
         </h2>
         <p className="text-[13px] text-zinc-500 mt-1">

@@ -29,9 +29,9 @@ const TIMEZONES = [
 ];
 
 const inputClass =
-  "w-full rounded-lg border border-transparent bg-surface-2 px-3 py-2.5 text-sm text-primary placeholder-tertiary hover:border-border-hover focus:border-brand focus:outline-none transition-colors";
+  "w-full rounded-md border border-white/[0.04] bg-transparent px-3 py-2.5 text-sm text-primary placeholder-tertiary hover:border-white/[0.08] focus:border-white/[0.08] focus:outline-none transition-colors";
 const labelClass =
-  "block text-[11px] font-semibold text-tertiary uppercase tracking-wider mb-1.5";
+  "block text-[13px] font-medium text-secondary mb-1.5";
 
 export default function Onboarding() {
   const { user } = useAuth();
@@ -180,7 +180,7 @@ export default function Onboarding() {
           {step === 0 && (
             <div className="space-y-5">
               <div>
-                <h2 className="text-lg font-semibold text-primary">
+                <h2 className="text-base font-medium text-primary">
                   What do you trade?
                 </h2>
                 <p className="text-sm text-tertiary mt-1">
@@ -219,7 +219,7 @@ export default function Onboarding() {
           {step === 1 && (
             <div className="space-y-5">
               <div>
-                <h2 className="text-lg font-semibold text-primary">
+                <h2 className="text-base font-medium text-primary">
                   Set your defaults
                 </h2>
                 <p className="text-sm text-tertiary mt-1">
@@ -291,7 +291,7 @@ export default function Onboarding() {
           {step === 2 && (
             <div className="space-y-5">
               <div>
-                <h2 className="text-lg font-semibold text-primary">
+                <h2 className="text-base font-medium text-primary">
                   Log your first trade
                 </h2>
                 <p className="text-sm text-tertiary mt-1">
@@ -396,7 +396,7 @@ export default function Onboarding() {
                 parseFloat(exampleTrade.exit_price) > 0 &&
                 parseInt(exampleTrade.shares) > 0 && (
                   <div className="rounded-xl bg-surface-1 px-4 py-3">
-                    <span className="text-xs text-tertiary uppercase tracking-wider">
+                    <span className="text-[13px] font-medium text-secondary">
                       P&L{" "}
                       <span
                         className={cn(

@@ -21,9 +21,9 @@ const TIMEZONES = [
 ];
 
 const inputClass =
-  "w-full rounded-lg border border-transparent bg-surface-2 px-3 py-2.5 text-sm text-primary placeholder-tertiary hover:border-border-hover focus:border-brand focus:outline-none transition-colors";
+  "w-full rounded-md border border-white/[0.04] bg-transparent px-3 py-2.5 text-sm text-primary placeholder-tertiary hover:border-white/[0.08] focus:border-white/[0.08] focus:outline-none transition-colors";
 const labelClass =
-  "block text-xs font-medium text-secondary uppercase tracking-wide mb-1.5";
+  "block text-[13px] font-medium text-secondary mb-1.5";
 
 export default function Settings() {
   const { user, signOut } = useAuth();
@@ -212,7 +212,7 @@ export default function Settings() {
         &larr; Back
       </button>
 
-      <h2 className="text-xl font-semibold text-primary">Account Settings</h2>
+      <h2 className="text-base font-medium text-primary">Account Settings</h2>
 
       {/* Plan Status */}
       <div className="bg-surface-1 rounded-lg p-6 space-y-4">

@@ -128,8 +128,8 @@ body {
 
 /* ── Typography ── */
 h1, h2, h3, h4, h5, h6 {
-  letter-spacing: -0.025em;
-  font-weight: 600;
+  letter-spacing: -0.02em;
+  font-weight: 500;
 }
 
 code, kbd, pre {
@@ -243,9 +243,7 @@ table {
 th {
   color: var(--color-secondary);
   font-weight: 500;
-  font-size: 12px;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  font-size: 13px;
 }
 
 tr {

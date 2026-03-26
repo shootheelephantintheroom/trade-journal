@@ -270,7 +270,7 @@ export default function TradeImport({ onImported }: Props) {
             {/* Modal header */}
             <div className="flex items-center justify-between px-6 py-4 border-b border-border">
               <div>
-                <h3 className="text-base font-semibold text-primary">
+                <h3 className="text-base font-medium text-primary">
                   Import Trades
                 </h3>
                 <p className="text-xs text-tertiary mt-0.5">
@@ -287,7 +287,7 @@ export default function TradeImport({ onImported }: Props) {
 
             {/* Column mapping */}
             <div className="px-6 py-4 border-b border-border">
-              <h4 className="text-[10px] text-tertiary uppercase font-semibold tracking-wider mb-3">
+              <h4 className="text-[13px] font-medium text-secondary mb-3">
                 Column Mapping
               </h4>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
@@ -323,7 +323,7 @@ export default function TradeImport({ onImported }: Props) {
 
             {/* Preview table */}
             <div className="px-6 py-4">
-              <h4 className="text-[10px] text-tertiary uppercase font-semibold tracking-wider mb-3">
+              <h4 className="text-[13px] font-medium text-secondary mb-3">
                 Preview (first {previewRows.length} rows)
               </h4>
               <div className="overflow-x-auto rounded-lg border border-border">
@@ -333,7 +333,7 @@ export default function TradeImport({ onImported }: Props) {
                       {headers.map((h, i) => (
                         <th
                           key={i}
-                          className="px-3 py-2 text-left text-[10px] text-secondary uppercase font-semibold tracking-wider whitespace-nowrap"
+                          className="px-3 py-2 text-left text-[13px] font-medium text-secondary whitespace-nowrap"
                         >
                           {h}
                         </th>

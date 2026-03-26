@@ -14,19 +14,19 @@ export default function EmotionPerformance({
         <table className="w-full text-sm text-left">
           <thead>
             <tr className="border-b border-border">
-              <th className="pb-2.5 text-[10px] text-tertiary uppercase font-medium tracking-wider">
+              <th className="pb-2.5 text-[13px] font-medium text-secondary">
                 Emotion
               </th>
-              <th className="pb-2.5 text-[10px] text-tertiary uppercase font-medium tracking-wider">
+              <th className="pb-2.5 text-[13px] font-medium text-secondary">
                 Trades
               </th>
-              <th className="pb-2.5 text-[10px] text-tertiary uppercase font-medium tracking-wider">
+              <th className="pb-2.5 text-[13px] font-medium text-secondary">
                 Win Rate
               </th>
-              <th className="pb-2.5 text-[10px] text-tertiary uppercase font-medium tracking-wider text-right">
+              <th className="pb-2.5 text-[13px] font-medium text-secondary text-right">
                 Avg P&L
               </th>
-              <th className="pb-2.5 text-[10px] text-tertiary uppercase font-medium tracking-wider text-right">
+              <th className="pb-2.5 text-[13px] font-medium text-secondary text-right">
                 Total P&L
               </th>
             </tr>

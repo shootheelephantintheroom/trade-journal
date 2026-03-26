@@ -27,7 +27,7 @@ export function StatCard({
         {Icon && (
           <Icon size={14} strokeWidth={1.8} className="text-zinc-500" />
         )}
-        <p className="text-[11px] font-medium text-zinc-500 uppercase tracking-widest">
+        <p className="text-[13px] font-medium text-secondary">
           {label}
         </p>
       </div>

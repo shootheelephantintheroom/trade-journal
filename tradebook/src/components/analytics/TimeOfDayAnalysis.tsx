@@ -172,7 +172,7 @@ export default function TimeOfDayAnalysis({ trades }: Props) {
     <div className="space-y-8">
       {/* ── Bar chart ───────────────────────────────────────── */}
       <div className="bg-surface-1 rounded-lg p-6">
-        <h3 className="text-[11px] font-semibold text-secondary uppercase tracking-wider mb-4">
+        <h3 className="text-[13px] font-medium text-secondary mb-4">
           P&L by Time of Day
         </h3>
 
@@ -282,7 +282,7 @@ export default function TimeOfDayAnalysis({ trades }: Props) {
 
       {/* ── First 30 min vs Rest of Day ─────────────────────── */}
       <div className="bg-surface-1 rounded-lg p-6">
-        <h3 className="text-[11px] font-semibold text-secondary uppercase tracking-wider mb-4">
+        <h3 className="text-[13px] font-medium text-secondary mb-4">
           First 30 min vs Rest of Day
         </h3>
 
@@ -302,7 +302,7 @@ export default function TimeOfDayAnalysis({ trades }: Props) {
 
       {/* ── Key Insights ────────────────────────────────────── */}
       <div className="bg-surface-1 rounded-lg p-6">
-        <h3 className="text-[11px] font-semibold text-secondary uppercase tracking-wider mb-3">
+        <h3 className="text-[13px] font-medium text-secondary mb-3">
           Key Insights
         </h3>
 
@@ -330,7 +330,7 @@ export default function TimeOfDayAnalysis({ trades }: Props) {
           )}
           {insights.dangerZones.length > 0 && (
             <div className="mt-3 rounded-lg border border-loss/20 bg-loss-muted px-3 py-2.5">
-              <p className="text-[11px] font-semibold text-loss uppercase tracking-wider mb-1.5">
+              <p className="text-[13px] font-medium text-loss mb-1.5">
                 Danger Zones
               </p>
               {insights.dangerZones.map((dz) => (
@@ -418,7 +418,7 @@ function StatRow({
 }) {
   return (
     <div className="flex items-center justify-between">
-      <span className="text-xs text-tertiary uppercase tracking-wide">
+      <span className="text-[13px] font-medium text-secondary">
         {label}
       </span>
       <span className={cn("text-sm font-semibold font-mono", color)}>
@@ -441,7 +441,7 @@ function InsightRow({
     <div className="flex items-baseline gap-2">
       <span
         className={cn(
-          "text-[11px] font-semibold uppercase tracking-wider shrink-0",
+          "text-[13px] font-medium shrink-0",
           color,
         )}
       >
