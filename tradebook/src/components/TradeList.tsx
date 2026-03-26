@@ -21,7 +21,7 @@ function exportTradesToCsv(trades: Trade[]) {
     "Side",
     "Entry",
     "Exit",
-    "Shares",
+    "Size",
     "P&L",
     "R:R",
     "Grade",
@@ -494,52 +494,67 @@ export default function TradeList({
 
       {/* Table */}
       {sorted.length > 0 ? (
-        <div className={cn("rounded-xl overflow-hidden transition-opacity", fetching && "opacity-60")}>
+        <div className={cn("transition-opacity", fetching && "opacity-60")}>
           <div className="overflow-x-auto">
             <table className="w-full text-sm text-left">
               <thead>
                 <tr>
                   <th
-                    className="text-xs font-medium text-tertiary uppercase tracking-wide px-4 py-3 border-b border-border cursor-pointer hover:text-secondary transition-colors"
+                    className="text-[11px] font-medium text-zinc-500 uppercase tracking-wider px-4 py-3 cursor-pointer hover:text-secondary transition-colors"
+                    style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}
                     onClick={() => toggleSort("date")}
                   >
                     Date <SortIcon col="date" />
                   </th>
                   <th
-                    className="text-xs font-medium text-tertiary uppercase tracking-wide px-4 py-3 border-b border-border cursor-pointer hover:text-secondary transition-colors"
+                    className="text-[11px] font-medium text-zinc-500 uppercase tracking-wider px-4 py-3 cursor-pointer hover:text-secondary transition-colors"
+                    style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}
                     onClick={() => toggleSort("ticker")}
                   >
                     Ticker <SortIcon col="ticker" />
                   </th>
-                  <th className="text-xs font-medium text-tertiary uppercase tracking-wide px-4 py-3 border-b border-border">
-                    Side
-                  </th>
-                  <th className="text-xs font-medium text-tertiary uppercase tracking-wide px-4 py-3 border-b border-border text-right">
-                    Entry
-                  </th>
-                  <th className="text-xs font-medium text-tertiary uppercase tracking-wide px-4 py-3 border-b border-border text-right">
-                    Exit
-                  </th>
-                  <th className="text-xs font-medium text-tertiary uppercase tracking-wide px-4 py-3 border-b border-border text-right">
-                    Shares
+                  <th
+                    className="text-[11px] font-medium text-zinc-500 uppercase tracking-wider px-4 py-3"
+                    style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}
+                  >
+                    Direction
                   </th>
                   <th
-                    className="text-xs font-medium text-tertiary uppercase tracking-wide px-4 py-3 border-b border-border text-right cursor-pointer hover:text-secondary transition-colors"
+                    className="text-[11px] font-medium text-zinc-500 uppercase tracking-wider px-4 py-3 text-right"
+                    style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}
+                  >
+                    Entry
+                  </th>
+                  <th
+                    className="text-[11px] font-medium text-zinc-500 uppercase tracking-wider px-4 py-3 text-right"
+                    style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}
+                  >
+                    Exit
+                  </th>
+                  <th
+                    className="text-[11px] font-medium text-zinc-500 uppercase tracking-wider px-4 py-3 text-right"
+                    style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}
+                  >
+                    Size
+                  </th>
+                  <th
+                    className="text-[11px] font-medium text-zinc-500 uppercase tracking-wider px-4 py-3 text-right cursor-pointer hover:text-secondary transition-colors"
+                    style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}
                     onClick={() => toggleSort("pnl")}
                   >
                     P&L <SortIcon col="pnl" />
                   </th>
-                  <th className="text-xs font-medium text-tertiary uppercase tracking-wide px-4 py-3 border-b border-border text-right">
+                  <th
+                    className="text-[11px] font-medium text-zinc-500 uppercase tracking-wider px-4 py-3 text-right"
+                    style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}
+                  >
                     R:R
                   </th>
                   <th
-                    className="text-xs font-medium text-tertiary uppercase tracking-wide px-4 py-3 border-b border-border cursor-pointer hover:text-secondary transition-colors"
-                    onClick={() => toggleSort("grade")}
+                    className="text-[11px] font-medium text-zinc-500 uppercase tracking-wider px-4 py-3"
+                    style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}
                   >
-                    Grade <SortIcon col="grade" />
-                  </th>
-                  <th className="text-xs font-medium text-tertiary uppercase tracking-wide px-4 py-3 border-b border-border">
-                    Setup / Tags
+                    Setup
                   </th>
                 </tr>
               </thead>
@@ -548,7 +563,6 @@ export default function TradeList({
                   const pl = calcPnl(t);
                   const rr = calcRR(t);
                   const isExpanded = expandedId === t.id;
-                  const isWin = pl > 0;
 
                   return (
                     <Fragment key={t.id}>
@@ -557,98 +571,64 @@ export default function TradeList({
                           setExpandedId(isExpanded ? null : t.id)
                         }
                         className={cn(
-                          "border-b border-border cursor-pointer hover:bg-surface-1 transition-colors",
-                          isExpanded && "bg-surface-2/40"
+                          "cursor-pointer transition-colors h-12",
+                          isExpanded ? "bg-white/[0.03]" : "hover:bg-white/[0.03]"
                         )}
+                        style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}
                       >
-                        <td className="px-4 py-3 text-sm text-primary">
+                        <td className="px-4 text-sm text-primary whitespace-nowrap">
                           {t.trade_date}
                         </td>
-                        <td className="px-4 py-3">
-                          <div className="flex items-center gap-1.5">
-                            <span
-                              className={cn(
-                                "w-1.5 h-1.5 rounded-full",
-                                isWin ? "bg-brand" : "bg-loss"
-                              )}
-                            />
-                            <span className="font-semibold text-primary">
-                              {t.ticker}
-                            </span>
-                          </div>
-                        </td>
-                        <td className="px-4 py-3">
-                          <span
-                            className={cn(
-                              "text-xs font-medium",
-                              t.side === "long"
-                                ? "text-profit"
-                                : "text-loss"
-                            )}
-                          >
-                            {t.side.toUpperCase()}
+                        <td className="px-4">
+                          <span className="font-semibold text-primary">
+                            {t.ticker}
                           </span>
                         </td>
-                        <td className="px-4 py-3 text-sm text-primary font-mono text-right tabular-nums">
+                        <td className="px-4">
+                          <span
+                            className={cn(
+                              "inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-medium",
+                              t.side === "long"
+                                ? "bg-brand-muted text-blue-400"
+                                : "bg-amber-muted text-amber-400"
+                            )}
+                          >
+                            {t.side === "long" ? "Long" : "Short"}
+                          </span>
+                        </td>
+                        <td className="px-4 text-sm text-primary font-mono text-right tabular-nums">
                           ${t.entry_price.toFixed(2)}
                         </td>
-                        <td className="px-4 py-3 text-sm text-primary font-mono text-right tabular-nums">
+                        <td className="px-4 text-sm text-primary font-mono text-right tabular-nums">
                           ${t.exit_price.toFixed(2)}
                         </td>
-                        <td className="px-4 py-3 text-sm text-primary text-right tabular-nums">
+                        <td className="px-4 text-sm text-primary font-mono text-right tabular-nums">
                           {t.shares}
                         </td>
                         <td
                           className={cn(
-                            "px-4 py-3 font-semibold font-mono text-sm text-right tabular-nums",
+                            "px-4 font-semibold font-mono text-sm text-right tabular-nums",
                             pl >= 0 ? "text-profit" : "text-loss"
                           )}
                         >
                           {pl >= 0 ? "+" : ""}${pl.toFixed(2)}
                         </td>
-                        <td className="px-4 py-3 text-sm text-primary font-mono text-right tabular-nums">
+                        <td className="px-4 text-sm text-primary font-mono text-right tabular-nums">
                           {rr !== null ? `${rr.toFixed(1)}R` : "—"}
                         </td>
-                        <td className="px-4 py-3">
-                          {t.grade ? (
-                            <span
-                              className={cn(
-                                "inline-block w-6 text-center rounded text-xs font-semibold py-0.5",
-                                gradeClasses(t.grade)
-                              )}
-                            >
-                              {t.grade}
-                            </span>
-                          ) : (
-                            <span className="text-tertiary">—</span>
-                          )}
-                        </td>
-                        <td className="px-4 py-3 text-sm text-primary max-w-[240px]">
-                          {t.tags && t.tags.length > 0 && (
-                            <div className="flex flex-wrap gap-1 mb-0.5">
-                              {t.tags.map((tag) => (
-                                <span
-                                  key={tag}
-                                  className="px-1.5 py-0.5 rounded-full text-[10px] font-medium bg-brand-muted text-brand/80 border border-brand/20"
-                                >
-                                  {tag}
-                                </span>
-                              ))}
-                            </div>
-                          )}
-                          <span className="text-tertiary text-xs truncate block">
-                            {t.setup || "—"}
-                          </span>
+                        <td className="px-4 text-sm text-secondary max-w-[200px] truncate">
+                          {t.setup || "—"}
                         </td>
                       </tr>
                       {/* Expanded detail row */}
                       {isExpanded && (
                         <tr key={`${t.id}-detail`}>
                           <td
-                            colSpan={10}
-                            className="px-4 py-0 bg-surface-2/20"
+                            colSpan={9}
+                            className="px-0 py-0"
+                            style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}
                           >
-                            <div className="trade-expand py-4 grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                            <div className="trade-expand px-4 py-4 grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
                               {t.entry_time && (
                                 <div>
                                   <span className="text-tertiary uppercase tracking-wider text-[10px] font-semibold">
@@ -671,11 +651,11 @@ export default function TradeList({
                                 </div>
                               )}
                               {t.notes && (
-                                <div>
+                                <div className="md:col-span-2">
                                   <span className="text-tertiary uppercase tracking-wider text-[10px] font-semibold">
                                     Notes
                                   </span>
-                                  <p className="text-secondary mt-0.5">
+                                  <p className="text-secondary mt-0.5 whitespace-pre-wrap">
                                     {t.notes}
                                   </p>
                                 </div>
