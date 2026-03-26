@@ -1,173 +1,154 @@
+import { useEffect, useRef } from "react";
+import {
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
+
+const LINE_COLOR = "#3b82f6";
+
+const fmtDollar = (v: number) =>
+  Math.abs(v) >= 1000 ? `$${(v / 1000).toFixed(1)}k` : `$${v.toFixed(0)}`;
+
+/* Custom tooltip */
+function ChartTooltip({ active, payload, label }: any) {
+  if (!active || !payload?.length) return null;
+  return (
+    <div
+      style={{
+        background: "var(--color-surface-3)",
+        border: "1px solid rgba(255,255,255,0.1)",
+        borderRadius: 10,
+        padding: "8px 12px",
+        fontFamily: "'Geist Mono', ui-monospace, monospace",
+      }}
+    >
+      <p style={{ color: "#a1a1aa", fontSize: 10, margin: 0 }}>{label}</p>
+      <p
+        style={{
+          color: payload[0].value >= 0 ? "#22c55e" : "#ef4444",
+          fontSize: 13,
+          fontWeight: 600,
+          margin: "2px 0 0",
+        }}
+      >
+        {payload[0].value >= 0 ? "+" : ""}
+        {fmtDollar(payload[0].value)}
+      </p>
+    </div>
+  );
+}
+
 export default function EquityCurve({
   points,
-  drawdownRegion,
 }: {
   points: { date: string; value: number }[];
   drawdownRegion?: { peakIdx: number; troughIdx: number };
 }) {
+  const wrapperRef = useRef<HTMLDivElement>(null);
+
+  // Animate the stroke line drawing from left to right on mount
+  useEffect(() => {
+    const el = wrapperRef.current;
+    if (!el) return;
+
+    // recharts renders the Area stroke as the first <path> inside .recharts-area-curve
+    const curvePath = el.querySelector<SVGPathElement>(
+      ".recharts-area-curve path"
+    );
+    if (!curvePath) return;
+
+    const length = curvePath.getTotalLength();
+    curvePath.style.strokeDasharray = `${length}`;
+    curvePath.style.strokeDashoffset = `${length}`;
+    // force reflow
+    curvePath.getBoundingClientRect();
+    curvePath.style.transition =
+      "stroke-dashoffset 1.2s cubic-bezier(0.16, 1, 0.3, 1)";
+    curvePath.style.strokeDashoffset = "0";
+
+    // Fade in the area fill
+    const areaPath = el.querySelector<SVGPathElement>(
+      ".recharts-area-area path"
+    );
+    if (areaPath) {
+      areaPath.style.opacity = "0";
+      areaPath.style.transition =
+        "opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.4s";
+      // force reflow
+      areaPath.getBoundingClientRect();
+      areaPath.style.opacity = "1";
+    }
+  }, [points]);
+
   if (points.length < 2) return null;
 
-  const values = points.map((p) => p.value);
-  const minVal = Math.min(0, ...values);
-  const maxVal = Math.max(0, ...values);
-  const range = maxVal - minVal || 1;
-
-  const W = 520;
-  const H = 200;
-  const pad = { t: 10, b: 25, l: 45, r: 10 };
-  const cW = W - pad.l - pad.r;
-  const cH = H - pad.t - pad.b;
-
-  const coords = points.map((p, i) => ({
-    x: pad.l + (i / (points.length - 1)) * cW,
-    y: pad.t + cH - ((p.value - minVal) / range) * cH,
-  }));
-
-  const polyline = coords.map((c) => `${c.x},${c.y}`).join(" ");
-  const last = coords[coords.length - 1];
-
-  const areaPath =
-    `M${coords[0].x},${coords[0].y} ` +
-    coords
-      .slice(1)
-      .map((c) => `L${c.x},${c.y}`)
-      .join(" ") +
-    ` L${last.x},${pad.t + cH} L${coords[0].x},${pad.t + cH} Z`;
-
-  const zeroY = pad.t + cH - ((0 - minVal) / range) * cH;
-
-  const gridLines = [0.25, 0.5, 0.75].map((f) => ({
-    y: pad.t + cH * (1 - f),
-    val: minVal + range * f,
-  }));
-
-  const fmtDollar = (v: number) =>
-    Math.abs(v) >= 1000
-      ? `$${(v / 1000).toFixed(1)}k`
-      : `$${v.toFixed(0)}`;
-
-  const lineColor =
-    points[points.length - 1].value >= 0 ? "#22c55e" : "#ef4444";
-
-  const firstDateIdx = points.findIndex((p) => p.date);
-  const lastDateIdx = points.length - 1;
-
-  let lineLength = 0;
-  for (let i = 1; i < coords.length; i++) {
-    const dx = coords[i].x - coords[i - 1].x;
-    const dy = coords[i].y - coords[i - 1].y;
-    lineLength += Math.sqrt(dx * dx + dy * dy);
-  }
-
   return (
-    <svg
-      viewBox={`0 0 ${W} ${H}`}
-      className="w-full"
-      style={{ height: 200, ["--line-length" as string]: Math.ceil(lineLength) }}
-    >
-      <defs>
-        <linearGradient id="eqGrad" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor={lineColor} stopOpacity={0.25} />
-          <stop offset="100%" stopColor={lineColor} stopOpacity={0.02} />
-        </linearGradient>
-      </defs>
-      {gridLines.map((g, i) => (
-        <g key={i}>
-          <line
-            x1={pad.l}
-            y1={g.y}
-            x2={W - pad.r}
-            y2={g.y}
+    <div ref={wrapperRef}>
+      <ResponsiveContainer width="100%" height={200}>
+        <AreaChart
+          data={points}
+          margin={{ top: 8, right: 8, bottom: 0, left: -8 }}
+        >
+          <defs>
+            <linearGradient id="eqGradRc" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="rgba(59,130,246,0.15)" />
+              <stop offset="100%" stopColor="rgba(59,130,246,0)" />
+            </linearGradient>
+          </defs>
+
+          <CartesianGrid
+            horizontal
+            vertical={false}
             stroke="rgba(255,255,255,0.04)"
-            strokeWidth="1"
           />
-          <text
-            x={pad.l - 4}
-            y={g.y + 3}
-            fill="#52525b"
-            fontSize="9"
-            textAnchor="end"
-          >
-            {fmtDollar(g.val)}
-          </text>
-        </g>
-      ))}
-      <line
-        x1={pad.l}
-        y1={zeroY}
-        x2={W - pad.r}
-        y2={zeroY}
-        stroke="rgba(255,255,255,0.06)"
-        strokeWidth="1"
-        strokeDasharray="4,4"
-      />
-      <text
-        x={pad.l - 4}
-        y={zeroY + 3}
-        fill="#52525b"
-        fontSize="9"
-        textAnchor="end"
-      >
-        $0
-      </text>
-      <path d={areaPath} fill="url(#eqGrad)" className="equity-area" />
-      {drawdownRegion &&
-        drawdownRegion.peakIdx < drawdownRegion.troughIdx &&
-        (() => {
-          const { peakIdx, troughIdx } = drawdownRegion;
-          const peakY = coords[peakIdx].y;
-          const region = coords.slice(peakIdx, troughIdx + 1);
-          const ddPath =
-            `M${region[0].x},${peakY} ` +
-            `L${region[region.length - 1].x},${peakY} ` +
-            [...region]
-              .reverse()
-              .map((c) => `L${c.x},${c.y}`)
-              .join(" ") +
-            " Z";
-          return <path d={ddPath} fill="rgba(239, 68, 68, 0.1)" />;
-        })()}
-      <polyline
-        points={polyline}
-        fill="none"
-        stroke={lineColor}
-        strokeWidth="2.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        className="equity-line"
-      />
-      <circle cx={last.x} cy={last.y} r="4" fill={lineColor} />
-      <circle
-        cx={last.x}
-        cy={last.y}
-        r="7"
-        fill="none"
-        stroke={lineColor}
-        strokeWidth="1.5"
-        opacity="0.35"
-      />
-      {firstDateIdx >= 0 && (
-        <text
-          x={coords[firstDateIdx].x}
-          y={H - 4}
-          fill="#52525b"
-          fontSize="9"
-          textAnchor="start"
-        >
-          {points[firstDateIdx].date}
-        </text>
-      )}
-      {lastDateIdx !== firstDateIdx && (
-        <text
-          x={last.x}
-          y={H - 4}
-          fill="#52525b"
-          fontSize="9"
-          textAnchor="end"
-        >
-          {points[lastDateIdx].date}
-        </text>
-      )}
-    </svg>
+
+          <XAxis
+            dataKey="date"
+            axisLine={false}
+            tickLine={false}
+            tick={{
+              fill: "#71717a",
+              fontSize: 11,
+              fontFamily: "'Geist Mono', ui-monospace, monospace",
+            }}
+            interval="preserveStartEnd"
+            minTickGap={60}
+          />
+
+          <YAxis
+            axisLine={false}
+            tickLine={false}
+            tickFormatter={fmtDollar}
+            tick={{
+              fill: "#71717a",
+              fontSize: 11,
+              fontFamily: "'Geist Mono', ui-monospace, monospace",
+            }}
+            width={48}
+          />
+
+          <Tooltip
+            content={<ChartTooltip />}
+            cursor={{ stroke: "rgba(255,255,255,0.08)", strokeWidth: 1 }}
+          />
+
+          <Area
+            type="monotone"
+            dataKey="value"
+            stroke={LINE_COLOR}
+            strokeWidth={2}
+            fill="url(#eqGradRc)"
+            dot={false}
+            activeDot={false}
+            isAnimationActive={false}
+          />
+        </AreaChart>
+      </ResponsiveContainer>
+    </div>
   );
 }
