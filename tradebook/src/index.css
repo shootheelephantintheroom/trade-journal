@@ -324,6 +324,11 @@ tbody tr:hover {
   to   { opacity: 1; }
 }
 
+@keyframes slide-down {
+  from { opacity: 0; transform: translateY(-20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
 @keyframes ping {
   75%, 100% { transform: scale(2); opacity: 0; }
 }
@@ -333,6 +338,7 @@ tbody tr:hover {
 .animate-page-enter { animation: page-enter 0.3s var(--ease-spring) forwards; }
 .animate-slide-up  { animation: slide-up 0.35s var(--ease-spring) forwards; }
 .animate-ping      { animation: ping 1s var(--ease-out) infinite; }
+.animate-slide-down { animation: slide-down 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
 
 /* Landing page animations */
 .hero-enter    { animation: hero-up 0.9s var(--ease-spring) forwards; }

@@ -18,9 +18,23 @@ import { useSubscription } from "../contexts/SubscriptionContext";
 import DashboardFilters, { FilterSummary, QuickDatePills, useDashboardFilters, applyFilters } from "./dashboard/DashboardFilters";
 
 function TodaySummary({ trades }: { trades: Trade[] }) {
+  const [dismissed, setDismissed] = useState(false);
   const today = todayLocal();
   const todayTrades = trades.filter((t) => t.trade_date === today);
-  if (todayTrades.length === 0) return null;
+
+  // Auto-hide after US market close (4 PM ET)
+  useEffect(() => {
+    const check = () => {
+      const now = new Date();
+      const et = new Date(now.toLocaleString("en-US", { timeZone: "America/New_York" }));
+      if (et.getHours() >= 16) setDismissed(true);
+    };
+    check();
+    const id = setInterval(check, 60_000);
+    return () => clearInterval(id);
+  }, []);
+
+  if (todayTrades.length === 0 || dismissed) return null;
 
   const pnls = todayTrades.map(calcPnl);
   const totalPnl = pnls.reduce((a, b) => a + b, 0);
@@ -28,36 +42,55 @@ function TodaySummary({ trades }: { trades: Trade[] }) {
   const losses = pnls.filter((p) => p < 0).length;
 
   return (
-    <div className="rounded-xl bg-surface-1 p-6 mb-6">
-      <div className="flex items-center gap-3 mb-3">
-        <div className="w-2 h-2 rounded-full bg-brand animate-ping" />
-        <h3 className="text-sm font-semibold text-primary uppercase tracking-wide">
-          Today's Session
-        </h3>
+    <div
+      role="button"
+      tabIndex={0}
+      onClick={() => setDismissed(true)}
+      onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") setDismissed(true); }}
+      className="relative rounded-xl bg-surface-1 border border-white/[0.06] p-6 mb-6 cursor-pointer
+                 animate-slide-down overflow-hidden select-none
+                 hover:border-white/[0.1] transition-[border-color] duration-200"
+    >
+      {/* Left accent – pulsing blue dot */}
+      <div className="absolute left-0 top-0 bottom-0 flex items-center pl-3">
+        <span className="relative flex h-2 w-2">
+          <span className="absolute inline-flex h-full w-full rounded-full bg-brand animate-ping opacity-75" />
+          <span className="relative inline-flex h-2 w-2 rounded-full bg-brand" />
+        </span>
       </div>
-      <div className="grid grid-cols-3 gap-4">
-        <div>
-          <p className="text-[11px] text-tertiary uppercase tracking-wider">Trades</p>
-          <p className="text-2xl font-semibold tabular-nums text-primary">{todayTrades.length}</p>
+
+      <div className="pl-4">
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="text-sm font-semibold text-primary uppercase tracking-wide">
+            Today's Session
+          </h3>
+          <span className="text-[11px] text-tertiary">click to dismiss</span>
         </div>
-        <div>
-          <p className="text-[11px] text-tertiary uppercase tracking-wider">W / L</p>
-          <p className="text-2xl font-semibold tabular-nums">
-            <span className="text-profit">{wins}</span>
-            <span className="text-tertiary"> / </span>
-            <span className="text-loss">{losses}</span>
-          </p>
-        </div>
-        <div>
-          <p className="text-[11px] text-tertiary uppercase tracking-wider">P&L</p>
-          <p
-            className={cn(
-              "text-2xl font-semibold tabular-nums",
-              totalPnl >= 0 ? "text-profit" : "text-loss"
-            )}
-          >
-            {totalPnl >= 0 ? "+" : ""}${totalPnl.toFixed(2)}
-          </p>
+
+        <div className="grid grid-cols-3 gap-4">
+          <div>
+            <p className="text-[11px] text-tertiary uppercase tracking-wider">Trades</p>
+            <p className="text-2xl font-semibold tabular-nums text-primary">{todayTrades.length}</p>
+          </div>
+          <div>
+            <p className="text-[11px] text-tertiary uppercase tracking-wider">W / L</p>
+            <p className="text-2xl font-semibold tabular-nums">
+              <span className="text-profit">{wins}</span>
+              <span className="text-tertiary"> / </span>
+              <span className="text-loss">{losses}</span>
+            </p>
+          </div>
+          <div>
+            <p className="text-[11px] text-tertiary uppercase tracking-wider">P&L</p>
+            <p
+              className={cn(
+                "text-2xl font-semibold tabular-nums",
+                totalPnl >= 0 ? "text-profit" : "text-loss"
+              )}
+            >
+              {totalPnl >= 0 ? "+" : ""}${totalPnl.toFixed(2)}
+            </p>
+          </div>
         </div>
       </div>
     </div>
