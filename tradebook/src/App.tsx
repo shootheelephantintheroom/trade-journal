@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useRef } from "react";
+import { useEffect, useState, useCallback, useRef, useLayoutEffect } from "react";
 import {
   Routes,
   Route,
@@ -25,20 +25,20 @@ import { useToast } from "./components/Toast";
 import { cn } from "./lib/utils";
 
 const tabs = [
+  { to: "/app/dashboard", label: "Dashboard", icon: "◈" },
   { to: "/app/log", label: "Log Trade", icon: "+" },
   { to: "/app/trades", label: "History", icon: "☰" },
   { to: "/app/missed", label: "Missed", icon: "◎" },
   { to: "/app/journal", label: "Journal", icon: "✎" },
   { to: "/app/analytics", label: "Analytics", icon: "▣" },
-  { to: "/app/dashboard", label: "Dashboard", icon: "◈" },
 ];
 
 function navClassName({ isActive }: { isActive: boolean }) {
   return cn(
-    "relative px-3 py-3.5 text-sm font-medium transition-colors duration-150",
+    "relative px-3 py-3.5 text-sm font-medium transition-colors duration-150 whitespace-nowrap",
     isActive
-      ? "text-primary"
-      : "text-tertiary hover:text-secondary"
+      ? "text-white"
+      : "text-zinc-500 hover:text-zinc-300"
   );
 }
 
@@ -50,10 +50,26 @@ export default function App() {
   const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+  const navRef = useRef<HTMLDivElement>(null);
+  const [indicator, setIndicator] = useState({ left: 0, width: 0, ready: false });
   const [missedTrades, setMissedTrades] = useState<MissedTrade[]>([]);
   const [loading, setLoading] = useState(true);
   const [fetchError, setFetchError] = useState(false);
   const [tradeRefreshKey, setTradeRefreshKey] = useState(0);
+
+  // Sliding underline indicator
+  useLayoutEffect(() => {
+    const nav = navRef.current;
+    if (!nav) return;
+    const active = nav.querySelector<HTMLAnchorElement>("a.text-white");
+    if (active) {
+      setIndicator({
+        left: active.offsetLeft,
+        width: active.offsetWidth,
+        ready: true,
+      });
+    }
+  }, [location.pathname]);
 
   const editingTrade =
     (location.state as { editTrade?: Trade } | null)?.editTrade ?? null;
@@ -99,75 +115,83 @@ export default function App() {
   return (
     <div className="min-h-screen bg-surface-0 text-primary">
       {/* Header */}
-      <header className="sticky top-0 z-40 h-14 bg-surface-0/80 backdrop-blur-xl border-b border-border">
-        <div className="max-w-5xl mx-auto px-4 h-full flex items-center justify-between">
-          <h1 className="text-lg font-semibold tracking-tight text-primary">
+      <header className="sticky top-0 z-40 h-14 bg-surface-0/80 backdrop-blur-xl border-b border-[rgba(255,255,255,0.06)]">
+        <div className="max-w-5xl mx-auto px-4 h-full flex items-center">
+          {/* App name */}
+          <h1 className="text-lg font-[500] tracking-tight text-white shrink-0" style={{ fontFamily: "'Geist Sans', system-ui, sans-serif" }}>
             MyTradeBook
           </h1>
-          <nav className="flex gap-0.5 items-center">
-            <div className="hidden sm:contents">
-              {tabs.map((t) => (
-                <NavLink
-                  key={t.to}
-                  to={t.to}
-                  end
-                  className={navClassName}
-                >
-                  {t.label}
-                </NavLink>
-              ))}
-              <div className="w-px h-5 bg-border mx-2" />
-            </div>
-            <div className="relative" ref={menuRef}>
-              <button
-                onClick={() => setMenuOpen((o) => !o)}
-                className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium text-secondary hover:text-primary hover:bg-surface-2 transition-colors duration-150"
+
+          {/* Nav links */}
+          <nav className="hidden sm:flex items-center relative ml-8" ref={navRef}>
+            {tabs.map((t) => (
+              <NavLink
+                key={t.to}
+                to={t.to}
+                end
+                className={navClassName}
               >
-                {displayName && (
-                  <span className="hidden sm:inline">{displayName}</span>
-                )}
-                <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-                </svg>
-              </button>
-              {menuOpen && (
-                <div className="absolute right-0 top-full mt-1 w-48 rounded-lg border border-border bg-surface-1 py-1 shadow-xl z-50">
-                  {profile?.stripe_customer_id && (
-                    <button
-                      onClick={async () => {
-                        setMenuOpen(false);
-                        try {
-                          const { data, error } = await invokeEdgeFunction("create-portal-session");
-                          if (error) {
-                            showToast("Failed to open billing portal", "error");
-                            return;
-                          }
-                          if (data.url) window.location.href = data.url;
-                        } catch {
-                          showToast("Failed to open billing portal", "error");
-                        }
-                      }}
-                      className="w-full text-left px-3 py-2 text-xs text-secondary hover:bg-surface-2 hover:text-primary transition-colors duration-150"
-                    >
-                      Manage Subscription
-                    </button>
-                  )}
+                {t.label}
+              </NavLink>
+            ))}
+            {/* Sliding underline indicator */}
+            <span
+              className="absolute bottom-0 h-0.5 bg-brand rounded-full"
+              style={{
+                left: indicator.left,
+                width: indicator.width,
+                transition: indicator.ready ? "left 250ms cubic-bezier(0.16,1,0.3,1), width 250ms cubic-bezier(0.16,1,0.3,1)" : "none",
+              }}
+            />
+          </nav>
+
+          <div className="flex-1" />
+
+          {/* Avatar dropdown */}
+          <div className="relative" ref={menuRef}>
+            <button
+              onClick={() => setMenuOpen((o) => !o)}
+              className="h-8 w-8 rounded-full bg-surface-2 border border-[rgba(255,255,255,0.06)] flex items-center justify-center text-xs font-medium text-zinc-300 hover:text-white hover:border-[rgba(255,255,255,0.12)] transition-colors duration-150"
+            >
+              {displayName ? displayName.charAt(0).toUpperCase() : "?"}
+            </button>
+            {menuOpen && (
+              <div className="absolute right-0 top-full mt-1 w-48 rounded-lg border border-border bg-surface-1 py-1 z-50">
+                {profile?.stripe_customer_id && (
                   <button
-                    onClick={() => { setMenuOpen(false); navigate("/app/settings"); }}
+                    onClick={async () => {
+                      setMenuOpen(false);
+                      try {
+                        const { data, error } = await invokeEdgeFunction("create-portal-session");
+                        if (error) {
+                          showToast("Failed to open billing portal", "error");
+                          return;
+                        }
+                        if (data.url) window.location.href = data.url;
+                      } catch {
+                        showToast("Failed to open billing portal", "error");
+                      }
+                    }}
                     className="w-full text-left px-3 py-2 text-xs text-secondary hover:bg-surface-2 hover:text-primary transition-colors duration-150"
                   >
-                    Settings
+                    Manage Subscription
                   </button>
-                  <button
-                    onClick={() => { setMenuOpen(false); signOut(); }}
-                    className="w-full text-left px-3 py-2 text-xs text-tertiary hover:bg-surface-2 hover:text-loss transition-colors duration-150"
-                  >
-                    Sign Out
-                  </button>
-                </div>
-              )}
-            </div>
-          </nav>
+                )}
+                <button
+                  onClick={() => { setMenuOpen(false); navigate("/app/settings"); }}
+                  className="w-full text-left px-3 py-2 text-xs text-secondary hover:bg-surface-2 hover:text-primary transition-colors duration-150"
+                >
+                  Settings
+                </button>
+                <button
+                  onClick={() => { setMenuOpen(false); signOut(); }}
+                  className="w-full text-left px-3 py-2 text-xs text-tertiary hover:bg-surface-2 hover:text-loss transition-colors duration-150"
+                >
+                  Sign Out
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </header>
 
