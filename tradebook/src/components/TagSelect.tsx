@@ -50,10 +50,10 @@ export default function TagSelect({
               type="button"
               onClick={() => toggle(tag)}
               className={cn(
-                "px-3 py-1.5 rounded-full text-xs font-medium transition-colors duration-150",
+                "px-2 py-0.5 rounded-[4px] text-[12px] font-medium border transition-colors duration-150",
                 active
-                  ? "bg-brand-muted text-brand"
-                  : "bg-surface-2 text-tertiary hover:text-secondary"
+                  ? "bg-white/[0.08] text-white border-white/[0.08]"
+                  : "bg-transparent text-zinc-500 border-white/[0.04] hover:border-white/[0.08]"
               )}
             >
               {tag}
@@ -67,7 +67,7 @@ export default function TagSelect({
           {customTags.map((tag) => (
             <span
               key={tag}
-              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium bg-brand-muted text-brand"
+              className="inline-flex items-center gap-1 px-2 py-0.5 rounded-[4px] text-[12px] font-medium bg-white/[0.08] text-white border border-white/[0.08]"
             >
               {tag}
               <button
@@ -94,12 +94,12 @@ export default function TagSelect({
             }
           }}
           placeholder="Add custom tag..."
-          className="flex-1 rounded-lg border border-transparent bg-surface-2 px-3 py-1.5 text-xs text-primary placeholder-tertiary hover:border-border-hover focus:border-brand focus:outline-none transition-colors duration-150"
+          className="flex-1 h-[34px] rounded-[6px] border border-white/[0.06] bg-transparent px-[10px] py-[7px] text-[13px] text-primary placeholder-tertiary hover:border-white/[0.1] focus:border-white/[0.15] focus:outline-none transition-colors duration-150"
         />
         <button
           type="button"
           onClick={addCustom}
-          className="px-3 py-1.5 rounded-lg text-xs font-medium bg-surface-2 text-tertiary hover:text-primary transition-colors duration-150"
+          className="px-2.5 py-1 rounded-[6px] text-[12px] font-medium bg-transparent border border-white/[0.06] text-zinc-500 hover:text-primary hover:border-white/[0.1] transition-colors duration-150"
         >
           Add
         </button>

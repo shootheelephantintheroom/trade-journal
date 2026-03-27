@@ -107,7 +107,7 @@ export default function MissedTrades({
   }
 
   const inputClass =
-    "w-full rounded-md border border-white/[0.04] bg-transparent px-3 py-2.5 text-sm text-primary placeholder-tertiary hover:border-white/[0.08] focus:border-white/[0.08] focus:outline-none transition-colors duration-150";
+    "w-full h-[34px] rounded-[6px] border border-white/[0.06] bg-transparent px-[10px] py-[7px] text-[13px] text-primary placeholder-tertiary hover:border-white/[0.1] focus:border-white/[0.15] focus:outline-none transition-colors duration-150";
   const labelClass =
     "block text-[13px] font-medium text-secondary mb-1.5";
 
@@ -123,123 +123,117 @@ export default function MissedTrades({
         </h2>
 
         {/* Ticker, Side, Date */}
-        <div className="bg-surface-1 rounded-lg p-6">
-          <div className="grid grid-cols-3 gap-3">
-            <div>
-              <label className={labelClass}>Ticker</label>
-              <input
-                className={inputClass}
-                placeholder="e.g. TSLA"
-                value={form.ticker}
-                onChange={(e) => set("ticker", e.target.value)}
-                required
-              />
+        <div className="grid grid-cols-3 gap-3">
+          <div>
+            <label className={labelClass}>Ticker</label>
+            <input
+              className={inputClass}
+              placeholder="e.g. TSLA"
+              value={form.ticker}
+              onChange={(e) => set("ticker", e.target.value)}
+              required
+            />
+          </div>
+          <div>
+            <label className={labelClass}>Side</label>
+            <div className="flex h-[34px] rounded-[6px] border border-white/[0.04] bg-transparent p-0.5 gap-0.5">
+              <button
+                type="button"
+                onClick={() => set("side", "long")}
+                className={cn(
+                  "flex-1 rounded-[4px] text-[13px] font-medium transition-colors duration-150",
+                  form.side === "long"
+                    ? "bg-white/[0.08] text-white"
+                    : "text-zinc-500 hover:text-zinc-400"
+                )}
+              >
+                Long
+              </button>
+              <button
+                type="button"
+                onClick={() => set("side", "short")}
+                className={cn(
+                  "flex-1 rounded-[4px] text-[13px] font-medium transition-colors duration-150",
+                  form.side === "short"
+                    ? "bg-white/[0.08] text-white"
+                    : "text-zinc-500 hover:text-zinc-400"
+                )}
+              >
+                Short
+              </button>
             </div>
-            <div>
-              <label className={labelClass}>Side</label>
-              <div className="flex gap-2">
-                <button
-                  type="button"
-                  onClick={() => set("side", "long")}
-                  className={cn(
-                    "flex-1 py-2.5 rounded-lg text-xs font-medium transition-colors duration-150",
-                    form.side === "long"
-                      ? "bg-profit-bg text-profit"
-                      : "bg-surface-2 text-secondary hover:text-primary"
-                  )}
-                >
-                  Long
-                </button>
-                <button
-                  type="button"
-                  onClick={() => set("side", "short")}
-                  className={cn(
-                    "flex-1 py-2.5 rounded-lg text-xs font-medium transition-colors duration-150",
-                    form.side === "short"
-                      ? "bg-loss-bg text-loss"
-                      : "bg-surface-2 text-secondary hover:text-primary"
-                  )}
-                >
-                  Short
-                </button>
-              </div>
-            </div>
-            <div>
-              <label className={labelClass}>Date</label>
-              <input
-                type="date"
-                className={inputClass}
-                value={form.trade_date}
-                onChange={(e) => set("trade_date", e.target.value)}
-                required
-              />
-            </div>
+          </div>
+          <div>
+            <label className={labelClass}>Date</label>
+            <input
+              type="date"
+              className={inputClass}
+              value={form.trade_date}
+              onChange={(e) => set("trade_date", e.target.value)}
+              required
+            />
           </div>
         </div>
 
         {/* Estimated Entry, Exit, Shares */}
-        <div className="bg-surface-1 rounded-lg p-6">
-          <p className="text-[13px] font-medium text-secondary mb-3">
-            Estimated Position
-          </p>
-          <div className="grid grid-cols-3 gap-3">
-            <div>
-              <label className={labelClass}>Est. Entry</label>
-              <input
-                type="number"
-                step="any"
-                min="0"
-                className={inputClass}
-                placeholder="0.00"
-                value={form.estimated_entry ?? ""}
-                onChange={(e) =>
-                  set("estimated_entry", e.target.value ? parseFloat(e.target.value) : null)
-                }
-              />
-            </div>
-            <div>
-              <label className={labelClass}>Est. Exit</label>
-              <input
-                type="number"
-                step="any"
-                min="0"
-                className={inputClass}
-                placeholder="0.00"
-                value={form.estimated_exit ?? ""}
-                onChange={(e) =>
-                  set("estimated_exit", e.target.value ? parseFloat(e.target.value) : null)
-                }
-              />
-            </div>
-            <div>
-              <label className={labelClass}>Shares</label>
-              <input
-                type="number"
-                min="1"
-                className={inputClass}
-                placeholder="0"
-                value={form.estimated_shares ?? ""}
-                onChange={(e) =>
-                  set("estimated_shares", e.target.value ? parseInt(e.target.value) : null)
-                }
-              />
-            </div>
+        <div className="h-px bg-white/[0.04]" />
+        <div className="grid grid-cols-3 gap-3">
+          <div>
+            <label className={labelClass}>Est. Entry</label>
+            <input
+              type="number"
+              step="any"
+              min="0"
+              className={inputClass}
+              placeholder="0.00"
+              value={form.estimated_entry ?? ""}
+              onChange={(e) =>
+                set("estimated_entry", e.target.value ? parseFloat(e.target.value) : null)
+              }
+            />
+          </div>
+          <div>
+            <label className={labelClass}>Est. Exit</label>
+            <input
+              type="number"
+              step="any"
+              min="0"
+              className={inputClass}
+              placeholder="0.00"
+              value={form.estimated_exit ?? ""}
+              onChange={(e) =>
+                set("estimated_exit", e.target.value ? parseFloat(e.target.value) : null)
+              }
+            />
+          </div>
+          <div>
+            <label className={labelClass}>Shares</label>
+            <input
+              type="number"
+              min="1"
+              className={inputClass}
+              placeholder="0"
+              value={form.estimated_shares ?? ""}
+              onChange={(e) =>
+                set("estimated_shares", e.target.value ? parseInt(e.target.value) : null)
+              }
+            />
           </div>
         </div>
 
         {/* Estimated P&L preview */}
         {estimatedPnl !== null && (
-          <div className="bg-surface-1 rounded-lg p-6">
+          <div className="flex items-center gap-2">
             <span className="text-[13px] font-medium text-secondary">
-              Est. P&L{" "}
-              <span
-                className={cn(
-                  "text-sm font-medium font-mono ml-1",
-                  estimatedPnl >= 0 ? "text-profit" : "text-loss"
-                )}
-              >
-                {estimatedPnl >= 0 ? "+" : ""}${estimatedPnl.toFixed(2)}
-              </span>
+              Est. P&L
+            </span>
+            <span
+              className={cn(
+                "text-[13px] font-medium font-mono",
+                estimatedPnl >= 0 ? "text-profit" : "text-loss"
+              )}
+            >
+              {estimatedPnl >= 0 ? "+" : ""}${estimatedPnl.toFixed(2)}
             </span>
           </div>
         )}
@@ -263,7 +257,8 @@ export default function MissedTrades({
         </div>
 
         {/* Why I Hesitated */}
-        <div className="bg-surface-1 rounded-lg p-6">
+        <div className="h-px bg-white/[0.04]" />
+        <div>
           <label className="block text-[13px] font-medium text-secondary mb-2">
             Why I Hesitated
           </label>
@@ -276,7 +271,7 @@ export default function MissedTrades({
         <div>
           <label className={labelClass}>Why You Passed</label>
           <textarea
-            className={inputClass + " resize-none"}
+            className={cn(inputClass, "h-auto min-h-[60px]")}
             rows={2}
             placeholder="e.g. Wasn't sure about float, waited too long"
             value={form.reason}

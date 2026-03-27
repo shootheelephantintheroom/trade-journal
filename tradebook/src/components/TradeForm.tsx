@@ -95,7 +95,7 @@ export default function TradeForm({
   }
 
   const inputClass =
-    "w-full h-10 rounded-md border border-white/[0.04] bg-transparent px-3 text-sm text-white font-sans placeholder-tertiary focus:outline-none focus:border-white/[0.08] transition-all";
+    "w-full h-[34px] rounded-[6px] border border-white/[0.06] bg-transparent px-[10px] py-[7px] text-[13px] text-white font-sans placeholder-tertiary focus:outline-none focus:border-white/[0.15] transition-all";
 
   const labelClass = "block text-[13px] font-medium text-secondary mb-1.5";
 
@@ -138,15 +138,15 @@ export default function TradeForm({
         </div>
         <div>
           <label className={labelClass}>Direction</label>
-          <div className="flex h-9 rounded-[10px] border border-white/[0.06] bg-surface-2 p-0.5 gap-0.5">
+          <div className="flex h-[34px] rounded-[6px] border border-white/[0.04] bg-transparent p-0.5 gap-0.5">
             <button
               type="button"
               onClick={() => set("side", "long")}
               className={cn(
-                "flex-1 rounded-[8px] text-sm font-semibold transition-all",
+                "flex-1 rounded-[4px] text-[13px] font-medium transition-all",
                 form.side === "long"
-                  ? "bg-profit text-surface-0 shadow-sm"
-                  : "text-zinc-500 hover:text-zinc-300"
+                  ? "bg-white/[0.08] text-white"
+                  : "text-zinc-500 hover:text-zinc-400"
               )}
             >
               Long
@@ -155,10 +155,10 @@ export default function TradeForm({
               type="button"
               onClick={() => set("side", "short")}
               className={cn(
-                "flex-1 rounded-[8px] text-sm font-semibold transition-all",
+                "flex-1 rounded-[4px] text-[13px] font-medium transition-all",
                 form.side === "short"
-                  ? "bg-loss text-surface-0 shadow-sm"
-                  : "text-zinc-500 hover:text-zinc-300"
+                  ? "bg-white/[0.08] text-white"
+                  : "text-zinc-500 hover:text-zinc-400"
               )}
             >
               Short
@@ -300,8 +300,8 @@ export default function TradeForm({
       <div>
         <label className={labelClass}>Notes</label>
         <textarea
-          className={cn(inputClass, "h-auto py-2.5 resize-none")}
-          rows={3}
+          className={cn(inputClass, "h-auto min-h-[60px]")}
+          rows={2}
           placeholder="What happened? What would you do differently?"
           value={form.notes}
           onChange={(e) => set("notes", e.target.value)}

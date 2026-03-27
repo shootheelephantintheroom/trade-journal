@@ -150,9 +150,15 @@ button:active, [role="button"]:active {
 input, select, textarea {
   border-radius: var(--radius);
   background-color: transparent;
-  border: 1px solid var(--color-border);
+  border: 1px solid rgba(255, 255, 255, 0.06);
   color: var(--color-primary);
+  padding: 7px 10px;
+  font-size: 13px;
   transition: border-color var(--transition-fast);
+}
+
+input:not([type="checkbox"]):not([type="radio"]) {
+  height: 34px;
 }
 
 input::placeholder, textarea::placeholder {
@@ -160,7 +166,7 @@ input::placeholder, textarea::placeholder {
 }
 
 input:hover, select:hover, textarea:hover {
-  border-color: var(--color-border-hover);
+  border-color: rgba(255, 255, 255, 0.1);
 }
 
 /* ── Card pattern ── */
@@ -319,9 +325,15 @@ tbody tr:hover {
 
 /* ── Focus ring ── */
 input:focus, select:focus, textarea:focus {
-  border-color: var(--color-border-hover);
+  border-color: rgba(255, 255, 255, 0.15);
   box-shadow: none;
   outline: none;
+}
+
+textarea {
+  height: auto;
+  min-height: 60px;
+  resize: none;
 }
 
 /* ── Date / time input icons ── */

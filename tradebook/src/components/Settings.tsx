@@ -21,7 +21,7 @@ const TIMEZONES = [
 ];
 
 const inputClass =
-  "w-full rounded-md border border-white/[0.04] bg-transparent px-3 py-2.5 text-sm text-primary placeholder-tertiary hover:border-white/[0.08] focus:border-white/[0.08] focus:outline-none transition-colors";
+  "w-full h-[34px] rounded-[6px] border border-white/[0.06] bg-transparent px-[10px] py-[7px] text-[13px] text-primary placeholder-tertiary hover:border-white/[0.1] focus:border-white/[0.15] focus:outline-none transition-colors";
 const labelClass =
   "block text-[13px] font-medium text-secondary mb-1.5";
 
@@ -215,8 +215,8 @@ export default function Settings() {
       <h2 className="text-base font-medium text-primary">Account Settings</h2>
 
       {/* Plan Status */}
-      <div className="bg-surface-1 rounded-lg p-6 space-y-4">
-        <h3 className="text-sm font-semibold text-primary">Current Plan</h3>
+      <div className="space-y-4">
+        <h3 className="text-[13px] font-medium text-primary">Current Plan</h3>
         <div className="flex items-center gap-3">
           <span
             className={cn(
@@ -275,8 +275,9 @@ export default function Settings() {
       </div>
 
       {/* Display Name */}
-      <div className="bg-surface-1 rounded-lg p-6 space-y-3">
-        <h3 className="text-sm font-semibold text-primary">Display Name</h3>
+      <div className="h-px bg-white/[0.04]" />
+      <div className="space-y-3">
+        <h3 className="text-[13px] font-medium text-primary">Display Name</h3>
         <div>
           <label className={labelClass}>Name</label>
           <input
@@ -296,8 +297,9 @@ export default function Settings() {
       </div>
 
       {/* Email */}
-      <div className="bg-surface-1 rounded-lg p-6 space-y-3">
-        <h3 className="text-sm font-semibold text-primary">Email Address</h3>
+      <div className="h-px bg-white/[0.04]" />
+      <div className="space-y-3">
+        <h3 className="text-[13px] font-medium text-primary">Email Address</h3>
         <p className="text-xs text-tertiary">
           Current: {user?.email ?? "—"}
         </p>
@@ -321,8 +323,9 @@ export default function Settings() {
       </div>
 
       {/* Password */}
-      <div className="bg-surface-1 rounded-lg p-6 space-y-3">
-        <h3 className="text-sm font-semibold text-primary">Password</h3>
+      <div className="h-px bg-white/[0.04]" />
+      <div className="space-y-3">
+        <h3 className="text-[13px] font-medium text-primary">Password</h3>
         <div>
           <label className={labelClass}>New Password</label>
           <input
@@ -353,8 +356,9 @@ export default function Settings() {
       </div>
 
       {/* Timezone */}
-      <div className="bg-surface-1 rounded-lg p-6 space-y-3">
-        <h3 className="text-sm font-semibold text-primary">Timezone</h3>
+      <div className="h-px bg-white/[0.04]" />
+      <div className="space-y-3">
+        <h3 className="text-[13px] font-medium text-primary">Timezone</h3>
         <div>
           <label className={labelClass}>Timezone</label>
           <select
@@ -383,7 +387,7 @@ export default function Settings() {
 
       {/* Danger Zone */}
       <div className="bg-surface-1 rounded-lg p-6 space-y-3">
-        <h3 className="text-sm font-semibold text-loss">Danger Zone</h3>
+        <h3 className="text-[13px] font-medium text-loss">Danger Zone</h3>
         <p className="text-xs text-tertiary">
           Permanently delete your account and all data. This cannot be undone.
         </p>

@@ -23,7 +23,7 @@ const GRADES = [
 ];
 
 const inputClass =
-  "w-full rounded-md border border-white/[0.04] bg-transparent px-3 py-2.5 text-sm text-primary placeholder-tertiary hover:border-white/[0.08] focus:border-white/[0.08] focus:outline-none transition-colors duration-150 resize-none";
+  "w-full rounded-[6px] border border-white/[0.06] bg-transparent px-[10px] py-[7px] text-[13px] text-primary placeholder-tertiary hover:border-white/[0.1] focus:border-white/[0.15] focus:outline-none transition-colors duration-150";
 const labelClass =
   "block text-[13px] font-medium text-secondary mb-1.5";
 
@@ -329,11 +329,11 @@ export default function Journal() {
         ) : entry ? (
           <div className="space-y-5">
             {/* Pre-market Plan */}
-            <div className="bg-surface-1 rounded-lg p-6">
+            <div>
               <label className={labelClass}>Pre-market Plan</label>
               <textarea
-                className={inputClass}
-                rows={4}
+                className={cn(inputClass, "min-h-[60px]")}
+                rows={3}
                 placeholder="What's on your watchlist? What setups are you looking for?"
                 value={entry.premarket_plan}
                 onChange={(e) => updateField("premarket_plan", e.target.value)}
@@ -341,11 +341,12 @@ export default function Journal() {
             </div>
 
             {/* Post-market Review */}
-            <div className="bg-surface-1 rounded-lg p-6">
+            <div className="h-px bg-white/[0.04]" />
+            <div>
               <label className={labelClass}>Post-market Review</label>
               <textarea
-                className={inputClass}
-                rows={4}
+                className={cn(inputClass, "min-h-[60px]")}
+                rows={3}
                 placeholder="How did the day go? What worked, what didn't?"
                 value={entry.postmarket_review}
                 onChange={(e) => updateField("postmarket_review", e.target.value)}
@@ -353,11 +354,12 @@ export default function Journal() {
             </div>
 
             {/* Lessons Learned */}
-            <div className="bg-surface-1 rounded-lg p-6">
+            <div className="h-px bg-white/[0.04]" />
+            <div>
               <label className={labelClass}>Lessons Learned</label>
               <textarea
-                className={inputClass}
-                rows={3}
+                className={cn(inputClass, "min-h-[60px]")}
+                rows={2}
                 placeholder="What will you do differently?"
                 value={entry.lessons}
                 onChange={(e) => updateField("lessons", e.target.value)}
@@ -419,11 +421,12 @@ export default function Journal() {
             </div>
 
             {/* Goals for Tomorrow */}
-            <div className="bg-surface-1 rounded-lg p-6">
+            <div className="h-px bg-white/[0.04]" />
+            <div>
               <label className={labelClass}>Goals for Tomorrow</label>
               <textarea
-                className={inputClass}
-                rows={3}
+                className={cn(inputClass, "min-h-[60px]")}
+                rows={2}
                 placeholder="What do you want to focus on next session?"
                 value={entry.goals_for_tomorrow}
                 onChange={(e) => updateField("goals_for_tomorrow", e.target.value)}
