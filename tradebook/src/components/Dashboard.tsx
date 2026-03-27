@@ -59,50 +59,39 @@ function TodaySummary({ trades }: { trades: Trade[] }) {
       tabIndex={0}
       onClick={() => setDismissed(true)}
       onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") setDismissed(true); }}
-      className="relative rounded-xl bg-surface-1 border border-white/[0.06] p-6 cursor-pointer
-                 animate-slide-down overflow-hidden select-none
-                 hover:border-white/[0.1] transition-[border-color] duration-200"
+      className="relative pl-4 py-3 cursor-pointer animate-slide-down select-none
+                 border-l-2 border-brand"
     >
-      {/* Left accent */}
-      <div className="absolute left-0 top-0 bottom-0 flex items-center pl-3">
-        <span className="relative flex h-2 w-2">
-          <span className="absolute inline-flex h-full w-full rounded-full bg-brand animate-ping opacity-75" />
-          <span className="relative inline-flex h-2 w-2 rounded-full bg-brand" />
-        </span>
+      <div className="flex items-center justify-between mb-2">
+        <h3 className="text-[13px] font-medium text-primary">
+          Today's Session
+        </h3>
+        <span className="text-[11px] text-tertiary">dismiss</span>
       </div>
 
-      <div className="pl-4">
-        <div className="flex items-center justify-between mb-3">
-          <h3 className="text-[13px] font-medium text-primary">
-            Today's Session
-          </h3>
-          <span className="text-[11px] text-tertiary">click to dismiss</span>
+      <div className="flex items-center gap-6">
+        <div>
+          <p className="text-[12px] text-tertiary">Trades</p>
+          <p className="text-xl font-medium tabular-nums text-primary">{todayTrades.length}</p>
         </div>
-
-        <div className="grid grid-cols-3 gap-4">
-          <div>
-            <p className="text-[13px] font-medium text-secondary">Trades</p>
-            <p className="text-2xl font-semibold tabular-nums text-primary">{todayTrades.length}</p>
-          </div>
-          <div>
-            <p className="text-[13px] font-medium text-secondary">W / L</p>
-            <p className="text-2xl font-semibold tabular-nums">
-              <span className="text-profit">{wins}</span>
-              <span className="text-tertiary"> / </span>
-              <span className="text-loss">{losses}</span>
-            </p>
-          </div>
-          <div>
-            <p className="text-[13px] font-medium text-secondary">P&L</p>
-            <p
-              className={cn(
-                "text-2xl font-semibold tabular-nums",
-                totalPnl >= 0 ? "text-profit" : "text-loss"
-              )}
-            >
-              {totalPnl >= 0 ? "+" : ""}${totalPnl.toFixed(2)}
-            </p>
-          </div>
+        <div>
+          <p className="text-[12px] text-tertiary">W / L</p>
+          <p className="text-xl font-medium tabular-nums">
+            <span className="text-profit">{wins}</span>
+            <span className="text-tertiary"> / </span>
+            <span className="text-loss">{losses}</span>
+          </p>
+        </div>
+        <div>
+          <p className="text-[12px] text-tertiary">P&L</p>
+          <p
+            className={cn(
+              "text-xl font-medium tabular-nums",
+              totalPnl >= 0 ? "text-profit" : "text-loss"
+            )}
+          >
+            {totalPnl >= 0 ? "+" : ""}${totalPnl.toFixed(2)}
+          </p>
         </div>
       </div>
     </div>
@@ -600,17 +589,15 @@ export default function Dashboard({
           <SectionHeader title="Charts" />
           <div className={cn("grid grid-cols-1 gap-4", proUser && "lg:grid-cols-2")}>
             {equityPoints.length >= 2 && (
-              <div className="rounded-xl bg-surface-1 border border-white/[0.06] p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-[13px] font-medium text-zinc-400">
+              <div className="pt-4 border-t border-white/[0.04]">
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="text-[13px] font-medium text-secondary">
                     Equity Curve
                   </h3>
                   <span
                     className={cn(
-                      "text-xs font-semibold font-mono px-2.5 py-1 rounded-md",
-                      totalPnl >= 0
-                        ? "text-profit bg-profit-muted"
-                        : "text-loss bg-loss-muted"
+                      "text-[12px] font-medium font-mono",
+                      totalPnl >= 0 ? "text-profit" : "text-loss"
                     )}
                   >
                     {totalPnl >= 0 ? "+" : ""}${totalPnl.toFixed(2)}
@@ -638,9 +625,7 @@ export default function Dashboard({
       {hasTrades && dailyStats.length > 0 && (
         <section className="space-y-4">
           <SectionHeader title="Trade Calendar" />
-          <div className="rounded-xl bg-surface-1 border border-white/[0.06] p-6">
-            <CalendarHeatmap dailyStats={dailyStats} />
-          </div>
+          <CalendarHeatmap dailyStats={dailyStats} />
         </section>
       )}
 

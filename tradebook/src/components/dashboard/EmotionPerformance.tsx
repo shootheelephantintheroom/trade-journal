@@ -6,8 +6,8 @@ export default function EmotionPerformance({
   emotionStats: EmotionStats[];
 }) {
   return (
-    <div className="rounded-xl bg-surface-1 border border-white/[0.06] p-5">
-      <h3 className="text-[13px] font-medium text-zinc-400 mb-4">
+    <div>
+      <h3 className="text-[13px] font-medium text-secondary mb-3">
         By Emotion
       </h3>
       <div className="overflow-x-auto">
@@ -33,7 +33,7 @@ export default function EmotionPerformance({
           </thead>
           <tbody>
             {emotionStats.map((s) => (
-              <tr key={s.emotion} className="border-t border-border hover:bg-surface-2 transition-colors">
+              <tr key={s.emotion} className="border-t border-border hover:bg-white/[0.02] transition-colors">
                 <td className="py-2.5 text-secondary text-xs">{s.emotion}</td>
                 <td className="py-2.5 text-secondary text-xs">{s.totalTrades}</td>
                 <td className={`py-2.5 text-xs font-medium ${s.winRate >= 50 ? "text-profit" : "text-loss"}`}>

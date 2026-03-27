@@ -6,8 +6,8 @@ export default function SetupPerformance({
   tagStats: TagStats[];
 }) {
   return (
-    <div className="rounded-xl bg-surface-1 border border-white/[0.06] p-5">
-      <h3 className="text-[13px] font-medium text-zinc-400 mb-4">
+    <div>
+      <h3 className="text-[13px] font-medium text-secondary mb-3">
         By Setup
       </h3>
       <div className="overflow-x-auto">
@@ -36,7 +36,7 @@ export default function SetupPerformance({
           </thead>
           <tbody>
             {tagStats.map((s) => (
-              <tr key={s.tag} className="border-t border-border hover:bg-surface-2 transition-colors">
+              <tr key={s.tag} className="border-t border-border hover:bg-white/[0.02] transition-colors">
                 <td className="py-2.5">
                   <span className="px-1.5 py-0.5 rounded-full text-[10px] font-medium bg-brand-muted text-brand border border-brand/20">
                     {s.tag}

@@ -6,8 +6,8 @@ export default function DailyBreakdown({
   dailyStats: DayStats[];
 }) {
   return (
-    <div className="rounded-xl bg-surface-1 border border-white/[0.06] p-5">
-      <h3 className="text-[13px] font-medium text-zinc-400 mb-4">
+    <div className="pt-4 border-t border-white/[0.04]">
+      <h3 className="text-[13px] font-medium text-secondary mb-3">
         Daily Breakdown
       </h3>
       <div className="overflow-x-auto">
@@ -40,7 +40,7 @@ export default function DailyBreakdown({
               return (
                 <tr
                   key={day.date}
-                  className="border-t border-border hover:bg-surface-2 transition-colors"
+                  className="border-t border-border hover:bg-white/[0.02] transition-colors"
                 >
                   <td className="py-2.5 text-secondary text-xs">
                     {day.date}

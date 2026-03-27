@@ -89,7 +89,7 @@ export default function EquityCurve({
 
   return (
     <div ref={wrapperRef}>
-      <ResponsiveContainer width="100%" height={200}>
+      <ResponsiveContainer width="100%" height={180}>
         <AreaChart
           data={points}
           margin={{ top: 8, right: 8, bottom: 0, left: -8 }}

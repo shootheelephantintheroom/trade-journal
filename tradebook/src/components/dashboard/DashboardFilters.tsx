@@ -134,11 +134,11 @@ const QUICK_KEYS: QuickRange[] = ["30d", "90d", "6mo", "1yr", "All"];
 const SIDES = ["all", "long", "short"] as const;
 
 const pillBase =
-  "px-2.5 py-1 rounded-md text-[11px] font-medium transition-all border cursor-pointer";
+  "px-2 py-1 rounded-[4px] text-[12px] font-medium transition-all border cursor-pointer";
 const pillActive =
-  "bg-brand-muted text-brand border-brand/30";
+  "bg-white/[0.06] text-white border-white/[0.06]";
 const pillInactive =
-  "text-tertiary border-transparent hover:text-secondary hover:border-border-hover";
+  "text-tertiary border-transparent hover:text-secondary hover:border-white/[0.06]";
 
 const inputClass =
   "w-full h-[34px] rounded-[6px] border border-white/[0.06] bg-transparent px-[10px] py-[7px] text-[13px] text-primary placeholder-tertiary hover:border-white/[0.1] focus:border-white/[0.15] focus:outline-none transition-colors";
@@ -169,7 +169,7 @@ export default function DashboardFilters({
 
   return (
     <PaywallGate feature="Advanced Filters">
-      <div className="rounded-xl bg-surface-1 p-4 mb-6">
+      <div className="py-3 border-t border-white/[0.04] mb-4">
         <div className="flex flex-wrap gap-x-6 gap-y-4 items-end">
           {/* Date range */}
           <div className="flex flex-col gap-1.5">
@@ -220,13 +220,7 @@ export default function DashboardFilters({
                   onClick={() => onUpdate({ side: s })}
                   className={cn(
                     pillBase,
-                    filters.side === s
-                      ? s === "long"
-                        ? "bg-profit-muted text-profit border-profit/30"
-                        : s === "short"
-                          ? "bg-loss-muted text-loss border-loss/30"
-                          : pillActive
-                      : pillInactive
+                    filters.side === s ? pillActive : pillInactive
                   )}
                 >
                   {s === "all" ? "All" : s === "long" ? "Long" : "Short"}
