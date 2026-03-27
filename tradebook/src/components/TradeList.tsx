@@ -93,6 +93,19 @@ function sortTrades(
   return sorted;
 }
 
+const pillBase =
+  "px-2 py-1 rounded-[4px] text-[12px] font-medium transition-all cursor-pointer";
+const pillActive =
+  "bg-white/[0.06] text-white";
+const pillInactive =
+  "text-tertiary hover:text-secondary";
+
+const inputClass =
+  "h-[30px] rounded-[4px] border border-white/[0.06] bg-transparent px-2 text-[13px] text-primary placeholder-tertiary hover:border-white/[0.1] focus:border-white/[0.15] focus:outline-none transition-colors";
+
+const thClass =
+  "text-[11px] font-medium text-tertiary uppercase tracking-[0.04em] py-2";
+
 export default function TradeList({
   onLogTrade,
   onEdit,
@@ -225,7 +238,7 @@ export default function TradeList({
     return (
       <div className="flex flex-col items-center justify-center py-20 gap-3">
         <div className="h-6 w-6 border-2 border-tertiary border-t-brand rounded-full animate-spin" />
-        <p className="text-sm text-tertiary">Loading trades...</p>
+        <p className="text-[13px] text-tertiary">Loading trades...</p>
       </div>
     );
   }
@@ -238,19 +251,19 @@ export default function TradeList({
   if (totalCount === 0 && !hasActiveFilters) {
     return (
       <div className="flex flex-col items-center justify-center py-20 gap-4">
-        <div className="w-16 h-16 rounded-2xl bg-surface-1 flex items-center justify-center text-3xl">
+        <div className="w-12 h-12 rounded-[6px] flex items-center justify-center text-2xl">
           📋
         </div>
         <h2 className="text-base font-medium text-primary tracking-tight">
           No trades yet
         </h2>
-        <p className="text-sm text-secondary text-center max-w-xs">
+        <p className="text-[13px] text-tertiary text-center max-w-xs">
           Start logging to see your trade history here.
         </p>
         {onLogTrade && (
           <button
             onClick={onLogTrade}
-            className="mt-2 bg-brand hover:bg-brand/90 text-surface-0 font-medium text-sm px-6 py-2.5 rounded-lg transition-colors"
+            className="mt-2 bg-brand hover:bg-brand/90 text-white font-medium text-[13px] px-5 py-2 rounded-[6px] transition-colors"
           >
             Log Your First Trade
           </button>
@@ -270,9 +283,9 @@ export default function TradeList({
   }
 
   const SortIcon = ({ col }: { col: SortKey }) => {
-    if (sortKey !== col) return <span className="text-surface-3 ml-0.5">↕</span>;
+    if (sortKey !== col) return <span className="text-zinc-600 ml-0.5">↕</span>;
     return (
-      <span className="text-brand ml-0.5">
+      <span className="text-secondary ml-0.5">
         {sortDir === "asc" ? "↑" : "↓"}
       </span>
     );
@@ -296,19 +309,19 @@ export default function TradeList({
       {/* Header bar */}
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div className="flex items-center gap-4">
-          <h2 className="text-base font-medium text-primary tracking-tight">
+          <h2 className="text-base font-medium text-white tracking-tight">
             Trade History
           </h2>
-          <div className="flex items-center gap-1.5 text-xs">
+          <div className="flex items-center gap-1.5 text-[12px]">
             <span className="text-tertiary">{totalCount} trades</span>
-            <span className="text-surface-3">·</span>
+            <span className="text-zinc-700">·</span>
             <span className="text-profit font-medium">{pageWins}W</span>
-            <span className="text-surface-3">/</span>
+            <span className="text-zinc-700">/</span>
             <span className="text-loss font-medium">{pageLosses}L</span>
-            <span className="text-surface-3">·</span>
+            <span className="text-zinc-700">·</span>
             <span
               className={cn(
-                "font-semibold font-mono",
+                "font-medium font-mono",
                 pagePnl >= 0 ? "text-profit" : "text-loss"
               )}
             >
@@ -316,23 +329,14 @@ export default function TradeList({
             </span>
           </div>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
           {/* Win/Loss filter pills */}
           <div className="flex gap-1">
             {(["all", "win", "loss"] as FilterResult[]).map((f) => (
               <button
                 key={f}
                 onClick={() => setResultFilter(f)}
-                className={cn(
-                  "px-2.5 py-1 rounded-md text-[11px] font-medium transition-all",
-                  resultFilter === f
-                    ? f === "win"
-                      ? "bg-profit-muted text-profit border border-profit/40"
-                      : f === "loss"
-                        ? "bg-loss-muted text-loss border border-loss/40"
-                        : "bg-surface-2 text-primary border border-border"
-                    : "text-tertiary border border-transparent hover:text-secondary"
-                )}
+                className={cn(pillBase, resultFilter === f ? pillActive : pillInactive)}
               >
                 {f === "all" ? "All" : f === "win" ? "Wins" : "Losses"}
               </button>
@@ -342,202 +346,158 @@ export default function TradeList({
           <button
             onClick={handleExportCsv}
             disabled={exporting}
-            className="flex items-center gap-1.5 text-xs text-tertiary hover:text-primary border border-transparent hover:border-border-hover px-3 py-1.5 rounded-lg transition-colors disabled:opacity-50"
+            className="text-[12px] text-tertiary hover:text-white transition-colors disabled:opacity-50"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-              className="w-3.5 h-3.5"
-            >
-              <path d="M10.75 2.75a.75.75 0 0 0-1.5 0v8.614L6.295 8.235a.75.75 0 1 0-1.09 1.03l4.25 4.5a.75.75 0 0 0 1.09 0l4.25-4.5a.75.75 0 0 0-1.09-1.03l-2.955 3.129V2.75Z" />
-              <path d="M3.5 12.75a.75.75 0 0 0-1.5 0v2.5A2.75 2.75 0 0 0 4.75 18h10.5A2.75 2.75 0 0 0 18 15.25v-2.5a.75.75 0 0 0-1.5 0v2.5c0 .69-.56 1.25-1.25 1.25H4.75c-.69 0-1.25-.56-1.25-1.25v-2.5Z" />
-            </svg>
-            {exporting ? "Exporting..." : "CSV"}
+            {exporting ? "Exporting..." : "Export CSV"}
           </button>
         </div>
       </div>
 
       {/* Filter bar */}
-      <div className="rounded-xl bg-surface-1 p-3">
-        <div className="flex flex-wrap items-end gap-3">
-          <div>
-            <label className="block text-[13px] font-medium text-secondary mb-1">
-              From
-            </label>
-            <input
-              type="date"
-              value={filters.dateFrom || ""}
-              onChange={(e) => {
-                setFilters((f) => ({ ...f, dateFrom: e.target.value || undefined }));
-                setPage(1);
-              }}
-              className="bg-surface-2 border border-transparent hover:border-border-hover rounded-lg px-2.5 py-1.5 text-xs text-secondary focus:outline-none focus:border-brand transition-colors"
-            />
-          </div>
-          <div>
-            <label className="block text-[13px] font-medium text-secondary mb-1">
-              To
-            </label>
-            <input
-              type="date"
-              value={filters.dateTo || ""}
-              onChange={(e) => {
-                setFilters((f) => ({ ...f, dateTo: e.target.value || undefined }));
-                setPage(1);
-              }}
-              className="bg-surface-2 border border-transparent hover:border-border-hover rounded-lg px-2.5 py-1.5 text-xs text-secondary focus:outline-none focus:border-brand transition-colors"
-            />
-          </div>
-          <div>
-            <label className="block text-[13px] font-medium text-secondary mb-1">
-              Ticker
-            </label>
-            <input
-              type="text"
-              placeholder="Search..."
-              value={tickerInput}
-              onChange={(e) => setTickerInput(e.target.value)}
-              className="bg-surface-2 border border-transparent hover:border-border-hover rounded-lg px-2.5 py-1.5 text-xs text-secondary w-24 focus:outline-none focus:border-brand transition-colors"
-            />
-          </div>
-          <div>
-            <label className="block text-[13px] font-medium text-secondary mb-1">
-              Side
-            </label>
-            <div className="flex gap-1">
-              {(["all", "long", "short"] as const).map((s) => (
-                <button
-                  key={s}
-                  onClick={() => {
-                    setFilters((f) => ({ ...f, side: s === "all" ? undefined : s }));
-                    setPage(1);
-                  }}
-                  className={cn(
-                    "px-2.5 py-1 rounded-md text-[11px] font-medium transition-all",
-                    (s === "all" && !filters.side) || filters.side === s
-                      ? s === "long"
-                        ? "bg-profit-muted text-profit border border-profit/40"
-                        : s === "short"
-                          ? "bg-loss-muted text-loss border border-loss/40"
-                          : "bg-surface-2 text-primary border border-border"
-                      : "text-tertiary border border-transparent hover:text-secondary"
-                  )}
-                >
-                  {s === "all" ? "All" : s === "long" ? "Long" : "Short"}
-                </button>
-              ))}
-            </div>
-          </div>
-          <div>
-            <label className="block text-[13px] font-medium text-secondary mb-1">
-              Grade
-            </label>
-            <div className="flex gap-1">
-              {(["all", "A", "B", "C", "D"] as const).map((g) => (
-                <button
-                  key={g}
-                  onClick={() => {
-                    setFilters((f) => ({ ...f, grade: g === "all" ? undefined : g }));
-                    setPage(1);
-                  }}
-                  className={cn(
-                    "px-2.5 py-1 rounded-md text-[11px] font-medium transition-all",
-                    (g === "all" && !filters.grade) || filters.grade === g
-                      ? g === "A"
-                        ? "bg-profit-muted text-profit border border-profit/40"
-                        : g === "B"
-                          ? "bg-brand-muted text-brand border border-brand/40"
-                          : g === "C"
-                            ? "bg-amber-muted text-amber border border-amber/40"
-                            : g === "D"
-                              ? "bg-loss-muted text-loss border border-loss/40"
-                              : "bg-surface-2 text-primary border border-border"
-                      : "text-tertiary border border-transparent hover:text-secondary"
-                  )}
-                >
-                  {g === "all" ? "All" : g}
-                </button>
-              ))}
-            </div>
-          </div>
-          {hasActiveFilters && (
-            <button
-              onClick={() => {
-                setFilters({});
-                setTickerInput("");
-                setPage(1);
-              }}
-              className="text-[11px] text-tertiary hover:text-primary transition-colors underline"
-            >
-              Clear filters
-            </button>
-          )}
+      <div className="flex flex-wrap items-end gap-3 py-3 border-t border-white/[0.04]">
+        <div>
+          <label className="block text-[11px] font-medium text-tertiary uppercase tracking-[0.04em] mb-1.5">
+            From
+          </label>
+          <input
+            type="date"
+            value={filters.dateFrom || ""}
+            onChange={(e) => {
+              setFilters((f) => ({ ...f, dateFrom: e.target.value || undefined }));
+              setPage(1);
+            }}
+            className={cn(inputClass, "w-[130px]")}
+          />
         </div>
+        <div>
+          <label className="block text-[11px] font-medium text-tertiary uppercase tracking-[0.04em] mb-1.5">
+            To
+          </label>
+          <input
+            type="date"
+            value={filters.dateTo || ""}
+            onChange={(e) => {
+              setFilters((f) => ({ ...f, dateTo: e.target.value || undefined }));
+              setPage(1);
+            }}
+            className={cn(inputClass, "w-[130px]")}
+          />
+        </div>
+        <div>
+          <label className="block text-[11px] font-medium text-tertiary uppercase tracking-[0.04em] mb-1.5">
+            Ticker
+          </label>
+          <input
+            type="text"
+            placeholder="Search..."
+            value={tickerInput}
+            onChange={(e) => setTickerInput(e.target.value)}
+            className={cn(inputClass, "w-24")}
+          />
+        </div>
+        <div>
+          <label className="block text-[11px] font-medium text-tertiary uppercase tracking-[0.04em] mb-1.5">
+            Side
+          </label>
+          <div className="flex gap-1">
+            {(["all", "long", "short"] as const).map((s) => (
+              <button
+                key={s}
+                onClick={() => {
+                  setFilters((f) => ({ ...f, side: s === "all" ? undefined : s }));
+                  setPage(1);
+                }}
+                className={cn(
+                  pillBase,
+                  (s === "all" && !filters.side) || filters.side === s
+                    ? pillActive
+                    : pillInactive
+                )}
+              >
+                {s === "all" ? "All" : s === "long" ? "Long" : "Short"}
+              </button>
+            ))}
+          </div>
+        </div>
+        <div>
+          <label className="block text-[11px] font-medium text-tertiary uppercase tracking-[0.04em] mb-1.5">
+            Grade
+          </label>
+          <div className="flex gap-1">
+            {(["all", "A", "B", "C", "D"] as const).map((g) => (
+              <button
+                key={g}
+                onClick={() => {
+                  setFilters((f) => ({ ...f, grade: g === "all" ? undefined : g }));
+                  setPage(1);
+                }}
+                className={cn(
+                  pillBase,
+                  (g === "all" && !filters.grade) || filters.grade === g
+                    ? pillActive
+                    : pillInactive
+                )}
+              >
+                {g === "all" ? "All" : g}
+              </button>
+            ))}
+          </div>
+        </div>
+        {hasActiveFilters && (
+          <button
+            onClick={() => {
+              setFilters({});
+              setTickerInput("");
+              setPage(1);
+            }}
+            className="text-[12px] text-tertiary hover:text-white transition-colors"
+          >
+            Clear filters
+          </button>
+        )}
       </div>
 
       {/* Table */}
       {sorted.length > 0 ? (
         <div className={cn("transition-opacity", fetching && "opacity-60")}>
           <div className="overflow-x-auto">
-            <table className="w-full text-sm text-left">
+            <table className="w-full text-[13px] text-left">
               <thead>
-                <tr>
+                <tr className="border-b border-white/[0.06]">
                   <th
-                    className="text-[13px] font-medium text-secondary px-4 py-3 cursor-pointer hover:text-secondary transition-colors"
-                    style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}
+                    className={cn(thClass, "cursor-pointer hover:text-secondary transition-colors")}
                     onClick={() => toggleSort("date")}
                   >
                     Date <SortIcon col="date" />
                   </th>
                   <th
-                    className="text-[13px] font-medium text-secondary px-4 py-3 cursor-pointer hover:text-secondary transition-colors"
-                    style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}
+                    className={cn(thClass, "cursor-pointer hover:text-secondary transition-colors")}
                     onClick={() => toggleSort("ticker")}
                   >
                     Ticker <SortIcon col="ticker" />
                   </th>
-                  <th
-                    className="text-[13px] font-medium text-secondary px-4 py-3"
-                    style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}
-                  >
-                    Direction
+                  <th className={thClass}>
+                    Side
                   </th>
-                  <th
-                    className="text-[13px] font-medium text-secondary px-4 py-3 text-right"
-                    style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}
-                  >
+                  <th className={cn(thClass, "text-right")}>
                     Entry
                   </th>
-                  <th
-                    className="text-[13px] font-medium text-secondary px-4 py-3 text-right"
-                    style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}
-                  >
+                  <th className={cn(thClass, "text-right")}>
                     Exit
                   </th>
-                  <th
-                    className="text-[13px] font-medium text-secondary px-4 py-3 text-right"
-                    style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}
-                  >
+                  <th className={cn(thClass, "text-right")}>
                     Size
                   </th>
                   <th
-                    className="text-[13px] font-medium text-secondary px-4 py-3 text-right cursor-pointer hover:text-secondary transition-colors"
-                    style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}
+                    className={cn(thClass, "text-right cursor-pointer hover:text-secondary transition-colors")}
                     onClick={() => toggleSort("pnl")}
                   >
                     P&L <SortIcon col="pnl" />
                   </th>
-                  <th
-                    className="text-[13px] font-medium text-secondary px-4 py-3 text-right"
-                    style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}
-                  >
+                  <th className={cn(thClass, "text-right")}>
                     R:R
                   </th>
-                  <th
-                    className="text-[13px] font-medium text-secondary px-4 py-3"
-                    style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}
-                  >
+                  <th className={thClass}>
                     Setup
                   </th>
                 </tr>
@@ -555,53 +515,50 @@ export default function TradeList({
                           setExpandedId(isExpanded ? null : t.id)
                         }
                         className={cn(
-                          "cursor-pointer transition-colors h-12",
-                          isExpanded ? "bg-white/[0.03]" : "hover:bg-white/[0.03]"
+                          "group cursor-pointer transition-colors border-b border-white/[0.03]",
+                          isExpanded ? "bg-white/[0.02]" : "hover:bg-white/[0.02]"
                         )}
-                        style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}
                       >
-                        <td className="px-4 text-sm text-primary whitespace-nowrap">
+                        <td className="py-2 text-[13px] text-secondary whitespace-nowrap">
                           {t.trade_date}
                         </td>
-                        <td className="px-4">
-                          <span className="font-semibold text-primary">
+                        <td className="py-2">
+                          <span className="font-mono font-medium text-primary">
                             {t.ticker}
                           </span>
                         </td>
-                        <td className="px-4">
+                        <td className="py-2">
                           <span
                             className={cn(
-                              "inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-medium",
-                              t.side === "long"
-                                ? "bg-brand-muted text-blue-400"
-                                : "bg-amber-muted text-amber-400"
+                              "text-[13px] font-medium",
+                              t.side === "long" ? "text-profit" : "text-loss"
                             )}
                           >
                             {t.side === "long" ? "Long" : "Short"}
                           </span>
                         </td>
-                        <td className="px-4 text-sm text-primary font-mono text-right tabular-nums">
+                        <td className="py-2 text-[13px] text-secondary font-mono text-right tabular-nums">
                           ${t.entry_price.toFixed(2)}
                         </td>
-                        <td className="px-4 text-sm text-primary font-mono text-right tabular-nums">
+                        <td className="py-2 text-[13px] text-secondary font-mono text-right tabular-nums">
                           ${t.exit_price.toFixed(2)}
                         </td>
-                        <td className="px-4 text-sm text-primary font-mono text-right tabular-nums">
+                        <td className="py-2 text-[13px] text-secondary font-mono text-right tabular-nums">
                           {t.shares}
                         </td>
                         <td
                           className={cn(
-                            "px-4 font-semibold font-mono text-sm text-right tabular-nums",
+                            "py-2 font-medium font-mono text-[13px] text-right tabular-nums",
                             pl >= 0 ? "text-profit" : "text-loss"
                           )}
                         >
                           {pl >= 0 ? "+" : ""}${pl.toFixed(2)}
                         </td>
-                        <td className="px-4 text-sm text-primary font-mono text-right tabular-nums">
-                          {rr !== null ? `${rr.toFixed(1)}R` : "—"}
+                        <td className="py-2 text-[13px] text-secondary font-mono text-right tabular-nums">
+                          {rr !== null ? `${rr.toFixed(1)}R` : "\u2014"}
                         </td>
-                        <td className="px-4 text-sm text-secondary max-w-[200px] truncate">
-                          {t.setup || "—"}
+                        <td className="py-2 text-[13px] text-tertiary max-w-[200px] truncate">
+                          {t.setup || "\u2014"}
                         </td>
                       </tr>
                       {/* Expanded detail row */}
@@ -609,13 +566,12 @@ export default function TradeList({
                         <tr key={`${t.id}-detail`}>
                           <td
                             colSpan={9}
-                            className="px-0 py-0"
-                            style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}
+                            className="p-0 border-b border-white/[0.03]"
                           >
-                            <div className="trade-expand px-4 py-4 grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                            <div className="bg-white/[0.02] p-3 grid grid-cols-1 md:grid-cols-2 gap-3 text-[13px]">
                               {t.entry_time && (
                                 <div>
-                                  <span className="text-[13px] font-medium text-secondary">
+                                  <span className="text-[11px] font-medium text-tertiary uppercase tracking-[0.04em]">
                                     Time
                                   </span>
                                   <p className="text-secondary mt-0.5">
@@ -626,7 +582,7 @@ export default function TradeList({
                               )}
                               {t.premarket_plan && (
                                 <div>
-                                  <span className="text-[13px] font-medium text-secondary">
+                                  <span className="text-[11px] font-medium text-tertiary uppercase tracking-[0.04em]">
                                     Pre-market Plan
                                   </span>
                                   <p className="text-secondary mt-0.5">
@@ -636,7 +592,7 @@ export default function TradeList({
                               )}
                               {t.notes && (
                                 <div className="md:col-span-2">
-                                  <span className="text-[13px] font-medium text-secondary">
+                                  <span className="text-[11px] font-medium text-tertiary uppercase tracking-[0.04em]">
                                     Notes
                                   </span>
                                   <p className="text-secondary mt-0.5 whitespace-pre-wrap">
@@ -646,14 +602,14 @@ export default function TradeList({
                               )}
                               {t.emotions && (
                                 <div>
-                                  <span className="text-[13px] font-medium text-secondary">
+                                  <span className="text-[11px] font-medium text-tertiary uppercase tracking-[0.04em]">
                                     Emotions
                                   </span>
                                   <div className="flex flex-wrap gap-1 mt-1">
                                     {t.emotions.split(",").map((e) => (
                                       <span
                                         key={e.trim()}
-                                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-brand-muted border border-brand/20 text-brand"
+                                        className="px-1.5 py-0.5 rounded-[4px] text-[12px] font-medium bg-white/[0.06] text-secondary"
                                       >
                                         {e.trim()}
                                       </span>
@@ -663,7 +619,7 @@ export default function TradeList({
                               )}
                               {t.stop_loss_price != null && (
                                 <div>
-                                  <span className="text-[13px] font-medium text-secondary">
+                                  <span className="text-[11px] font-medium text-tertiary uppercase tracking-[0.04em]">
                                     Stop Loss
                                   </span>
                                   <p className="text-amber font-medium font-mono mt-0.5">
@@ -673,7 +629,7 @@ export default function TradeList({
                               )}
                               {t.screenshot_url && (
                                 <div className="md:col-span-2">
-                                  <span className="text-[13px] font-medium text-secondary">
+                                  <span className="text-[11px] font-medium text-tertiary uppercase tracking-[0.04em]">
                                     Chart Screenshot
                                   </span>
                                   <a
@@ -686,20 +642,20 @@ export default function TradeList({
                                     <img
                                       src={t.screenshot_url}
                                       alt={`${t.ticker} chart`}
-                                      className="max-h-[200px] rounded-lg border border-border hover:border-border-hover transition-colors"
+                                      className="max-h-[200px] rounded-[4px] border border-white/[0.06] hover:border-white/[0.1] transition-colors"
                                     />
                                   </a>
                                 </div>
                               )}
                               {/* Edit / Delete actions */}
-                              <div className="md:col-span-2 flex gap-2 pt-2 border-t border-border/40">
+                              <div className="md:col-span-2 flex gap-4 pt-2 border-t border-white/[0.04]">
                                 <button
                                   type="button"
                                   onClick={(e) => {
                                     e.stopPropagation();
                                     onEdit?.(t);
                                   }}
-                                  className="px-3 py-1.5 rounded-lg text-xs font-medium bg-surface-2 border border-transparent text-secondary hover:text-primary hover:border-border-hover transition-colors"
+                                  className="text-[12px] text-tertiary hover:text-white transition-colors"
                                 >
                                   Edit
                                 </button>
@@ -710,7 +666,7 @@ export default function TradeList({
                                     e.stopPropagation();
                                     handleDelete(t.id);
                                   }}
-                                  className="px-3 py-1.5 rounded-lg text-xs font-medium bg-surface-2 border border-transparent text-loss hover:bg-loss-muted hover:border-loss/40 transition-colors disabled:opacity-50"
+                                  className="text-[12px] text-tertiary hover:text-loss transition-colors disabled:opacity-50"
                                 >
                                   {deleting === t.id ? "Deleting..." : "Delete"}
                                 </button>
@@ -728,7 +684,7 @@ export default function TradeList({
         </div>
       ) : (
         <div className="text-center py-10">
-          <p className="text-sm text-secondary">
+          <p className="text-[13px] text-tertiary">
             {hasActiveFilters
               ? "No trades match your filters."
               : "No trades to show on this page."}
@@ -740,7 +696,7 @@ export default function TradeList({
                 setTickerInput("");
                 setPage(1);
               }}
-              className="text-xs text-brand hover:text-brand mt-2 transition-colors"
+              className="text-[12px] text-tertiary hover:text-white mt-2 transition-colors"
             >
               Clear filters
             </button>
@@ -748,35 +704,35 @@ export default function TradeList({
         </div>
       )}
 
-      {/* Pagination controls */}
+      {/* Pagination */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-center gap-3 pt-1">
+        <div className="flex items-center justify-center gap-4 pt-1">
           <button
             disabled={page <= 1}
             onClick={() => setPage((p) => p - 1)}
             className={cn(
-              "px-2.5 py-1 rounded-md text-[11px] font-medium transition-all",
+              "text-[12px] transition-colors",
               page <= 1
-                ? "text-surface-3 border border-transparent cursor-default"
-                : "text-secondary border border-transparent hover:text-primary hover:border-border-hover"
+                ? "text-zinc-700 cursor-default"
+                : "text-secondary hover:text-white"
             )}
           >
-            Previous
+            ← Prev
           </button>
-          <span className="text-[11px] text-tertiary">
-            Page {page} of {totalPages}
+          <span className="text-[12px] text-tertiary tabular-nums">
+            {page} / {totalPages}
           </span>
           <button
             disabled={page >= totalPages}
             onClick={() => setPage((p) => p + 1)}
             className={cn(
-              "px-2.5 py-1 rounded-md text-[11px] font-medium transition-all",
+              "text-[12px] transition-colors",
               page >= totalPages
-                ? "text-surface-3 border border-transparent cursor-default"
-                : "text-secondary border border-transparent hover:text-primary hover:border-border-hover"
+                ? "text-zinc-700 cursor-default"
+                : "text-secondary hover:text-white"
             )}
           >
-            Next
+            Next →
           </button>
         </div>
       )}
