@@ -6,7 +6,7 @@ interface DayData {
   losses: number;
 }
 
-const CELL = 12;
+const CELL = 10;
 const GAP = 2;
 const STEP = CELL + GAP;
 const WEEKS = 13;
@@ -53,7 +53,7 @@ export default function CalendarHeatmap({
     const s = statsMap.get(dateStr);
     if (!s || s.trades === 0) return "#18181b"; // surface-2
     const t = Math.min(Math.abs(s.pnl) / maxAbs, 1);
-    const opacity = 0.15 + t * 0.45;
+    const opacity = 0.10 + t * 0.30;
     return s.pnl >= 0
       ? `rgba(34,197,94,${opacity})`  // profit
       : `rgba(239,68,68,${opacity})`; // loss

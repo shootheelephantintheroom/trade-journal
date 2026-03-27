@@ -11,22 +11,22 @@ export default function DailyBreakdown({
         Daily Breakdown
       </h3>
       <div className="overflow-x-auto">
-        <table className="w-full text-sm text-left">
+        <table className="w-full text-[13px] text-left">
           <thead>
             <tr className="border-b border-border">
-              <th className="pb-2.5 text-[13px] font-medium text-secondary">
+              <th className="pb-2 text-[13px] font-medium text-secondary">
                 Date
               </th>
-              <th className="pb-2.5 text-[13px] font-medium text-secondary">
+              <th className="pb-2 text-[13px] font-medium text-secondary">
                 Trades
               </th>
-              <th className="pb-2.5 text-[13px] font-medium text-secondary">
+              <th className="pb-2 text-[13px] font-medium text-secondary">
                 W / L
               </th>
-              <th className="pb-2.5 text-[13px] font-medium text-secondary">
+              <th className="pb-2 text-[13px] font-medium text-secondary">
                 Win Rate
               </th>
-              <th className="pb-2.5 text-[13px] font-medium text-secondary text-right">
+              <th className="pb-2 text-[13px] font-medium text-secondary text-right">
                 P&L
               </th>
             </tr>
@@ -42,13 +42,13 @@ export default function DailyBreakdown({
                   key={day.date}
                   className="border-t border-border hover:bg-white/[0.02] transition-colors"
                 >
-                  <td className="py-2.5 text-secondary text-xs">
+                  <td className="py-2 text-secondary text-[13px]">
                     {day.date}
                   </td>
-                  <td className="py-2.5 text-secondary text-xs">
+                  <td className="py-2 text-secondary text-[13px]">
                     {day.trades}
                   </td>
-                  <td className="py-2.5 text-xs">
+                  <td className="py-2 text-[13px]">
                     <span className="text-profit font-medium">
                       {day.wins}
                     </span>
@@ -57,12 +57,12 @@ export default function DailyBreakdown({
                       {day.losses}
                     </span>
                   </td>
-                  <td className="py-2.5 text-secondary text-xs">
+                  <td className="py-2 text-secondary text-[13px]">
                     {wr}%
                   </td>
                   <td
                     className={
-                      "py-2.5 text-right text-xs font-medium font-mono " +
+                      "py-2 text-right text-[13px] font-medium font-mono " +
                       (day.pnl >= 0 ? "text-profit" : "text-loss")
                     }
                   >

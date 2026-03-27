@@ -22,7 +22,7 @@ function ChartTooltip({ active, payload, label }: any) {
       style={{
         background: "var(--color-surface-3)",
         border: "1px solid rgba(255,255,255,0.1)",
-        borderRadius: 10,
+        borderRadius: 6,
         padding: "8px 12px",
         fontFamily: "'Geist Mono', ui-monospace, monospace",
       }}

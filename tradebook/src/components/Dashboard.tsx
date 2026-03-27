@@ -149,8 +149,8 @@ export default function Dashboard({
   if (trades.length === 0 && missedTrades.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-20 gap-4">
-        <div className="w-16 h-16 rounded-2xl bg-surface-1 border border-white/[0.06] flex items-center justify-center">
-          <TrendingUp size={28} strokeWidth={1.5} className="text-zinc-500" />
+        <div className="w-12 h-12 rounded-[6px] flex items-center justify-center">
+          <TrendingUp size={24} strokeWidth={1.5} className="text-zinc-600" />
         </div>
         <h2 className="text-base font-medium text-primary tracking-tight">
           No trades logged yet
@@ -162,7 +162,7 @@ export default function Dashboard({
         {onLogTrade && (
           <button
             onClick={onLogTrade}
-            className="mt-2 bg-brand hover:bg-brand-hover text-white font-medium text-sm px-6 py-2.5 rounded-lg transition-colors"
+            className="mt-2 bg-brand hover:bg-brand-hover text-white font-medium text-[13px] px-5 py-2 rounded-[6px] transition-colors"
           >
             Log Your First Trade
           </button>
