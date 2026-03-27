@@ -94,7 +94,7 @@ function sortTrades(
 }
 
 const pillBase =
-  "px-2 py-1 rounded-[4px] text-[12px] font-medium transition-all cursor-pointer";
+  "px-2 py-1 rounded-[4px] text-[12px] font-medium transition-colors cursor-pointer";
 const pillActive =
   "bg-white/[0.06] text-white";
 const pillInactive =
@@ -237,7 +237,7 @@ export default function TradeList({
   if (initialLoading) {
     return (
       <div className="flex flex-col items-center justify-center py-20 gap-3">
-        <div className="h-6 w-6 border-2 border-tertiary border-t-brand rounded-full animate-spin" />
+        <div className="h-4 w-4 border-2 border-white/10 border-t-white/50 rounded-full animate-spin" />
         <p className="text-[13px] text-tertiary">Loading trades...</p>
       </div>
     );
@@ -251,7 +251,7 @@ export default function TradeList({
   if (totalCount === 0 && !hasActiveFilters) {
     return (
       <div className="flex flex-col items-center justify-center py-20 gap-4">
-        <div className="w-12 h-12 rounded-[6px] flex items-center justify-center text-2xl">
+        <div className="w-12 h-12 rounded-md flex items-center justify-center text-2xl">
           📋
         </div>
         <h2 className="text-base font-medium text-primary tracking-tight">

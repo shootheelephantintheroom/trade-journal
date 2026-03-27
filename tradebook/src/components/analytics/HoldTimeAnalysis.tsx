@@ -177,17 +177,17 @@ export default function HoldTimeAnalysis({ trades }: Props) {
 
   if (trades.length === 0) {
     return (
-      <div className="bg-surface-1 rounded-lg p-6 text-center text-sm text-tertiary">
+      <p className="text-[13px] text-tertiary">
         No trades to analyze.
-      </div>
+      </p>
     );
   }
 
   if (points.length === 0) {
     return (
-      <div className="bg-surface-1 rounded-lg p-6 text-center text-sm text-tertiary">
+      <p className="text-[13px] text-tertiary">
         No trades with valid entry &amp; exit times.
-      </div>
+      </p>
     );
   }
 
@@ -238,7 +238,7 @@ export default function HoldTimeAnalysis({ trades }: Props) {
   return (
     <div className="space-y-8">
       {/* ── Scatter plot ──────────────────────────────────────── */}
-      <div className="bg-surface-1 rounded-lg p-6">
+      <div className="border-t border-white/[0.04] pt-4">
         <h3 className="text-[13px] font-medium text-secondary mb-4">
           Hold Time vs P&L
         </h3>
@@ -357,7 +357,7 @@ export default function HoldTimeAnalysis({ trades }: Props) {
           {/* Tooltip */}
           {tooltip && (
             <div
-              className="absolute z-50 pointer-events-none rounded-lg border border-border bg-surface-1/95 px-3 py-2.5 shadow-xl backdrop-blur-sm"
+              className="absolute z-50 pointer-events-none rounded-md border border-white/[0.06] bg-surface-2 px-3 py-2.5 backdrop-blur-sm"
               style={{
                 left: tooltip.flipX
                   ? tooltip.x - 12
@@ -369,7 +369,7 @@ export default function HoldTimeAnalysis({ trades }: Props) {
               }}
             >
               <div className="flex items-baseline gap-2">
-                <span className="text-xs font-semibold text-primary">
+                <span className="text-xs font-medium text-primary">
                   {tooltip.point.trade.ticker}
                 </span>
                 <span className="text-[10px] text-tertiary">
@@ -411,13 +411,13 @@ export default function HoldTimeAnalysis({ trades }: Props) {
       </div>
 
       {/* ── Bucketed stats ────────────────────────────────────── */}
-      <div className="bg-surface-1 rounded-lg p-6">
+      <div className="border-t border-white/[0.04] pt-4">
         <h3 className="text-[13px] font-medium text-secondary mb-4">
           Hold Time Breakdown
         </h3>
 
         <div className="overflow-x-auto">
-          <table className="w-full text-sm text-left">
+          <table className="w-full text-[13px] text-left">
             <thead>
               <tr className="border-b border-border">
                 {["Duration", "Trades", "Win Rate", "Avg P&L", "Total P&L"].map(
@@ -503,7 +503,7 @@ export default function HoldTimeAnalysis({ trades }: Props) {
       </div>
 
       {/* ── Auto-insights ─────────────────────────────────────── */}
-      <div className="bg-surface-1 rounded-lg p-6">
+      <div className="border-t border-white/[0.04] pt-4">
         <h3 className="text-[13px] font-medium text-secondary mb-3">
           Hold Time Insights
         </h3>

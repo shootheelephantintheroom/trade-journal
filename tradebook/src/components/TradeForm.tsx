@@ -95,14 +95,14 @@ export default function TradeForm({
   }
 
   const inputClass =
-    "w-full h-[34px] rounded-[6px] border border-white/[0.06] bg-transparent px-[10px] py-[7px] text-[13px] text-white font-sans placeholder-tertiary focus:outline-none focus:border-white/[0.15] transition-all";
+    "w-full h-[34px] rounded-[6px] border border-white/[0.06] bg-transparent px-[10px] py-[7px] text-[13px] text-white font-sans placeholder-tertiary focus:outline-none focus:border-white/[0.15] transition-colors";
 
   const labelClass = "block text-[13px] font-medium text-secondary mb-1.5";
 
   return (
     <form
       onSubmit={handleSubmit}
-      className="rounded-md bg-surface-1 border border-white/[0.04] p-4 sm:p-6 space-y-5"
+      className="space-y-5"
     >
       <div className="flex items-center justify-between">
         <div>
@@ -117,7 +117,7 @@ export default function TradeForm({
           <button
             type="button"
             onClick={() => onEditDone?.()}
-            className="h-8 w-8 rounded-lg flex items-center justify-center text-zinc-500 hover:text-white hover:bg-white/[0.06] transition-colors"
+            className="h-8 w-8 rounded-md flex items-center justify-center text-zinc-500 hover:text-white hover:bg-white/[0.06] transition-colors"
           >
             <X size={16} strokeWidth={1.8} />
           </button>
@@ -143,7 +143,7 @@ export default function TradeForm({
               type="button"
               onClick={() => set("side", "long")}
               className={cn(
-                "flex-1 rounded-[4px] text-[13px] font-medium transition-all",
+                "flex-1 rounded-[4px] text-[13px] font-medium transition-colors",
                 form.side === "long"
                   ? "bg-white/[0.08] text-white"
                   : "text-zinc-500 hover:text-zinc-400"
@@ -155,7 +155,7 @@ export default function TradeForm({
               type="button"
               onClick={() => set("side", "short")}
               className={cn(
-                "flex-1 rounded-[4px] text-[13px] font-medium transition-all",
+                "flex-1 rounded-[4px] text-[13px] font-medium transition-colors",
                 form.side === "short"
                   ? "bg-white/[0.08] text-white"
                   : "text-zinc-500 hover:text-zinc-400"
@@ -249,7 +249,7 @@ export default function TradeForm({
             </span>
             <p
               className={cn(
-                "text-sm font-semibold font-mono",
+                "text-[13px] font-medium font-mono",
                 pnl >= 0 ? "text-profit" : "text-loss"
               )}
             >
@@ -263,7 +263,7 @@ export default function TradeForm({
               </span>
               <p
                 className={cn(
-                  "text-sm font-semibold font-mono",
+                  "text-[13px] font-medium font-mono",
                   rr >= 0 ? "text-profit" : "text-loss"
                 )}
               >
@@ -312,7 +312,7 @@ export default function TradeForm({
       <button
         type="submit"
         disabled={saving}
-        className="w-full h-11 rounded-lg bg-brand hover:bg-brand-hover text-sm font-semibold text-white disabled:opacity-50 transition-colors cursor-pointer"
+        className="w-full h-9 rounded-md bg-brand hover:bg-brand-hover text-[13px] font-medium text-white disabled:opacity-50 transition-colors cursor-pointer"
       >
         {saving ? "Saving..." : editTrade ? "Update Trade" : "Save Trade"}
       </button>

@@ -73,7 +73,7 @@ export default function TagSelect({
               <button
                 type="button"
                 onClick={() => toggle(tag)}
-                className="text-brand/50 hover:text-brand text-sm leading-none transition-colors duration-150"
+                className="text-brand/50 hover:text-brand text-[13px] leading-none transition-colors duration-150"
               >
                 ×
               </button>

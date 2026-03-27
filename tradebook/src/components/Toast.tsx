@@ -42,10 +42,8 @@ export function ToastProvider({ children }: { children: ReactNode }) {
           <div
             key={toast.id}
             className={cn(
-              "pointer-events-auto px-4 py-2 rounded-lg text-sm font-medium shadow-lg animate-fade-in",
-              toast.type === "error"
-                ? "bg-loss text-primary"
-                : "bg-profit text-primary"
+              "pointer-events-auto text-[13px] rounded-md bg-surface-2 border border-white/[0.06] p-3 animate-fade-in",
+              toast.type === "error" ? "text-loss" : "text-profit"
             )}
           >
             {toast.message}

@@ -5,7 +5,7 @@ export default function PrivacyPage() {
     <div className="min-h-screen bg-surface-0 text-primary">
       <header className="border-b border-border">
         <div className="max-w-3xl mx-auto px-4 py-5 flex items-center justify-between">
-          <Link to="/" className="text-lg font-semibold text-primary">
+          <Link to="/" className="text-[13px] font-medium text-primary">
             MyTradeBook
           </Link>
           <Link to="/" className="text-xs text-tertiary hover:text-secondary transition-colors">
@@ -15,12 +15,12 @@ export default function PrivacyPage() {
       </header>
 
       <main className="max-w-3xl mx-auto px-4 py-12">
-        <h1 className="text-2xl font-semibold text-primary mb-2">Privacy Policy</h1>
-        <p className="text-sm text-tertiary mb-8">Last updated: March 24, 2026</p>
+        <h1 className="text-base font-medium text-primary mb-2">Privacy Policy</h1>
+        <p className="text-[13px] text-tertiary mb-8">Last updated: March 24, 2026</p>
 
-        <div className="space-y-6 text-sm text-secondary leading-relaxed">
+        <div className="space-y-6 text-[13px] text-secondary leading-relaxed">
           <section>
-            <h2 className="text-base font-semibold text-primary mb-2">1. Introduction</h2>
+            <h2 className="text-base font-medium text-primary mb-2">1. Introduction</h2>
             <p>
               Ohjudo ("Company," "we," "us," or "our") operates the MyTradeBook application and
               related services available at mytradebook.app (the "Service"). This Privacy Policy
@@ -31,16 +31,16 @@ export default function PrivacyPage() {
           </section>
 
           <section>
-            <h2 className="text-base font-semibold text-primary mb-2">2. Information We Collect</h2>
+            <h2 className="text-base font-medium text-primary mb-2">2. Information We Collect</h2>
             <p className="mb-3">We collect the following categories of information:</p>
 
-            <h3 className="text-sm font-medium text-secondary mb-1">Account Information</h3>
+            <h3 className="text-[13px] font-medium text-secondary mb-1">Account Information</h3>
             <p className="mb-3">
               When you create an account, we collect your email address and display name. This
               information is required to authenticate you and provide the Service.
             </p>
 
-            <h3 className="text-sm font-medium text-secondary mb-1">Payment Information</h3>
+            <h3 className="text-[13px] font-medium text-secondary mb-1">Payment Information</h3>
             <p className="mb-3">
               Subscription payments are processed by Stripe, our third-party payment processor. When
               you subscribe, your payment details (credit card number, billing address, etc.) are
@@ -50,20 +50,20 @@ export default function PrivacyPage() {
               display in your account settings and manage your subscription.
             </p>
 
-            <h3 className="text-sm font-medium text-secondary mb-1">Trading Journal Data</h3>
+            <h3 className="text-[13px] font-medium text-secondary mb-1">Trading Journal Data</h3>
             <p className="mb-3">
               We store all trade data, journal entries, notes, tags, and other content you voluntarily
               enter into the Service. This includes ticker symbols, entry/exit prices, position sizes,
               dates, emotions, setups, and any notes or screenshots you upload.
             </p>
 
-            <h3 className="text-sm font-medium text-secondary mb-1">Usage Data</h3>
+            <h3 className="text-[13px] font-medium text-secondary mb-1">Usage Data</h3>
             <p className="mb-3">
               We automatically collect information about how you interact with the Service, including
               pages visited, features used, and actions taken within the application.
             </p>
 
-            <h3 className="text-sm font-medium text-secondary mb-1">Device & Technical Information</h3>
+            <h3 className="text-[13px] font-medium text-secondary mb-1">Device & Technical Information</h3>
             <p>
               We collect your IP address, browser type, operating system, device type, and referring
               URLs. This information helps us operate, maintain, and improve the Service, as well as
@@ -72,7 +72,7 @@ export default function PrivacyPage() {
           </section>
 
           <section>
-            <h2 className="text-base font-semibold text-primary mb-2">3. How We Use Your Information</h2>
+            <h2 className="text-base font-medium text-primary mb-2">3. How We Use Your Information</h2>
             <p className="mb-2">We use the information we collect to:</p>
             <ul className="list-disc list-inside space-y-1.5 pl-1">
               <li>Provide, operate, and maintain the Service</li>
@@ -90,7 +90,7 @@ export default function PrivacyPage() {
           </section>
 
           <section>
-            <h2 className="text-base font-semibold text-primary mb-2">4. Data Sharing & Third Parties</h2>
+            <h2 className="text-base font-medium text-primary mb-2">4. Data Sharing & Third Parties</h2>
             <p className="mb-2">
               We do not sell, rent, lease, or trade your personal information to third parties. We may
               share limited information with the following service providers who assist us in operating
@@ -124,7 +124,7 @@ export default function PrivacyPage() {
           </section>
 
           <section>
-            <h2 className="text-base font-semibold text-primary mb-2">5. Data Security</h2>
+            <h2 className="text-base font-medium text-primary mb-2">5. Data Security</h2>
             <p>
               We take the security of your data seriously. All data transmitted between your browser
               and our servers is encrypted using HTTPS (TLS/SSL). Your data is stored with
@@ -136,7 +136,7 @@ export default function PrivacyPage() {
           </section>
 
           <section>
-            <h2 className="text-base font-semibold text-primary mb-2">6. Cookies & Tracking</h2>
+            <h2 className="text-base font-medium text-primary mb-2">6. Cookies & Tracking</h2>
             <p className="mb-2">We use cookies and similar technologies for the following purposes:</p>
             <ul className="list-disc list-inside space-y-1.5 pl-1">
               <li>
@@ -156,7 +156,7 @@ export default function PrivacyPage() {
           </section>
 
           <section>
-            <h2 className="text-base font-semibold text-primary mb-2">7. Data Retention & Deletion</h2>
+            <h2 className="text-base font-medium text-primary mb-2">7. Data Retention & Deletion</h2>
             <p>
               We retain your personal information and trade data for as long as your account is
               active or as needed to provide the Service. If you request deletion of your account, we
@@ -174,7 +174,7 @@ export default function PrivacyPage() {
           </section>
 
           <section>
-            <h2 className="text-base font-semibold text-primary mb-2">8. Your Rights</h2>
+            <h2 className="text-base font-medium text-primary mb-2">8. Your Rights</h2>
             <p className="mb-2">Depending on your jurisdiction, you may have the right to:</p>
             <ul className="list-disc list-inside space-y-1.5 pl-1">
               <li>Access the personal information we hold about you</li>
@@ -196,7 +196,7 @@ export default function PrivacyPage() {
           </section>
 
           <section>
-            <h2 className="text-base font-semibold text-primary mb-2">9. Children's Privacy</h2>
+            <h2 className="text-base font-medium text-primary mb-2">9. Children's Privacy</h2>
             <p>
               The Service is not intended for individuals under the age of 18. We do not knowingly
               collect personal information from children under 18. If we learn that we have collected
@@ -206,7 +206,7 @@ export default function PrivacyPage() {
           </section>
 
           <section>
-            <h2 className="text-base font-semibold text-primary mb-2">10. Changes to This Policy</h2>
+            <h2 className="text-base font-medium text-primary mb-2">10. Changes to This Policy</h2>
             <p>
               We may update this Privacy Policy from time to time to reflect changes in our practices
               or applicable laws. If we make material changes, we will notify you by email or by
@@ -217,7 +217,7 @@ export default function PrivacyPage() {
           </section>
 
           <section>
-            <h2 className="text-base font-semibold text-primary mb-2">11. Governing Law</h2>
+            <h2 className="text-base font-medium text-primary mb-2">11. Governing Law</h2>
             <p>
               This Privacy Policy shall be governed by and construed in accordance with the laws of
               the Commonwealth of Massachusetts, without regard to its conflict of laws principles.
@@ -225,7 +225,7 @@ export default function PrivacyPage() {
           </section>
 
           <section>
-            <h2 className="text-base font-semibold text-primary mb-2">12. Contact Us</h2>
+            <h2 className="text-base font-medium text-primary mb-2">12. Contact Us</h2>
             <p>
               If you have any questions or concerns about this Privacy Policy or our data practices,
               please contact us at{" "}

@@ -23,10 +23,10 @@ export default class ErrorBoundary extends Component<Props, State> {
     if (this.state.hasError) {
       return (
         <div className="min-h-screen flex flex-col items-center justify-center bg-surface-0 text-primary gap-4">
-          <h1 className="text-2xl font-semibold">Something went wrong</h1>
+          <h1 className="text-base font-medium">Something went wrong</h1>
           <button
             onClick={() => window.location.reload()}
-            className="px-4 py-2 bg-brand rounded-lg hover:bg-brand/90 text-surface-0 transition-colors"
+            className="px-4 py-2 bg-brand rounded-md hover:bg-brand/90 text-surface-0 text-[13px] font-medium transition-colors"
           >
             Reload
           </button>

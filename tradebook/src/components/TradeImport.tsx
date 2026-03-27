@@ -249,7 +249,7 @@ export default function TradeImport({ onImported }: Props) {
       />
       <button
         onClick={() => fileRef.current?.click()}
-        className="flex items-center gap-1.5 text-xs text-tertiary hover:text-primary border border-border hover:border-border-hover px-3 py-1.5 rounded-lg transition-colors"
+        className="flex items-center gap-1.5 text-xs text-tertiary hover:text-primary border border-border hover:border-border-hover px-3 py-1.5 rounded-md transition-colors"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -306,7 +306,7 @@ export default function TradeImport({ onImported }: Props) {
                         onChange={(e) =>
                           setMapping((m) => ({ ...m, [field]: e.target.value }))
                         }
-                        className="w-full bg-surface-2 border border-transparent rounded-lg px-2.5 py-1.5 text-xs text-primary hover:border-border-hover focus:outline-none focus:border-brand transition-colors"
+                        className="w-full border border-white/[0.06] bg-transparent rounded-md px-2.5 py-1.5 text-xs text-primary hover:border-white/[0.1] focus:outline-none focus:border-white/[0.15] transition-colors"
                       >
                         <option value="">-- skip --</option>
                         {headers.map((h) => (
@@ -326,7 +326,7 @@ export default function TradeImport({ onImported }: Props) {
               <h4 className="text-[13px] font-medium text-secondary mb-3">
                 Preview (first {previewRows.length} rows)
               </h4>
-              <div className="overflow-x-auto rounded-lg border border-border">
+              <div className="overflow-x-auto rounded-md border border-border">
                 <table className="w-full text-xs">
                   <thead>
                     <tr className="bg-surface-2">
@@ -365,14 +365,14 @@ export default function TradeImport({ onImported }: Props) {
             <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-border">
               <button
                 onClick={() => setOpen(false)}
-                className="px-4 py-2 rounded-lg text-xs font-medium text-secondary border border-border hover:text-primary hover:border-border-hover transition-colors"
+                className="px-4 py-2 rounded-md text-xs font-medium text-secondary border border-border hover:text-primary hover:border-border-hover transition-colors"
               >
                 Cancel
               </button>
               <button
                 onClick={handleImport}
                 disabled={importing}
-                className="bg-brand hover:bg-brand/90 text-surface-0 font-medium text-sm px-4 py-2 rounded-lg transition-colors disabled:opacity-50"
+                className="bg-brand hover:bg-brand/90 text-surface-0 font-medium text-[13px] px-4 py-2 rounded-md transition-colors disabled:opacity-50"
               >
                 {importing ? "Importing..." : `Import ${rows.length} Trades`}
               </button>

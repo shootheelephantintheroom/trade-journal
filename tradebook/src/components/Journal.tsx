@@ -194,7 +194,7 @@ export default function Journal() {
     <div className="flex gap-6 items-start">
       {/* Left sidebar — Calendar */}
       <div className="hidden md:block w-64 shrink-0">
-        <div className="bg-surface-1 rounded-lg p-6 sticky top-24">
+        <div className="sticky top-24">
           {/* Month navigation */}
           <div className="flex items-center justify-between mb-3">
             <button onClick={prevMonth} className="p-1 rounded hover:bg-surface-2 text-secondary hover:text-primary transition-colors duration-150">
@@ -202,7 +202,7 @@ export default function Journal() {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
               </svg>
             </button>
-            <span className="text-sm font-medium text-primary">{monthLabel}</span>
+            <span className="text-[13px] font-medium text-primary">{monthLabel}</span>
             <button onClick={nextMonth} className="p-1 rounded hover:bg-surface-2 text-secondary hover:text-primary transition-colors duration-150">
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
@@ -257,7 +257,7 @@ export default function Journal() {
               const d = new Date();
               setCalendarMonth({ year: d.getFullYear(), month: d.getMonth() });
             }}
-            className="mt-3 w-full text-center text-xs text-tertiary hover:text-brand transition-colors duration-150 py-1.5 rounded-lg hover:bg-surface-2"
+            className="mt-3 w-full text-center text-xs text-tertiary hover:text-brand transition-colors duration-150 py-1.5 rounded-md hover:bg-surface-2"
           >
             Go to today
           </button>
@@ -270,7 +270,7 @@ export default function Journal() {
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-base font-medium text-primary">Journal</h2>
-            <p className="text-sm text-secondary mt-0.5">
+            <p className="text-[13px] text-secondary mt-0.5">
               {new Date(selectedDate + "T12:00:00").toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" })}
             </p>
           </div>
@@ -281,7 +281,7 @@ export default function Journal() {
               value={selectedDate}
               max={todayLocal()}
               onChange={(e) => e.target.value && setSelectedDate(e.target.value)}
-              className="md:hidden rounded-lg border border-transparent bg-surface-2 px-2 py-1.5 text-xs text-primary hover:border-border-hover focus:border-brand focus:outline-none transition-colors duration-150"
+              className="md:hidden rounded-md border border-transparent bg-surface-2 px-2 py-1.5 text-xs text-primary hover:border-border-hover focus:border-brand focus:outline-none transition-colors duration-150"
             />
             {/* Save status */}
             <span className={cn(
@@ -296,8 +296,8 @@ export default function Journal() {
 
         {/* Reflection banner */}
         {hasTradesNoEntry && (
-          <div className="bg-surface-1 rounded-lg p-6">
-            <p className="text-sm text-secondary">
+          <div className="border border-white/[0.04] rounded-md p-3">
+            <p className="text-[13px] text-secondary">
               You took <span className="font-medium text-primary">{tradeCount} trade{tradeCount !== 1 ? "s" : ""}</span> today. Take a minute to reflect.
             </p>
           </div>
@@ -305,26 +305,26 @@ export default function Journal() {
 
         {/* Trades summary */}
         {tradeCount > 0 && (
-          <div className="bg-surface-1 rounded-lg p-6 flex flex-wrap gap-x-6 gap-y-1.5">
+          <div className="border-t border-white/[0.04] pt-3 flex flex-wrap gap-x-6 gap-y-1.5">
             <span className="text-[13px] font-medium text-secondary">
-              Trades <span className="text-sm font-medium text-primary ml-1">{tradeCount}</span>
+              Trades <span className="text-[13px] font-medium text-primary ml-1">{tradeCount}</span>
             </span>
             <span className="text-[13px] font-medium text-secondary">
               P&L{" "}
-              <span className={cn("text-sm font-medium font-mono ml-1", totalPnl >= 0 ? "text-profit" : "text-loss")}>
+              <span className={cn("text-[13px] font-medium font-mono ml-1", totalPnl >= 0 ? "text-profit" : "text-loss")}>
                 {totalPnl >= 0 ? "+" : ""}${totalPnl.toFixed(2)}
               </span>
             </span>
             <span className="text-[13px] font-medium text-secondary">
-              Win Rate <span className="text-sm font-medium text-primary ml-1">{winRate}%</span>
+              Win Rate <span className="text-[13px] font-medium text-primary ml-1">{winRate}%</span>
             </span>
           </div>
         )}
 
         {loading ? (
           <div className="flex flex-col items-center justify-center py-16 gap-3">
-            <div className="h-6 w-6 border-2 border-tertiary border-t-brand rounded-full animate-spin" />
-            <p className="text-sm text-secondary">Loading...</p>
+            <div className="h-4 w-4 border-2 border-white/10 border-t-white/50 rounded-full animate-spin" />
+            <p className="text-[13px] text-secondary">Loading...</p>
           </div>
         ) : entry ? (
           <div className="space-y-5">
@@ -376,7 +376,7 @@ export default function Journal() {
                     type="button"
                     onClick={() => updateField("mood", entry.mood === m.value ? null : m.value)}
                     className={cn(
-                      "px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-150",
+                      "px-3 py-2 rounded-md text-[13px] font-medium transition-colors duration-150",
                       entry.mood === m.value
                         ? m.value === "great"
                           ? "bg-profit-bg text-profit"
@@ -407,7 +407,7 @@ export default function Journal() {
                     type="button"
                     onClick={() => updateField("grade", entry.grade === g.value ? null : g.value)}
                     className={cn(
-                      "flex-1 py-2 rounded-lg text-center font-medium text-sm transition-colors duration-150",
+                      "flex-1 py-2 rounded-md text-center font-medium text-[13px] transition-colors duration-150",
                       entry.grade === g.value
                         ? `${g.activeBg} ${g.text}`
                         : "bg-surface-2 text-tertiary hover:text-secondary"
@@ -435,7 +435,7 @@ export default function Journal() {
           </div>
         ) : (
           <div className="text-center py-16">
-            <p className="text-sm text-secondary">Could not load journal entry.</p>
+            <p className="text-[13px] text-secondary">Could not load journal entry.</p>
           </div>
         )}
       </div>

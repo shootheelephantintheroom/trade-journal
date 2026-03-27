@@ -154,9 +154,9 @@ export default function TimeOfDayAnalysis({ trades }: Props) {
 
   if (trades.length === 0) {
     return (
-      <div className="bg-surface-1 rounded-lg p-6 text-center text-sm text-tertiary">
+      <p className="text-[13px] text-tertiary">
         No trades to analyze.
-      </div>
+      </p>
     );
   }
 
@@ -171,7 +171,7 @@ export default function TimeOfDayAnalysis({ trades }: Props) {
   return (
     <div className="space-y-8">
       {/* ── Bar chart ───────────────────────────────────────── */}
-      <div className="bg-surface-1 rounded-lg p-6">
+      <div className="border-t border-white/[0.04] pt-4">
         <h3 className="text-[13px] font-medium text-secondary mb-4">
           P&L by Time of Day
         </h3>
@@ -281,7 +281,7 @@ export default function TimeOfDayAnalysis({ trades }: Props) {
       </div>
 
       {/* ── First 30 min vs Rest of Day ─────────────────────── */}
-      <div className="bg-surface-1 rounded-lg p-6">
+      <div className="border-t border-white/[0.04] pt-4">
         <h3 className="text-[13px] font-medium text-secondary mb-4">
           First 30 min vs Rest of Day
         </h3>
@@ -301,7 +301,7 @@ export default function TimeOfDayAnalysis({ trades }: Props) {
       </div>
 
       {/* ── Key Insights ────────────────────────────────────── */}
-      <div className="bg-surface-1 rounded-lg p-6">
+      <div className="border-t border-white/[0.04] pt-4">
         <h3 className="text-[13px] font-medium text-secondary mb-3">
           Key Insights
         </h3>
@@ -329,7 +329,7 @@ export default function TimeOfDayAnalysis({ trades }: Props) {
             />
           )}
           {insights.dangerZones.length > 0 && (
-            <div className="mt-3 rounded-lg border border-loss/20 bg-loss-muted px-3 py-2.5">
+            <div className="mt-3 rounded-md border border-loss/20 bg-loss-muted px-3 py-2.5">
               <p className="text-[13px] font-medium text-loss mb-1.5">
                 Danger Zones
               </p>
@@ -379,8 +379,8 @@ function ComparisonColumn({
         : "text-secondary";
 
   return (
-    <div className="bg-surface-1 rounded-lg p-6">
-      <p className="text-xs font-semibold text-primary">{title}</p>
+    <div className="border-t border-white/[0.04] pt-4">
+      <p className="text-xs font-medium text-primary">{title}</p>
       <p className="text-[10px] text-tertiary mb-3">{subtitle}</p>
 
       <div className="space-y-2">
@@ -421,7 +421,7 @@ function StatRow({
       <span className="text-[13px] font-medium text-secondary">
         {label}
       </span>
-      <span className={cn("text-sm font-semibold font-mono", color)}>
+      <span className={cn("text-[13px] font-medium font-mono", color)}>
         {value}
       </span>
     </div>

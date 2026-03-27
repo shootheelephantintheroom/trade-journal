@@ -201,7 +201,7 @@ export default function Settings() {
     <div className="max-w-md mx-auto space-y-6">
       <button
         onClick={() => navigate(-1)}
-        className="text-sm text-tertiary hover:text-secondary transition-colors"
+        className="text-[13px] text-tertiary hover:text-secondary transition-colors"
       >
         &larr; Back
       </button>
@@ -219,7 +219,7 @@ export default function Settings() {
 
         {/* Subscription renewal / cancellation info for Pro users */}
         {isPro && !isTrialing && subscription?.current_period_end && (
-          <p className="text-sm text-secondary">
+          <p className="text-[13px] text-secondary">
             {subscription.cancel_at_period_end
               ? `Your subscription will be cancelled on ${formatRenewalDate(subscription.current_period_end)}`
               : `Your subscription will auto renew on ${formatRenewalDate(subscription.current_period_end)}`}
@@ -228,14 +228,14 @@ export default function Settings() {
 
         {/* Trial info */}
         {isTrialing && (
-          <p className="text-sm text-secondary">
+          <p className="text-[13px] text-secondary">
             Free trial · {daysLeftInTrial} day{daysLeftInTrial !== 1 ? "s" : ""} remaining
           </p>
         )}
 
         {/* Free user prompt */}
         {!isPro && !isTrialing && (
-          <p className="text-sm text-secondary">
+          <p className="text-[13px] text-secondary">
             Upgrade to unlock all features
           </p>
         )}

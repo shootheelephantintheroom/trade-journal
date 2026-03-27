@@ -134,7 +134,7 @@ const QUICK_KEYS: QuickRange[] = ["30d", "90d", "6mo", "1yr", "All"];
 const SIDES = ["all", "long", "short"] as const;
 
 const pillBase =
-  "px-2 py-1 rounded-[4px] text-[12px] font-medium transition-all border cursor-pointer";
+  "px-2 py-1 rounded-[4px] text-[12px] font-medium transition-colors border cursor-pointer";
 const pillActive =
   "bg-white/[0.06] text-white border-white/[0.06]";
 const pillInactive =

@@ -72,11 +72,11 @@ function TodaySummary({ trades }: { trades: Trade[] }) {
       <div className="flex items-center gap-6">
         <div>
           <p className="text-[12px] text-tertiary">Trades</p>
-          <p className="text-xl font-medium tabular-nums text-primary">{todayTrades.length}</p>
+          <p className="text-base font-medium tabular-nums text-primary">{todayTrades.length}</p>
         </div>
         <div>
           <p className="text-[12px] text-tertiary">W / L</p>
-          <p className="text-xl font-medium tabular-nums">
+          <p className="text-base font-medium tabular-nums">
             <span className="text-profit">{wins}</span>
             <span className="text-tertiary"> / </span>
             <span className="text-loss">{losses}</span>
@@ -86,7 +86,7 @@ function TodaySummary({ trades }: { trades: Trade[] }) {
           <p className="text-[12px] text-tertiary">P&L</p>
           <p
             className={cn(
-              "text-xl font-medium tabular-nums",
+              "text-base font-medium tabular-nums",
               totalPnl >= 0 ? "text-profit" : "text-loss"
             )}
           >
@@ -140,8 +140,8 @@ export default function Dashboard({
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center py-20 gap-3">
-        <div className="h-6 w-6 border-2 border-tertiary border-t-brand rounded-full animate-spin" />
-        <p className="text-sm text-tertiary">Loading dashboard...</p>
+        <div className="h-4 w-4 border-2 border-white/10 border-t-white/50 rounded-full animate-spin" />
+        <p className="text-[13px] text-tertiary">Loading dashboard...</p>
       </div>
     );
   }
@@ -155,7 +155,7 @@ export default function Dashboard({
         <h2 className="text-base font-medium text-primary tracking-tight">
           No trades logged yet
         </h2>
-        <p className="text-sm text-zinc-500 text-center max-w-xs">
+        <p className="text-[13px] text-zinc-500 text-center max-w-xs">
           Your dashboard will come alive once you start logging trades — win
           rate, P&L, streaks, and more.
         </p>

@@ -396,7 +396,7 @@ export default function Onboarding() {
                       P&L{" "}
                       <span
                         className={cn(
-                          "text-sm font-semibold font-mono ml-1",
+                          "text-[13px] font-medium font-mono ml-1",
                           (parseFloat(exampleTrade.exit_price) -
                             parseFloat(exampleTrade.entry_price)) *
                             (exampleTrade.side === "long" ? 1 : -1) *

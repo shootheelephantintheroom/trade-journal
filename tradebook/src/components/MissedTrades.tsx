@@ -282,7 +282,7 @@ export default function MissedTrades({
         <button
           type="submit"
           disabled={saving}
-          className="w-full bg-brand hover:bg-brand/90 text-surface-0 font-medium text-sm px-4 py-3 rounded-lg transition-colors duration-150 disabled:opacity-50"
+          className="w-full bg-brand hover:bg-brand/90 text-surface-0 font-medium text-[13px] px-4 py-2.5 rounded-md transition-colors duration-150 disabled:opacity-50"
         >
           {saving ? "Saving..." : "Save Missed Trade"}
         </button>
@@ -291,13 +291,13 @@ export default function MissedTrades({
       {/* List */}
       {missedTrades.length === 0 && (
         <div className="flex flex-col items-center justify-center py-12 gap-3">
-          <div className="w-16 h-16 rounded-2xl bg-surface-1 flex items-center justify-center text-3xl">
+          <div className="w-16 h-16 rounded-md flex items-center justify-center text-3xl">
             👀
           </div>
           <h3 className="text-base font-medium text-primary">
             No missed trades yet
           </h3>
-          <p className="text-sm text-secondary text-center max-w-xs">
+          <p className="text-[13px] text-secondary text-center max-w-xs">
             Spot a setup you didn't take? Log it above so you can track your
             hesitation patterns.
           </p>
@@ -318,9 +318,9 @@ export default function MissedTrades({
               {missedTrades.length} missed
             </span>
           </div>
-          <div className="bg-surface-1 rounded-lg overflow-hidden">
+          <div className="border border-white/[0.04] rounded-md overflow-hidden">
             <div className="overflow-x-auto">
-              <table className="w-full text-sm text-left">
+              <table className="w-full text-[13px] text-left">
                 <thead>
                   <tr className="border-b border-border">
                     <th className="px-4 py-3 text-[13px] font-medium text-secondary">
@@ -401,7 +401,7 @@ export default function MissedTrades({
                           </td>
                           <td
                             className={cn(
-                              "px-4 py-3 font-medium font-mono text-sm",
+                              "px-4 py-3 font-medium font-mono text-[13px]",
                               pnl === null
                                 ? "text-tertiary"
                                 : pnl >= 0
@@ -448,7 +448,7 @@ export default function MissedTrades({
                                     <span className="text-[13px] font-medium text-secondary">
                                       Setup
                                     </span>
-                                    <p className="text-sm text-secondary mt-0.5">
+                                    <p className="text-[13px] text-secondary mt-0.5">
                                       {mt.setup}
                                     </p>
                                   </div>
@@ -493,7 +493,7 @@ export default function MissedTrades({
                                     <span className="text-[13px] font-medium text-secondary">
                                       Why I Passed
                                     </span>
-                                    <p className="text-sm text-secondary mt-0.5">
+                                    <p className="text-[13px] text-secondary mt-0.5">
                                       {mt.reason}
                                     </p>
                                   </div>
@@ -507,7 +507,7 @@ export default function MissedTrades({
                                       e.stopPropagation();
                                       handleDelete(mt.id);
                                     }}
-                                    className="px-3 py-1.5 rounded-lg text-xs font-medium bg-surface-2 text-loss hover:bg-loss-bg transition-colors duration-150 disabled:opacity-50"
+                                    className="px-3 py-1.5 rounded-md text-xs font-medium bg-surface-2 text-loss hover:bg-loss-bg transition-colors duration-150 disabled:opacity-50"
                                   >
                                     {deleting === mt.id ? "Deleting..." : "Delete"}
                                   </button>

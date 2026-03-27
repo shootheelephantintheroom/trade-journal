@@ -5,7 +5,7 @@ export default function TermsPage() {
     <div className="min-h-screen bg-surface-0 text-primary">
       <header className="border-b border-border">
         <div className="max-w-3xl mx-auto px-4 py-5 flex items-center justify-between">
-          <Link to="/" className="text-lg font-semibold text-primary">
+          <Link to="/" className="text-[13px] font-medium text-primary">
             MyTradeBook
           </Link>
           <Link to="/" className="text-xs text-tertiary hover:text-secondary transition-colors">
@@ -15,12 +15,12 @@ export default function TermsPage() {
       </header>
 
       <main className="max-w-3xl mx-auto px-4 py-12">
-        <h1 className="text-2xl font-semibold text-primary mb-2">Terms of Service</h1>
-        <p className="text-sm text-tertiary mb-8">Last updated: March 24, 2026</p>
+        <h1 className="text-base font-medium text-primary mb-2">Terms of Service</h1>
+        <p className="text-[13px] text-tertiary mb-8">Last updated: March 24, 2026</p>
 
-        <div className="space-y-6 text-sm text-secondary leading-relaxed">
+        <div className="space-y-6 text-[13px] text-secondary leading-relaxed">
           <section>
-            <h2 className="text-base font-semibold text-primary mb-2">1. Acceptance of Terms</h2>
+            <h2 className="text-base font-medium text-primary mb-2">1. Acceptance of Terms</h2>
             <p>
               These Terms of Service ("Terms") constitute a legally binding agreement between you and
               Ohjudo ("Company," "we," "us," or "our"), governing your access to and use of the
@@ -32,7 +32,7 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="text-base font-semibold text-primary mb-2">2. Eligibility</h2>
+            <h2 className="text-base font-medium text-primary mb-2">2. Eligibility</h2>
             <p>
               You must be at least 18 years of age to use the Service. By using MyTradeBook, you
               represent and warrant that you are at least 18 years old and have the legal capacity to
@@ -43,7 +43,7 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="text-base font-semibold text-primary mb-2">3. Description of Service</h2>
+            <h2 className="text-base font-medium text-primary mb-2">3. Description of Service</h2>
             <p>
               MyTradeBook is a software-as-a-service (SaaS) subscription platform that provides an
               intraday trading journal and analytics tool. The Service allows you to log, review,
@@ -55,7 +55,7 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="text-base font-semibold text-primary mb-2">4. Not Financial Advice</h2>
+            <h2 className="text-base font-medium text-primary mb-2">4. Not Financial Advice</h2>
             <p>
               Nothing on MyTradeBook — including any analytics, metrics, statistics, charts,
               performance summaries, or other data displayed within the Service — constitutes
@@ -68,7 +68,7 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="text-base font-semibold text-primary mb-2">5. Subscription & Billing</h2>
+            <h2 className="text-base font-medium text-primary mb-2">5. Subscription & Billing</h2>
             <p className="mb-2">
               MyTradeBook is offered as a paid subscription service billed on a monthly basis. By
               subscribing, you agree to the following:
@@ -105,7 +105,7 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="text-base font-semibold text-primary mb-2">6. Your Data & Ownership</h2>
+            <h2 className="text-base font-medium text-primary mb-2">6. Your Data & Ownership</h2>
             <p>
               You retain full ownership of all trade data, journal entries, notes, and other content
               you submit to the Service ("Your Data"). By using the Service, you grant Ohjudo a
@@ -117,7 +117,7 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="text-base font-semibold text-primary mb-2">7. Acceptable Use</h2>
+            <h2 className="text-base font-medium text-primary mb-2">7. Acceptable Use</h2>
             <p className="mb-2">You agree not to:</p>
             <ul className="list-disc list-inside space-y-1.5 pl-1">
               <li>Use the Service for any unlawful purpose or in violation of any applicable laws</li>
@@ -134,7 +134,7 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="text-base font-semibold text-primary mb-2">8. Intellectual Property</h2>
+            <h2 className="text-base font-medium text-primary mb-2">8. Intellectual Property</h2>
             <p>
               The Service, including its design, code, features, branding, and documentation, is the
               property of Ohjudo and is protected by applicable intellectual property laws. These
@@ -144,7 +144,7 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="text-base font-semibold text-primary mb-2">9. Disclaimer of Warranties</h2>
+            <h2 className="text-base font-medium text-primary mb-2">9. Disclaimer of Warranties</h2>
             <p>
               THE SERVICE IS PROVIDED ON AN "AS IS" AND "AS AVAILABLE" BASIS WITHOUT WARRANTIES OF
               ANY KIND, WHETHER EXPRESS, IMPLIED, OR STATUTORY, INCLUDING BUT NOT LIMITED TO IMPLIED
@@ -155,7 +155,7 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="text-base font-semibold text-primary mb-2">10. Limitation of Liability</h2>
+            <h2 className="text-base font-medium text-primary mb-2">10. Limitation of Liability</h2>
             <p>
               TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, IN NO EVENT SHALL OHJUDO, ITS
               OFFICERS, DIRECTORS, EMPLOYEES, OR AGENTS BE LIABLE FOR ANY INDIRECT, INCIDENTAL,
@@ -169,7 +169,7 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="text-base font-semibold text-primary mb-2">11. Account Termination & Data Deletion</h2>
+            <h2 className="text-base font-medium text-primary mb-2">11. Account Termination & Data Deletion</h2>
             <p>
               You may close your account at any time by contacting us. We may also suspend or
               terminate your account for violations of these Terms. Upon account termination, your
@@ -180,7 +180,7 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="text-base font-semibold text-primary mb-2">12. Indemnification</h2>
+            <h2 className="text-base font-medium text-primary mb-2">12. Indemnification</h2>
             <p>
               You agree to indemnify, defend, and hold harmless Ohjudo and its officers, directors,
               employees, and agents from and against any claims, liabilities, damages, losses, and
@@ -191,7 +191,7 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="text-base font-semibold text-primary mb-2">13. Governing Law</h2>
+            <h2 className="text-base font-medium text-primary mb-2">13. Governing Law</h2>
             <p>
               These Terms shall be governed by and construed in accordance with the laws of the
               Commonwealth of Massachusetts, without regard to its conflict of laws principles. Any
@@ -202,7 +202,7 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="text-base font-semibold text-primary mb-2">14. Changes to These Terms</h2>
+            <h2 className="text-base font-medium text-primary mb-2">14. Changes to These Terms</h2>
             <p>
               We reserve the right to modify these Terms at any time. If we make material changes, we
               will notify you by email or by posting a notice within the Service at least 30 days
@@ -213,7 +213,7 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="text-base font-semibold text-primary mb-2">15. Severability</h2>
+            <h2 className="text-base font-medium text-primary mb-2">15. Severability</h2>
             <p>
               If any provision of these Terms is found to be unenforceable or invalid, that provision
               shall be limited or eliminated to the minimum extent necessary so that these Terms shall
@@ -222,7 +222,7 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="text-base font-semibold text-primary mb-2">16. Contact</h2>
+            <h2 className="text-base font-medium text-primary mb-2">16. Contact</h2>
             <p>
               If you have any questions about these Terms, please contact us at{" "}
               <a

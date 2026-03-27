@@ -25,7 +25,7 @@ function Section({
 }) {
   const [open, setOpen] = useState(true);
   return (
-    <div className="bg-surface-1 rounded-lg p-6">
+    <div className="border-t border-white/[0.04] pt-4">
       <button
         onClick={() => setOpen((o) => !o)}
         className="w-full flex items-center justify-between group"
@@ -108,7 +108,7 @@ function CatalystPerformance({ trades }: { trades: Trade[] }) {
 
   if (stats.length === 0) {
     return (
-      <p className="text-sm text-tertiary">
+      <p className="text-[13px] text-tertiary">
         No trades with catalyst data yet.
       </p>
     );
@@ -116,7 +116,7 @@ function CatalystPerformance({ trades }: { trades: Trade[] }) {
 
   return (
     <div className="overflow-x-auto">
-      <table className="w-full text-sm text-left">
+      <table className="w-full text-[13px] text-left">
         <thead>
           <tr className="border-b border-border">
             <th className="pb-2.5 text-[13px] font-medium text-secondary">
@@ -147,7 +147,7 @@ function CatalystPerformance({ trades }: { trades: Trade[] }) {
               <td className="py-2.5 text-secondary text-xs">{s.count}</td>
               <td
                 className={cn(
-                  "py-2.5 text-xs font-semibold font-mono",
+                  "py-2.5 text-xs font-medium font-mono",
                   s.winRate >= 50 ? "text-profit" : "text-loss",
                 )}
               >
@@ -155,7 +155,7 @@ function CatalystPerformance({ trades }: { trades: Trade[] }) {
               </td>
               <td
                 className={cn(
-                  "py-2.5 text-right text-xs font-semibold font-mono",
+                  "py-2.5 text-right text-xs font-medium font-mono",
                   s.avgPnl >= 0 ? "text-profit" : "text-loss",
                 )}
               >
@@ -163,7 +163,7 @@ function CatalystPerformance({ trades }: { trades: Trade[] }) {
               </td>
               <td
                 className={cn(
-                  "py-2.5 text-right text-xs font-semibold font-mono",
+                  "py-2.5 text-right text-xs font-medium font-mono",
                   s.totalPnl >= 0 ? "text-profit" : "text-loss",
                 )}
               >
@@ -237,7 +237,7 @@ function FloatSizePerformance({ trades }: { trades: Trade[] }) {
 
   if (stats.length === 0) {
     return (
-      <p className="text-sm text-tertiary">
+      <p className="text-[13px] text-tertiary">
         No trades with float data yet.
       </p>
     );
@@ -245,7 +245,7 @@ function FloatSizePerformance({ trades }: { trades: Trade[] }) {
 
   return (
     <div className="overflow-x-auto">
-      <table className="w-full text-sm text-left">
+      <table className="w-full text-[13px] text-left">
         <thead>
           <tr className="border-b border-border">
             <th className="pb-2.5 text-[13px] font-medium text-secondary">
@@ -276,7 +276,7 @@ function FloatSizePerformance({ trades }: { trades: Trade[] }) {
               <td className="py-2.5 text-secondary text-xs">{s.count}</td>
               <td
                 className={cn(
-                  "py-2.5 text-xs font-semibold font-mono",
+                  "py-2.5 text-xs font-medium font-mono",
                   s.winRate >= 50 ? "text-profit" : "text-loss",
                 )}
               >
@@ -284,7 +284,7 @@ function FloatSizePerformance({ trades }: { trades: Trade[] }) {
               </td>
               <td
                 className={cn(
-                  "py-2.5 text-right text-xs font-semibold font-mono",
+                  "py-2.5 text-right text-xs font-medium font-mono",
                   s.avgPnl >= 0 ? "text-profit" : "text-loss",
                 )}
               >
@@ -292,7 +292,7 @@ function FloatSizePerformance({ trades }: { trades: Trade[] }) {
               </td>
               <td
                 className={cn(
-                  "py-2.5 text-right text-xs font-semibold font-mono",
+                  "py-2.5 text-right text-xs font-medium font-mono",
                   s.totalPnl >= 0 ? "text-profit" : "text-loss",
                 )}
               >
@@ -342,8 +342,8 @@ export default function Analytics() {
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center py-20 gap-3">
-        <div className="h-6 w-6 border-2 border-tertiary border-t-brand rounded-full animate-spin" />
-        <p className="text-sm text-tertiary">Loading analytics...</p>
+        <div className="h-4 w-4 border-2 border-white/10 border-t-white/50 rounded-full animate-spin" />
+        <p className="text-[13px] text-tertiary">Loading analytics...</p>
       </div>
     );
   }

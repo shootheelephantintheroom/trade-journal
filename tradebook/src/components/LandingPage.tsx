@@ -165,7 +165,7 @@ export default function LandingPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-surface-0 flex items-center justify-center">
-        <div className="h-6 w-6 border-2 border-tertiary border-t-brand rounded-full animate-spin" />
+        <div className="h-4 w-4 border-2 border-white/10 border-t-white/50 rounded-full animate-spin" />
       </div>
     );
   }
@@ -184,26 +184,26 @@ export default function LandingPage() {
         )}
       >
         <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
-          <h1 className="text-lg font-semibold tracking-tight text-primary">
+          <h1 className="text-[13px] font-medium tracking-tight text-primary">
             MyTradeBook
           </h1>
           <div className="flex items-center gap-3">
             <a
               href="#pricing"
-              className="px-4 py-1.5 rounded-lg text-sm font-medium text-secondary hover:text-brand/80 transition-colors hidden sm:inline-block"
+              className="px-4 py-1.5 rounded-md text-[13px] font-medium text-secondary hover:text-brand/80 transition-colors hidden sm:inline-block"
             >
               Pricing
             </a>
             <Link
               to="/login"
-              className="px-4 py-1.5 rounded-lg text-sm font-medium text-secondary hover:text-brand/80 transition-colors"
+              className="px-4 py-1.5 rounded-md text-[13px] font-medium text-secondary hover:text-brand/80 transition-colors"
             >
               Sign In
             </Link>
             <Link
               to="/login?mode=signup"
               className={cn(
-                "px-4 py-1.5 rounded-lg text-sm font-semibold bg-brand hover:bg-brand/90 text-surface-0 transition-all duration-300",
+                "px-4 py-1.5 rounded-md text-[13px] font-medium bg-brand hover:bg-brand/90 text-surface-0 transition-all duration-300",
                 scrolled
                   ? "opacity-100 translate-y-0"
                   : "opacity-0 -translate-y-2 pointer-events-none"
@@ -239,13 +239,13 @@ export default function LandingPage() {
               in seconds, then let the analytics show you exactly where you're
               leaking money.
             </p>
-            <p className="hero-enter-d1 text-tertiary text-sm max-w-md mx-auto mb-10">
+            <p className="hero-enter-d1 text-tertiary text-[13px] max-w-md mx-auto mb-10">
               Used by small-cap day traders who are done losing to themselves.
             </p>
             <div className="hero-enter-d2">
               <Link
                 to="/login?mode=signup"
-                className="cta-btn inline-block bg-brand hover:bg-brand/90 text-surface-0 font-semibold text-base sm:text-lg px-10 py-4 rounded-xl"
+                className="cta-btn inline-block bg-brand hover:bg-brand/90 text-surface-0 font-semibold text-base sm:text-lg px-10 py-4 rounded-md"
               >
                 Start Free — No Credit Card
               </Link>
@@ -259,7 +259,7 @@ export default function LandingPage() {
         {/* ───── How It Works ───── */}
         <section className="px-4 py-20 sm:py-28 reveal">
           <div className="max-w-3xl mx-auto">
-            <h2 className="text-2xl sm:text-3xl font-semibold text-primary text-center mb-16">
+            <h2 className="text-2xl sm:text-3xl font-medium text-primary text-center mb-16">
               How It Works
             </h2>
             <div className="flex flex-col sm:flex-row sm:items-start gap-10 sm:gap-0">
@@ -267,14 +267,14 @@ export default function LandingPage() {
                 <Fragment key={item.step}>
                   <div className="flex-1 text-center">
                     <div className="w-12 h-12 rounded-full bg-surface-0 border-2 border-brand/40 flex items-center justify-center mx-auto mb-5 relative z-10">
-                      <span className="text-brand font-semibold">
+                      <span className="text-brand font-medium">
                         {item.step}
                       </span>
                     </div>
-                    <h3 className="text-base font-semibold text-primary mb-2">
+                    <h3 className="text-base font-medium text-primary mb-2">
                       {item.title}
                     </h3>
-                    <p className="text-sm text-secondary leading-relaxed max-w-[240px] mx-auto">
+                    <p className="text-[13px] text-secondary leading-relaxed max-w-[240px] mx-auto">
                       {item.desc}
                     </p>
                   </div>
@@ -309,10 +309,10 @@ export default function LandingPage() {
         {/* ───── Built for Momentum Traders ───── */}
         <section className="px-4 py-20 sm:py-28 reveal">
           <div className="max-w-4xl mx-auto">
-            <h2 className="text-2xl sm:text-3xl font-semibold text-primary text-center mb-4">
+            <h2 className="text-2xl sm:text-3xl font-medium text-primary text-center mb-4">
               Built for Momentum Traders
             </h2>
-            <p className="text-tertiary text-sm text-center mb-14 max-w-lg mx-auto">
+            <p className="text-tertiary text-[13px] text-center mb-14 max-w-lg mx-auto">
               Not a generic journal. Every feature is designed for intraday small-cap traders.
             </p>
 
@@ -320,9 +320,9 @@ export default function LandingPage() {
               {MOMENTUM_CALLOUTS.map((item) => (
                 <div
                   key={item.title}
-                  className="feature-card bg-surface-1/40 border border-border rounded-2xl p-7"
+                  className="feature-card bg-surface-1/40 border border-border rounded-md p-5"
                 >
-                  <div className="w-10 h-10 rounded-lg bg-brand/10 border border-brand/20 flex items-center justify-center mb-5">
+                  <div className="w-10 h-10 rounded-md bg-brand/10 border border-brand/20 flex items-center justify-center mb-5">
                     <svg
                       className="w-5 h-5 text-brand"
                       fill="none"
@@ -333,10 +333,10 @@ export default function LandingPage() {
                       {item.icon}
                     </svg>
                   </div>
-                  <h3 className="text-base font-semibold text-primary mb-2">
+                  <h3 className="text-base font-medium text-primary mb-2">
                     {item.title}
                   </h3>
-                  <p className="text-sm text-secondary leading-relaxed">
+                  <p className="text-[13px] text-secondary leading-relaxed">
                     {item.desc}
                   </p>
                 </div>
@@ -352,7 +352,7 @@ export default function LandingPage() {
               <img
                 src="/dashboard-preview.png"
                 alt="MyTradeBook dashboard showing P&L, win rate, equity curve, and trade history"
-                className="w-full rounded-xl border border-border relative z-10"
+                className="w-full rounded-md border border-border relative z-10"
               />
               <div className="absolute -bottom-8 left-[10%] right-[10%] h-24 bg-brand/10 rounded-full blur-[60px]" />
             </div>
@@ -365,10 +365,10 @@ export default function LandingPage() {
         {/* ───── Pricing ───── */}
         <section id="pricing" className="px-4 py-20 sm:py-28 reveal scroll-mt-20">
           <div className="max-w-3xl mx-auto">
-            <h2 className="text-2xl sm:text-3xl font-semibold text-primary text-center mb-4">
+            <h2 className="text-2xl sm:text-3xl font-medium text-primary text-center mb-4">
               Simple Pricing
             </h2>
-            <p className="text-tertiary text-sm text-center mb-14 max-w-md mx-auto">
+            <p className="text-tertiary text-[13px] text-center mb-14 max-w-md mx-auto">
               Start free. Upgrade when the analytics pay for themselves.
             </p>
 
@@ -379,9 +379,9 @@ export default function LandingPage() {
                   type="button"
                   onClick={() => setPricingPlan("monthly")}
                   className={cn(
-                    "rounded-full px-6 py-2.5 text-sm font-semibold transition-all duration-200",
+                    "rounded-full px-6 py-2.5 text-[13px] font-medium transition-colors duration-150",
                     pricingPlan === "monthly"
-                      ? "bg-primary text-surface-1 shadow-md"
+                      ? "bg-primary text-surface-1"
                       : "text-secondary hover:text-primary"
                   )}
                 >
@@ -391,9 +391,9 @@ export default function LandingPage() {
                   type="button"
                   onClick={() => setPricingPlan("yearly")}
                   className={cn(
-                    "rounded-full px-6 py-2.5 text-sm font-semibold transition-all duration-200",
+                    "rounded-full px-6 py-2.5 text-[13px] font-medium transition-colors duration-150",
                     pricingPlan === "yearly"
-                      ? "bg-primary text-surface-1 shadow-md"
+                      ? "bg-primary text-surface-1"
                       : "text-secondary hover:text-primary"
                   )}
                 >
@@ -401,7 +401,7 @@ export default function LandingPage() {
                 </button>
               </div>
               {pricingPlan === "yearly" && (
-                <span className="inline-flex items-center rounded-full bg-emerald-500/15 border border-emerald-500/30 px-3 py-1.5 text-xs font-semibold text-emerald-400 tracking-wide">
+                <span className="inline-flex items-center rounded-full bg-emerald-500/15 border border-emerald-500/30 px-3 py-1.5 text-xs font-medium text-emerald-400 tracking-wide">
                   Save 28%
                 </span>
               )}
@@ -409,15 +409,15 @@ export default function LandingPage() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               {/* Free */}
-              <div className="bg-surface-1/40 border border-border rounded-2xl p-8 flex flex-col">
-                <div className="text-sm font-medium text-secondary mb-1">Free</div>
+              <div className="bg-surface-1/40 border border-border rounded-md p-5 flex flex-col">
+                <div className="text-[13px] font-medium text-secondary mb-1">Free</div>
                 <div className="text-4xl font-semibold text-primary mb-1">
                   $0
                 </div>
                 <div className="text-xs text-tertiary mb-8">Free forever</div>
                 <ul className="space-y-3 flex-1">
                   {FREE_FEATURES.map((f) => (
-                    <li key={f} className="flex items-start gap-2.5 text-sm text-secondary">
+                    <li key={f} className="flex items-start gap-2.5 text-[13px] text-secondary">
                       <CheckIcon />
                       {f}
                     </li>
@@ -425,18 +425,18 @@ export default function LandingPage() {
                 </ul>
                 <Link
                   to="/login?mode=signup"
-                  className="mt-8 block w-full text-center rounded-xl border border-border bg-surface-2/50 px-6 py-3.5 text-sm font-semibold text-primary transition-colors hover:border-surface-3 hover:bg-surface-2"
+                  className="mt-8 block w-full text-center rounded-md border border-border bg-surface-2/50 px-6 py-3.5 text-[13px] font-medium text-primary transition-colors hover:border-surface-3 hover:bg-surface-2"
                 >
                   Get Started Free
                 </Link>
               </div>
 
               {/* Pro */}
-              <div className="relative bg-surface-1/60 border-2 border-brand/40 rounded-2xl p-8 flex flex-col">
-                <div className="absolute -top-3 left-6 bg-brand text-primary text-[11px] font-semibold uppercase tracking-wider px-3 py-1 rounded-full">
+              <div className="relative bg-surface-1/60 border-2 border-brand/40 rounded-md p-5 flex flex-col">
+                <div className="absolute -top-3 left-6 bg-brand text-primary text-[11px] font-medium uppercase tracking-wider px-3 py-1 rounded-full">
                   Recommended
                 </div>
-                <div className="text-sm font-medium text-brand mb-1">Pro</div>
+                <div className="text-[13px] font-medium text-brand mb-1">Pro</div>
                 {pricingPlan === "monthly" ? (
                   <>
                     <div className="text-4xl font-semibold text-primary mb-1">
@@ -461,7 +461,7 @@ export default function LandingPage() {
                 )}
                 <ul className="space-y-3 flex-1">
                   {PRO_FEATURES.map((f) => (
-                    <li key={f} className="flex items-start gap-2.5 text-sm text-secondary">
+                    <li key={f} className="flex items-start gap-2.5 text-[13px] text-secondary">
                       <CheckIcon className="mt-0.5 h-4 w-4 shrink-0 text-brand" />
                       {f}
                     </li>
@@ -469,7 +469,7 @@ export default function LandingPage() {
                 </ul>
                 <Link
                   to="/login?mode=signup"
-                  className="cta-btn mt-8 block w-full text-center rounded-xl bg-brand hover:bg-brand/90 px-6 py-3.5 text-sm font-semibold text-surface-0 transition-colors"
+                  className="cta-btn mt-8 block w-full text-center rounded-md bg-brand hover:bg-brand/90 px-6 py-3.5 text-[13px] font-medium text-surface-0 transition-colors"
                 >
                   Get Started Free
                 </Link>
@@ -495,25 +495,25 @@ export default function LandingPage() {
         {/* ───── FAQ ───── */}
         <section className="px-4 py-20 sm:py-28 reveal">
           <div className="max-w-2xl mx-auto">
-            <h2 className="text-2xl sm:text-3xl font-semibold text-primary text-center mb-14">
+            <h2 className="text-2xl sm:text-3xl font-medium text-primary text-center mb-14">
               Frequently Asked Questions
             </h2>
             <div className="space-y-2">
               {FAQS.map((faq, i) => (
                 <div
                   key={i}
-                  className="border border-border/60 rounded-lg overflow-hidden"
+                  className="border border-border/60 rounded-md overflow-hidden"
                 >
                   <button
                     onClick={() => setOpenFaq(openFaq === i ? null : i)}
                     className="w-full text-left px-5 py-4 flex items-center justify-between gap-4 hover:bg-surface-1/40 transition-colors cursor-pointer"
                   >
-                    <span className="text-sm font-medium text-primary">
+                    <span className="text-[13px] font-medium text-primary">
                       {faq.q}
                     </span>
                     <svg
                       className={cn(
-                        "w-4 h-4 text-tertiary shrink-0 transition-transform duration-200",
+                        "w-4 h-4 text-tertiary shrink-0 transition-transform duration-150",
                         openFaq === i ? "rotate-180" : ""
                       )}
                       fill="none"
@@ -530,12 +530,12 @@ export default function LandingPage() {
                   </button>
                   <div
                     className={cn(
-                      "grid transition-all duration-200",
+                      "grid transition-all duration-150",
                       openFaq === i ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
                     )}
                   >
                     <div className="overflow-hidden">
-                      <p className="px-5 pb-4 text-sm text-secondary leading-relaxed">
+                      <p className="px-5 pb-4 text-[13px] text-secondary leading-relaxed">
                         {faq.a}
                       </p>
                     </div>
@@ -549,16 +549,16 @@ export default function LandingPage() {
         {/* ───── Final CTA ───── */}
         <section className="px-4 py-20 sm:py-28 reveal">
           <div className="max-w-lg mx-auto text-center">
-            <h2 className="text-2xl sm:text-3xl font-semibold text-primary mb-3">
+            <h2 className="text-2xl sm:text-3xl font-medium text-primary mb-3">
               Ready to Find Your Edge?
             </h2>
-            <p className="text-secondary text-sm mb-8">
+            <p className="text-secondary text-[13px] mb-8">
               The trade journal built for momentum day traders. Free to start,
               takes 30 seconds to sign up.
             </p>
             <Link
               to="/login?mode=signup"
-              className="cta-btn inline-block bg-brand hover:bg-brand/90 text-surface-0 font-semibold text-base px-10 py-4 rounded-xl"
+              className="cta-btn inline-block bg-brand hover:bg-brand/90 text-surface-0 font-semibold text-base px-10 py-4 rounded-md"
             >
               Start Free — No Credit Card
             </Link>
@@ -573,7 +573,7 @@ export default function LandingPage() {
       <footer className="bg-surface-1/50 border-t border-border/50">
         <div className="max-w-5xl mx-auto px-4 py-10 flex flex-col sm:flex-row items-center justify-between gap-6">
           <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-5">
-            <span className="text-sm font-semibold text-primary">
+            <span className="text-[13px] font-medium text-primary">
               MyTradeBook
             </span>
             <span className="text-xs text-tertiary">

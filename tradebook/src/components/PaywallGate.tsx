@@ -60,7 +60,7 @@ export default function PaywallGate({ feature, children }: PaywallGateProps) {
 
   return (
     <div className="flex items-center justify-center py-16 px-4">
-      <div className="w-full max-w-md rounded-xl bg-surface-1 p-8 text-center">
+      <div className="w-full max-w-md text-center">
         {/* Icon */}
         <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-brand-muted">
           <svg
@@ -82,17 +82,17 @@ export default function PaywallGate({ feature, children }: PaywallGateProps) {
         <h3 className="text-base font-medium text-primary mb-1">
           Unlock {feature}
         </h3>
-        <p className="text-sm text-secondary mb-1">
+        <p className="text-[13px] text-secondary mb-1">
           {statusMessage}
         </p>
-        <p className="text-sm text-tertiary mb-6">
+        <p className="text-[13px] text-tertiary mb-6">
           Upgrade to Pro for the full trading toolkit.
         </p>
 
         {/* Feature list */}
         <ul className="text-left space-y-2 mb-8">
           {PRO_FEATURES.map((f) => (
-            <li key={f} className="flex items-start gap-2 text-sm text-secondary">
+            <li key={f} className="flex items-start gap-2 text-[13px] text-secondary">
               <svg
                 className="mt-0.5 h-4 w-4 shrink-0 text-brand"
                 fill="none"
@@ -130,19 +130,19 @@ export default function PaywallGate({ feature, children }: PaywallGateProps) {
               }
             }}
             disabled={trialLoading}
-            className="mb-4 w-full rounded-xl border border-brand/20 bg-brand-muted px-6 py-3 text-sm font-medium text-brand transition-all hover:bg-brand/15 active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed"
+            className="mb-4 w-full rounded-md border border-brand/20 bg-brand-muted px-6 py-3 text-[13px] font-medium text-brand transition-colors hover:bg-brand/15 disabled:opacity-60 disabled:cursor-not-allowed"
           >
             {trialLoading ? "Starting trial..." : "Start 14-day free trial"}
           </button>
         )}
 
         {/* Plan toggle */}
-        <div className="mb-4 flex items-center justify-center gap-1 rounded-lg bg-surface-2 p-1">
+        <div className="mb-4 flex items-center justify-center gap-1 rounded-md bg-surface-2 p-1">
           <button
             type="button"
             onClick={() => setPlan("monthly")}
             className={cn(
-              "flex-1 rounded-md px-4 py-2 text-sm font-medium transition-colors",
+              "flex-1 rounded-md px-4 py-2 text-[13px] font-medium transition-colors",
               plan === "monthly"
                 ? "bg-surface-3 text-primary"
                 : "text-tertiary hover:text-secondary"
@@ -154,7 +154,7 @@ export default function PaywallGate({ feature, children }: PaywallGateProps) {
             type="button"
             onClick={() => setPlan("yearly")}
             className={cn(
-              "flex-1 rounded-md px-4 py-2 text-sm font-medium transition-colors",
+              "flex-1 rounded-md px-4 py-2 text-[13px] font-medium transition-colors",
               plan === "yearly"
                 ? "bg-surface-3 text-primary"
                 : "text-tertiary hover:text-secondary"
@@ -174,7 +174,7 @@ export default function PaywallGate({ feature, children }: PaywallGateProps) {
         <button
           onClick={handleUpgrade}
           disabled={loading}
-          className="w-full rounded-xl bg-brand px-6 py-3 text-sm font-medium text-surface-0 transition-colors hover:bg-brand/90 active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed"
+          className="w-full rounded-md bg-brand px-6 py-3 text-[13px] font-medium text-surface-0 transition-colors hover:bg-brand/90 disabled:opacity-60 disabled:cursor-not-allowed"
         >
           {loading
             ? "Redirecting..."

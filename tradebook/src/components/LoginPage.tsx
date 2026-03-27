@@ -83,17 +83,17 @@ export default function LoginPage() {
           </div>
           {error && (
             <div className="border border-loss/20 rounded-[6px] px-3 py-2">
-              <p className="text-loss text-sm">{error}</p>
+              <p className="text-loss text-[13px]">{error}</p>
             </div>
           )}
           <button
             onClick={handleResendVerification}
             disabled={resending}
-            className="text-sm text-brand hover:text-brand/80 transition-colors disabled:opacity-50"
+            className="text-[13px] text-brand hover:text-brand/80 transition-colors disabled:opacity-50"
           >
             {resending ? "Sending..." : "Resend verification email"}
           </button>
-          <p className="text-sm text-tertiary">
+          <p className="text-[13px] text-tertiary">
             <button
               type="button"
               onClick={() => {
@@ -121,7 +121,7 @@ export default function LoginPage() {
         <form onSubmit={handleSubmit} className="space-y-4">
             {error && (
               <div className="border border-loss/20 rounded-[6px] px-3 py-2">
-                <p className="text-loss text-sm">{error}</p>
+                <p className="text-loss text-[13px]">{error}</p>
               </div>
             )}
 
@@ -187,7 +187,7 @@ export default function LoginPage() {
                     setError(null);
                     setResetSent(false);
                   }}
-                  className="text-sm text-brand hover:text-brand/80 transition-colors"
+                  className="text-[13px] text-brand hover:text-brand/80 transition-colors"
                 >
                   Forgot password?
                 </button>
