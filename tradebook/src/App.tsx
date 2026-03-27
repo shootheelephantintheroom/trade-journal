@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useRef } from "react";
+import { useEffect, useState, useCallback } from "react";
 import {
   Routes,
   Route,
@@ -49,7 +49,7 @@ export default function App() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const menuRef = useRef<HTMLDivElement>(null);
+
   const [missedTrades, setMissedTrades] = useState<MissedTrade[]>([]);
   const [loading, setLoading] = useState(true);
   const [fetchError, setFetchError] = useState(false);
@@ -61,7 +61,7 @@ export default function App() {
   // Close dropdown on outside click
   useEffect(() => {
     function handleClick(e: MouseEvent) {
-      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+      if (!(e.target as HTMLElement).closest?.("[data-user-menu]")) {
         setMenuOpen(false);
       }
     }
@@ -159,7 +159,7 @@ export default function App() {
         <div className="h-px bg-white/[0.04] mx-2 my-1" />
 
         {/* User menu */}
-        <div className="relative" ref={menuRef}>
+        <div className="relative" data-user-menu>
           <button
             onClick={() => setMenuOpen((o) => !o)}
             className={cn(
