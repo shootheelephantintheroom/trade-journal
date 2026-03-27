@@ -74,15 +74,15 @@ export default function LoginPage() {
   if (signupSuccess) {
     return (
       <div className="min-h-screen bg-surface-0 flex items-center justify-center px-4">
-        <div className="w-full max-w-sm text-center space-y-4">
-          <h1 className="text-2xl font-semibold text-primary mb-1">MyTradeBook</h1>
-          <div className="bg-profit-muted border border-profit/30 rounded-lg px-4 py-3">
-            <p className="text-profit text-sm">
+        <div className="w-full max-w-xs mx-auto text-center space-y-4">
+          <p className="text-sm font-medium text-primary mb-4">MyTradeBook</p>
+          <div className="border border-profit/20 rounded-[6px] px-3 py-2">
+            <p className="text-profit text-[13px]">
               Check your email to verify your account. You can close this page.
             </p>
           </div>
           {error && (
-            <div className="bg-loss-muted border border-loss/30 rounded-lg px-3 py-2">
+            <div className="border border-loss/20 rounded-[6px] px-3 py-2">
               <p className="text-loss text-sm">{error}</p>
             </div>
           )}
@@ -113,55 +113,48 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen bg-surface-0 flex items-center justify-center px-4">
-      <div className="w-full max-w-sm">
-        <h1 className="text-2xl font-semibold text-primary text-center mb-1">
+      <div className="w-full max-w-xs mx-auto">
+        <p className="text-sm font-medium text-primary text-center mb-6">
           MyTradeBook
-        </h1>
-        <p className="text-tertiary text-center text-sm mb-8">
-          {mode === "login"
-            ? "Sign in to your journal"
-            : mode === "signup"
-              ? "Create your account"
-              : "Reset your password"}
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-4">
             {error && (
-              <div className="bg-loss-muted border border-loss/30 rounded-lg px-3 py-2">
+              <div className="border border-loss/20 rounded-[6px] px-3 py-2">
                 <p className="text-loss text-sm">{error}</p>
               </div>
             )}
 
             {mode === "signup" && (
               <div>
-                <label className="block text-xs text-secondary mb-1">
+                <label className="block text-[13px] font-medium text-secondary mb-1.5">
                   Display Name
                 </label>
                 <input
                   type="text"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  className="w-full border border-transparent bg-surface-2 hover:border-border-hover focus:border-brand focus:outline-none rounded-lg px-3 py-2 text-sm text-primary placeholder-tertiary transition-colors"
+                  className="w-full h-[34px] rounded-[6px] border border-white/[0.06] bg-transparent px-[10px] py-[7px] text-[13px] text-primary placeholder-tertiary hover:border-white/[0.1] focus:border-white/[0.15] focus:outline-none transition-colors"
                   placeholder="Your name"
                 />
               </div>
             )}
 
             <div>
-              <label className="block text-xs text-secondary mb-1">Email</label>
+              <label className="block text-[13px] font-medium text-secondary mb-1.5">Email</label>
               <input
                 type="email"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full border border-transparent bg-surface-2 hover:border-border-hover focus:border-brand focus:outline-none rounded-lg px-3 py-2 text-sm text-primary placeholder-tertiary transition-colors"
+                className="w-full h-[34px] rounded-[6px] border border-white/[0.06] bg-transparent px-[10px] py-[7px] text-[13px] text-primary placeholder-tertiary hover:border-white/[0.1] focus:border-white/[0.15] focus:outline-none transition-colors"
                 placeholder="you@example.com"
               />
             </div>
 
             {mode !== "reset" && (
               <div>
-                <label className="block text-xs text-secondary mb-1">
+                <label className="block text-[13px] font-medium text-secondary mb-1.5">
                   Password
                 </label>
                 <input
@@ -170,7 +163,7 @@ export default function LoginPage() {
                   minLength={6}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full border border-transparent bg-surface-2 hover:border-border-hover focus:border-brand focus:outline-none rounded-lg px-3 py-2 text-sm text-primary placeholder-tertiary transition-colors"
+                  className="w-full h-[34px] rounded-[6px] border border-white/[0.06] bg-transparent px-[10px] py-[7px] text-[13px] text-primary placeholder-tertiary hover:border-white/[0.1] focus:border-white/[0.15] focus:outline-none transition-colors"
                   placeholder="••••••••"
                 />
               </div>
@@ -185,7 +178,7 @@ export default function LoginPage() {
                     onChange={(e) => setRememberMeState(e.target.checked)}
                     className="w-3.5 h-3.5 rounded border-tertiary bg-surface-1 text-brand focus:ring-brand focus:ring-offset-0 cursor-pointer"
                   />
-                  <span className="text-sm text-secondary">Remember me</span>
+                  <span className="text-[13px] text-secondary">Remember me</span>
                 </label>
                 <button
                   type="button"
@@ -202,15 +195,15 @@ export default function LoginPage() {
             )}
 
             {mode === "reset" && resetSent && (
-              <div className="bg-profit-muted border border-profit/30 rounded-lg px-3 py-2">
-                <p className="text-profit text-sm">Check your email for a reset link</p>
+              <div className="border border-profit/20 rounded-[6px] px-3 py-2">
+                <p className="text-profit text-[13px]">Check your email for a reset link</p>
               </div>
             )}
 
             <button
               type="submit"
               disabled={loading || (mode === "reset" && resetSent)}
-              className="w-full bg-brand hover:bg-brand/90 disabled:opacity-50 text-surface-0 font-medium text-sm py-2 rounded-lg transition-colors"
+              className="w-full text-[13px] py-1.5 bg-white/[0.06] text-white rounded-[6px] hover:bg-white/[0.1] disabled:opacity-50 transition-colors"
             >
               {loading
                 ? "..."
@@ -221,7 +214,7 @@ export default function LoginPage() {
                     : "Send Reset Link"}
             </button>
 
-            <p className="text-center text-sm text-tertiary">
+            <p className="text-center text-[13px] text-tertiary">
               {mode === "login" ? (
                 <>
                   No account?{" "}
