@@ -187,14 +187,6 @@ export default function Settings() {
     setManagingSubscription(false);
   }
 
-  function formatRenewalDate(dateStr: string): string {
-    return new Date(dateStr).toLocaleDateString("en-US", {
-      month: "long",
-      day: "numeric",
-      year: "numeric",
-    });
-  }
-
   function planLabel() {
     if (isTrialing) return "Free Trial";
     if (isPro) return "Pro";
@@ -222,14 +214,6 @@ export default function Settings() {
           </span>
         </div>
 
-        {/* Subscription renewal / cancellation info for Pro users */}
-        {isPro && !isTrialing && subscription?.current_period_end && (
-          <p className="text-[13px] text-secondary">
-            {subscription.cancel_at_period_end
-              ? `Your subscription will expire on ${formatRenewalDate(subscription.current_period_end)}`
-              : `Your subscription will auto renew on ${formatRenewalDate(subscription.current_period_end)}`}
-          </p>
-        )}
 
         {/* Trial info */}
         {isTrialing && (
