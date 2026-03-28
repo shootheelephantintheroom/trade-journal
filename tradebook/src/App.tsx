@@ -13,7 +13,14 @@ import {
   CreditCard,
   ChevronLeft,
   Menu,
+  LayoutDashboard,
+  PenLine,
+  Clock,
+  CircleOff,
+  BookOpen,
+  BarChart3,
 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import { supabase } from "./lib/supabase";
 import { invokeEdgeFunction } from "./lib/subscription";
 import type { Trade, MissedTrade } from "./types/trade";
@@ -31,13 +38,13 @@ import { useSubscription } from "./contexts/SubscriptionContext";
 import { useToast } from "./components/Toast";
 import { cn } from "./lib/utils";
 
-const navItems = [
-  { to: "/app/dashboard", label: "Dashboard" },
-  { to: "/app/log", label: "Log Trade" },
-  { to: "/app/trades", label: "History" },
-  { to: "/app/missed", label: "Missed" },
-  { to: "/app/journal", label: "Journal" },
-  { to: "/app/analytics", label: "Analytics" },
+const navItems: { to: string; label: string; icon: LucideIcon }[] = [
+  { to: "/app/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { to: "/app/log", label: "Log Trade", icon: PenLine },
+  { to: "/app/trades", label: "History", icon: Clock },
+  { to: "/app/missed", label: "Missed", icon: CircleOff },
+  { to: "/app/journal", label: "Journal", icon: BookOpen },
+  { to: "/app/analytics", label: "Analytics", icon: BarChart3 },
 ];
 
 export default function App() {
@@ -132,7 +139,8 @@ export default function App() {
               )
             }
           >
-            <span>{item.label}</span>
+            <item.icon size={18} strokeWidth={1.8} className="shrink-0" />
+            {!sidebarCollapsed && <span>{item.label}</span>}
           </NavLink>
         ))}
       </nav>
