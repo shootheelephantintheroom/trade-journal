@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, Fragment } from "react";
+import { useState, useEffect, Fragment } from "react";
 import { supabase } from "../lib/supabase";
 import type { Trade } from "../types/trade";
 import type { TradeFilters } from "../types/filters";
@@ -9,6 +9,8 @@ import { useToast } from "./Toast";
 import TradeImport from "./TradeImport";
 import TradeRowDetail from "./TradeRowDetail";
 import { cn } from "../lib/utils";
+import { usePaginatedTrades } from "../hooks/useTrades";
+import { useDeleteTrade } from "../hooks/useMutations";
 
 const PAGE_SIZE = 50;
 
@@ -30,22 +32,14 @@ const thClass =
 export default function TradeList({
   onLogTrade,
   onEdit,
-  refreshKey = 0,
 }: {
   onLogTrade?: () => void;
   onEdit?: (trade: Trade) => void;
-  refreshKey?: number;
 }) {
   const { showToast } = useToast();
 
-  // Server-side pagination & data
-  const [trades, setTrades] = useState<Trade[]>([]);
-  const [totalCount, setTotalCount] = useState(0);
+  // Server-side pagination & filters
   const [page, setPage] = useState(1);
-  const [initialLoading, setInitialLoading] = useState(true);
-  const [fetching, setFetching] = useState(false);
-
-  // Server-side filters
   const [filters, setFilters] = useState<TradeFilters>({});
   const [tickerInput, setTickerInput] = useState("");
 
@@ -54,7 +48,6 @@ export default function TradeList({
   const [sortKey, setSortKey] = useState<SortKey>("date");
   const [sortDir, setSortDir] = useState<SortDir>("desc");
   const [resultFilter, setResultFilter] = useState<FilterResult>("all");
-  const [deleting, setDeleting] = useState<string | null>(null);
   const [exporting, setExporting] = useState(false);
 
   // Debounce ticker search
@@ -70,72 +63,32 @@ export default function TradeList({
     return () => clearTimeout(timer);
   }, [tickerInput]);
 
-  // Build & execute paginated Supabase query
-  const fetchTrades = useCallback(async () => {
-    let query = supabase
-      .from("trades")
-      .select("*", { count: "exact" })
-      .order("trade_date", { ascending: false })
-      .order("entry_time", { ascending: false });
+  const { data, isLoading, isFetching, error } = usePaginatedTrades(filters, page);
+  const trades = data?.trades ?? [];
+  const totalCount = data?.totalCount ?? 0;
 
-    if (filters.dateFrom) query = query.gte("trade_date", filters.dateFrom);
-    if (filters.dateTo) query = query.lte("trade_date", filters.dateTo);
-    if (filters.ticker) query = query.ilike("ticker", `%${filters.ticker}%`);
-    if (filters.side) query = query.eq("side", filters.side);
-    if (filters.grade) query = query.eq("grade", filters.grade);
+  const deleteTrade = useDeleteTrade();
 
-    const from = (page - 1) * PAGE_SIZE;
-    const to = from + PAGE_SIZE - 1;
-    query = query.range(from, to);
-
-    const { data, count, error } = await query;
-    if (error) {
-      showToast("Failed to load trades", "error");
-      return;
-    }
-    setTrades((data as Trade[]) || []);
-    setTotalCount(count ?? 0);
-  }, [page, filters, showToast]);
-
-  // Single effect for all fetch triggers (mount, page/filter change, external refresh)
-  useEffect(() => {
-    let cancelled = false;
-    setFetching(true);
-    fetchTrades().finally(() => {
-      if (!cancelled) {
-        setFetching(false);
-        setInitialLoading(false);
-      }
-    });
-    return () => { cancelled = true; };
-  }, [fetchTrades, refreshKey]);
+  if (error) {
+    showToast("Failed to load trades", "error");
+  }
 
   // Delete handler
   async function handleDelete(tradeId: string) {
     if (!confirm("Delete this trade? This can't be undone.")) return;
-    setDeleting(tradeId);
-
-    // Clean up screenshot from storage if present
     const trade = trades.find((t) => t.id === tradeId);
-    if (trade?.screenshot_url) {
-      const match = trade.screenshot_url.match(/\/screenshots\/(.+)$/);
-      if (match) {
-        const { error: storageErr } = await supabase.storage
-          .from("screenshots")
-          .remove([match[1]]);
-        if (storageErr) console.warn("Failed to delete screenshot:", storageErr.message);
+    deleteTrade.mutate(
+      { tradeId, screenshotUrl: trade?.screenshot_url },
+      {
+        onSuccess: () => {
+          showToast("Trade deleted", "success");
+          setExpandedId(null);
+        },
+        onError: (err) => {
+          showToast(err.message, "error");
+        },
       }
-    }
-
-    const { error } = await supabase.from("trades").delete().eq("id", tradeId);
-    setDeleting(null);
-    if (error) {
-      showToast(error.message, "error");
-    } else {
-      showToast("Trade deleted", "success");
-      setExpandedId(null);
-      fetchTrades();
-    }
+    );
   }
 
   // CSV export — fetches ALL trades (no pagination/filters)
@@ -155,7 +108,7 @@ export default function TradeList({
   }
 
   // Initial loading spinner
-  if (initialLoading) {
+  if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center py-20 gap-3">
         <div className="h-4 w-4 border-2 border-white/10 border-t-white/50 rounded-full animate-spin" />
@@ -263,7 +216,7 @@ export default function TradeList({
               </button>
             ))}
           </div>
-          <TradeImport onImported={fetchTrades} />
+          <TradeImport />
           <button
             onClick={handleExportCsv}
             disabled={exporting}
@@ -380,7 +333,7 @@ export default function TradeList({
 
       {/* Table */}
       {sorted.length > 0 ? (
-        <div className={cn("transition-opacity", fetching && "opacity-60")}>
+        <div className={cn("transition-opacity", isFetching && "opacity-60")}>
           <div className="overflow-x-auto">
             <table className="w-full text-[13px] text-left">
               <thead>
@@ -486,7 +439,7 @@ export default function TradeList({
                       {isExpanded && (
                         <TradeRowDetail
                           trade={t}
-                          deleting={deleting === t.id}
+                          deleting={deleteTrade.isPending && deleteTrade.variables?.tradeId === t.id}
                           onEdit={onEdit}
                           onDelete={handleDelete}
                         />

@@ -1,11 +1,11 @@
-import { useState, useEffect, useCallback, useRef } from "react";
-import { supabase } from "../lib/supabase";
+import { useState, useEffect, useRef } from "react";
 import { calcPnl } from "../lib/calc";
 import { todayLocal } from "../lib/date";
 import { useToast } from "./Toast";
 import { cn } from "../lib/utils";
 import type { JournalEntry, JournalMood } from "../types/journal";
-import type { Trade } from "../types/trade";
+import { useJournalEntry, useJournalDates, useTradesForDate } from "../hooks/useTrades";
+import { useSaveJournalEntry } from "../hooks/useMutations";
 
 const MOODS: { value: JournalMood; label: string; emoji: string }[] = [
   { value: "great", label: "Great", emoji: "🟢" },
@@ -31,10 +31,7 @@ export default function Journal() {
   const { showToast } = useToast();
   const [selectedDate, setSelectedDate] = useState(todayLocal());
   const [entry, setEntry] = useState<JournalEntry | null>(null);
-  const [loading, setLoading] = useState(true);
   const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "saved">("idle");
-  const [datesWithEntries, setDatesWithEntries] = useState<Set<string>>(new Set());
-  const [dayTrades, setDayTrades] = useState<Trade[]>([]);
   const [calendarMonth, setCalendarMonth] = useState(() => {
     const d = new Date();
     return { year: d.getFullYear(), month: d.getMonth() };
@@ -43,120 +40,47 @@ export default function Journal() {
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const entryRef = useRef(entry);
   entryRef.current = entry;
-  const isLocalOnly = useRef(false);
 
-  // Fetch all dates that have journal entries (for dot indicators)
-  const fetchEntryDates = useCallback(async () => {
-    const { data } = await supabase
-      .from("journal_entries")
-      .select("entry_date");
-    if (data) {
-      setDatesWithEntries(new Set(data.map((d) => d.entry_date)));
-    }
-  }, []);
+  // Query hooks
+  const { data: queryEntry, isLoading: entryLoading } = useJournalEntry(selectedDate);
+  const { data: datesWithEntries = new Set<string>() } = useJournalDates();
+  const { data: dayTrades = [] } = useTradesForDate(selectedDate);
+  const saveJournalEntry = useSaveJournalEntry();
 
-  // Fetch trades for the selected date
-  const fetchDayTrades = useCallback(async (date: string) => {
-    const { data } = await supabase
-      .from("trades")
-      .select("*")
-      .eq("trade_date", date)
-      .order("entry_time", { ascending: true });
-    setDayTrades((data as Trade[]) || []);
-  }, []);
-
-  // Fetch or create journal entry for selected date
-  const fetchEntry = useCallback(async (date: string) => {
-    setLoading(true);
-    setSaveStatus("idle");
-
-    const { data, error } = await supabase
-      .from("journal_entries")
-      .select("*")
-      .eq("entry_date", date)
-      .maybeSingle();
-
-    if (error) {
-      showToast("Failed to load journal entry", "error");
-      setLoading(false);
-      return;
-    }
-
-    if (data) {
-      setEntry(data as JournalEntry);
-      isLocalOnly.current = false;
-    } else {
-      // Set local empty state — only INSERT on first actual edit
-      setEntry({
-        id: "",
-        user_id: "",
-        entry_date: date,
-        premarket_plan: "",
-        postmarket_review: "",
-        lessons: "",
-        mood: null,
-        grade: null,
-        goals_for_tomorrow: "",
-        created_at: "",
-        updated_at: "",
-      });
-      isLocalOnly.current = true;
-    }
-    setLoading(false);
-  }, [showToast]);
-
+  // Sync query data into local state for editing
   useEffect(() => {
-    fetchEntry(selectedDate);
-    fetchDayTrades(selectedDate);
-    fetchEntryDates();
-  }, [selectedDate, fetchEntry, fetchDayTrades, fetchEntryDates]);
+    if (queryEntry) {
+      setEntry(queryEntry);
+      setSaveStatus("idle");
+    }
+  }, [queryEntry]);
 
   // Auto-save with debounce
-  const saveEntry = useCallback(async (updates: Partial<JournalEntry>) => {
-    if (!entryRef.current) return;
-    setSaveStatus("saving");
-
-    if (isLocalOnly.current) {
-      // First edit — INSERT into supabase
-      const { data: newEntry, error } = await supabase
-        .from("journal_entries")
-        .insert({ entry_date: entryRef.current.entry_date, ...updates })
-        .select()
-        .single();
-
-      if (error) {
-        showToast("Failed to save", "error");
-        setSaveStatus("idle");
-      } else {
-        isLocalOnly.current = false;
-        setEntry(newEntry as JournalEntry);
-        setDatesWithEntries((prev) => new Set([...prev, entryRef.current!.entry_date]));
-        setSaveStatus("saved");
-        setTimeout(() => setSaveStatus((s) => (s === "saved" ? "idle" : s)), 2000);
-      }
-    } else {
-      const { error } = await supabase
-        .from("journal_entries")
-        .update(updates)
-        .eq("id", entryRef.current.id);
-
-      if (error) {
-        showToast("Failed to save", "error");
-        setSaveStatus("idle");
-      } else {
-        setSaveStatus("saved");
-        setTimeout(() => setSaveStatus((s) => (s === "saved" ? "idle" : s)), 2000);
-      }
-    }
-  }, [showToast]);
-
   function updateField<K extends keyof JournalEntry>(key: K, value: JournalEntry[K]) {
     if (!entry) return;
-    setEntry({ ...entry, [key]: value });
+    const updated = { ...entry, [key]: value };
+    setEntry(updated);
 
     if (debounceRef.current) clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(() => {
-      saveEntry({ [key]: value });
+      setSaveStatus("saving");
+      saveJournalEntry.mutate(
+        { entry: entryRef.current!, updates: { [key]: value } },
+        {
+          onSuccess: (newEntry) => {
+            // If this was an insert, update local entry with the real id
+            if (newEntry) {
+              setEntry(newEntry);
+            }
+            setSaveStatus("saved");
+            setTimeout(() => setSaveStatus((s) => (s === "saved" ? "idle" : s)), 2000);
+          },
+          onError: () => {
+            showToast("Failed to save", "error");
+            setSaveStatus("idle");
+          },
+        }
+      );
     }, 1000);
   }
 
@@ -321,7 +245,7 @@ export default function Journal() {
           </div>
         )}
 
-        {loading ? (
+        {entryLoading ? (
           <div className="flex flex-col items-center justify-center py-16 gap-3">
             <div className="h-4 w-4 border-2 border-white/10 border-t-white/50 rounded-full animate-spin" />
             <p className="text-[13px] text-secondary">Loading...</p>

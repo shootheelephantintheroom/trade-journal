@@ -1,11 +1,7 @@
 import { useState, useRef } from "react";
 
-import { supabase } from "../lib/supabase";
 import { useToast } from "./Toast";
-
-interface Props {
-  onImported: () => void;
-}
+import { useImportTrades } from "../hooks/useMutations";
 
 const REQUIRED_FIELDS = [
   "ticker",
@@ -83,15 +79,15 @@ function normalizeSide(val: string): "long" | "short" | null {
   return null;
 }
 
-export default function TradeImport({ onImported }: Props) {
+export default function TradeImport() {
   const { showToast } = useToast();
   const fileRef = useRef<HTMLInputElement>(null);
+  const importTrades = useImportTrades();
 
   const [open, setOpen] = useState(false);
   const [headers, setHeaders] = useState<string[]>([]);
   const [rows, setRows] = useState<string[][]>([]);
   const [mapping, setMapping] = useState<Record<Field, string>>({} as Record<Field, string>);
-  const [importing, setImporting] = useState(false);
 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -144,8 +140,6 @@ export default function TradeImport({ onImported }: Props) {
         return;
       }
     }
-
-    setImporting(true);
 
     const trades: Record<string, unknown>[] = [];
     const errors: string[] = [];
@@ -215,24 +209,24 @@ export default function TradeImport({ onImported }: Props) {
 
     if (trades.length === 0) {
       showToast(errors[0] || "No valid trades found in file", "error");
-      setImporting(false);
       return;
     }
 
-    const { error } = await supabase.from("trades").insert(trades);
-    setImporting(false);
-
-    if (error) {
-      showToast(`Import failed: ${error.message}`, "error");
-    } else {
-      const msg =
-        errors.length > 0
-          ? `Imported ${trades.length} trades (${errors.length} rows skipped)`
-          : `Imported ${trades.length} trades`;
-      showToast(msg, "success");
-      setOpen(false);
-      onImported();
-    }
+    const errorCount = errors.length;
+    const tradeCount = trades.length;
+    importTrades.mutate(trades, {
+      onSuccess: () => {
+        const msg =
+          errorCount > 0
+            ? `Imported ${tradeCount} trades (${errorCount} rows skipped)`
+            : `Imported ${tradeCount} trades`;
+        showToast(msg, "success");
+        setOpen(false);
+      },
+      onError: (err) => {
+        showToast(`Import failed: ${err.message}`, "error");
+      },
+    });
   }
 
   const previewRows = rows.slice(0, 5);
@@ -371,10 +365,10 @@ export default function TradeImport({ onImported }: Props) {
               </button>
               <button
                 onClick={handleImport}
-                disabled={importing}
+                disabled={importTrades.isPending}
                 className="bg-brand hover:bg-brand/90 text-surface-0 font-medium text-[13px] px-4 py-2 rounded-md transition-colors disabled:opacity-50"
               >
-                {importing ? "Importing..." : `Import ${rows.length} Trades`}
+                {importTrades.isPending ? "Importing..." : `Import ${rows.length} Trades`}
               </button>
             </div>
           </div>

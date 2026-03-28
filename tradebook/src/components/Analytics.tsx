@@ -1,9 +1,7 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { cn } from "../lib/utils";
-import { supabase } from "../lib/supabase";
 import type { Trade, CatalystType } from "../types/trade";
 import { calcPnl } from "../lib/calc";
-import { useToast } from "./Toast";
 import DashboardFilters, {
   FilterSummary,
   QuickDatePills,
@@ -13,6 +11,7 @@ import DashboardFilters, {
 import TimeOfDayAnalysis from "./analytics/TimeOfDayAnalysis";
 import HoldTimeAnalysis from "./analytics/HoldTimeAnalysis";
 import TiltDetection from "./analytics/TiltDetection";
+import { useAllTrades } from "../hooks/useTrades";
 
 /* -- Collapsible Section ---------------------------------------- */
 
@@ -309,37 +308,16 @@ function FloatSizePerformance({ trades }: { trades: Trade[] }) {
 /* -- Analytics Page --------------------------------------------- */
 
 export default function Analytics() {
-  const { showToast } = useToast();
-  const [trades, setTrades] = useState<Trade[]>([]);
-  const [loading, setLoading] = useState(true);
   const [filters, updateFilters] = useDashboardFilters();
 
-  useEffect(() => {
-    async function fetchTrades() {
-      setLoading(true);
-      let query = supabase
-        .from("trades")
-        .select("*")
-        .order("trade_date", { ascending: false })
-        .order("entry_time", { ascending: false });
-      if (filters.from) query = query.gte("trade_date", filters.from);
-      if (filters.to) query = query.lte("trade_date", filters.to);
-      const { data, error } = await query;
-      if (error) {
-        showToast("Failed to load trades", "error");
-      } else {
-        setTrades((data as Trade[]) || []);
-      }
-      setLoading(false);
-    }
-    fetchTrades();
-  }, [filters.from, filters.to, showToast]);
+  const { data: trades = [], isLoading } = useAllTrades(filters.from, filters.to);
+
   const filteredTrades = useMemo(
     () => applyFilters(trades, filters),
     [trades, filters],
   );
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center py-20 gap-3">
         <div className="h-4 w-4 border-2 border-white/10 border-t-white/50 rounded-full animate-spin" />

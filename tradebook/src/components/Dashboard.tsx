@@ -1,11 +1,9 @@
 import { useState, useEffect, useMemo } from "react";
-import { supabase } from "../lib/supabase";
 import { cn } from "../lib/utils";
-import type { Trade, MissedTrade } from "../types/trade";
+import type { Trade } from "../types/trade";
 import { calcPnl, calcRR, calcStreak } from "../lib/calc";
 import { calcMissedPnl } from "../lib/calc";
 import { todayLocal } from "../lib/date";
-import { useToast } from "./Toast";
 import CalendarHeatmap from "./CalendarHeatmap";
 import { StatCard, SectionHeader } from "./dashboard/StatCards";
 import EquityCurve from "./dashboard/EquityCurve";
@@ -16,6 +14,7 @@ import RecentTrades from "./dashboard/RecentTrades";
 import { buildDailyStats, buildTagStats, buildEmotionStats, calcDrawdownInfo } from "./dashboard/helpers";
 import { useSubscription } from "../contexts/SubscriptionContext";
 import DashboardFilters, { FilterSummary, QuickDatePills, useDashboardFilters, applyFilters } from "./dashboard/DashboardFilters";
+import { useAllTrades, useMissedTrades } from "../hooks/useTrades";
 import {
   TrendingUp,
   Hash,
@@ -99,45 +98,23 @@ function TodaySummary({ trades }: { trades: Trade[] }) {
 }
 
 export default function Dashboard({
-  missedTrades = [],
   onLogTrade,
 }: {
-  missedTrades?: MissedTrade[];
   onLogTrade?: () => void;
 }) {
-  const { showToast } = useToast();
   const { isPro, isTrialing } = useSubscription();
   const proUser = isPro || isTrialing;
-  const [trades, setTrades] = useState<Trade[]>([]);
-  const [loading, setLoading] = useState(true);
   const [filters, updateFilters] = useDashboardFilters();
 
-  useEffect(() => {
-    async function fetchTrades() {
-      setLoading(true);
-      let query = supabase
-        .from("trades")
-        .select("*")
-        .order("trade_date", { ascending: false })
-        .order("entry_time", { ascending: false });
-      if (filters.from) query = query.gte("trade_date", filters.from);
-      if (filters.to) query = query.lte("trade_date", filters.to);
-      const { data, error } = await query;
-      if (error) {
-        showToast("Failed to load trades", "error");
-      } else {
-        setTrades((data as Trade[]) || []);
-      }
-      setLoading(false);
-    }
-    fetchTrades();
-  }, [filters.from, filters.to, showToast]);
+  const { data: trades = [], isLoading } = useAllTrades(filters.from, filters.to);
+  const { data: missedTrades = [] } = useMissedTrades();
+
   const filteredTrades = useMemo(
     () => proUser ? applyFilters(trades, filters) : trades,
     [trades, filters, proUser]
   );
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center py-20 gap-3">
         <div className="h-4 w-4 border-2 border-white/10 border-t-white/50 rounded-full animate-spin" />

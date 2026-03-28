@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, lazy, Suspense } from "react";
+import { useEffect, useState, lazy, Suspense } from "react";
 import {
   Routes,
   Route,
@@ -21,9 +21,8 @@ import {
   BarChart3,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
-import { supabase } from "./lib/supabase";
 import { invokeEdgeFunction } from "./lib/subscription";
-import type { Trade, MissedTrade } from "./types/trade";
+import type { Trade } from "./types/trade";
 import TradeForm from "./components/TradeForm";
 import PaywallGate from "./components/PaywallGate";
 import Onboarding from "./components/Onboarding";
@@ -66,11 +65,6 @@ export default function App() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  const [missedTrades, setMissedTrades] = useState<MissedTrade[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [fetchError, setFetchError] = useState(false);
-  const [tradeRefreshKey, setTradeRefreshKey] = useState(0);
-
   const editingTrade =
     (location.state as { editTrade?: Trade } | null)?.editTrade ?? null;
 
@@ -89,28 +83,6 @@ export default function App() {
   useEffect(() => {
     setMobileOpen(false);
   }, [location.pathname]);
-
-  const fetchMissedTrades = useCallback(async () => {
-    const { data, error } = await supabase
-      .from("missed_trades")
-      .select("*")
-      .order("trade_date", { ascending: false });
-    if (error) {
-      showToast("Failed to load missed trades", "error");
-      setFetchError(true);
-      return;
-    }
-    setFetchError(false);
-    setMissedTrades((data as MissedTrade[]) || []);
-  }, [showToast]);
-
-  useEffect(() => {
-    fetchMissedTrades().finally(() => setLoading(false));
-  }, [fetchMissedTrades]);
-
-  const handleTradeChanged = useCallback(() => {
-    setTradeRefreshKey((k) => k + 1);
-  }, []);
 
   // Show onboarding for users who haven't completed it
   if (!profileLoading && profile && !profile.onboarded) {
@@ -303,27 +275,6 @@ export default function App() {
         {/* Page content */}
         <main className="flex-1 overflow-y-auto">
           <div className="max-w-6xl mx-auto px-4 sm:px-8 py-8">
-            {loading ? (
-              <div className="flex flex-col items-center justify-center py-20 gap-3">
-                <div className="h-6 w-6 border-2 border-surface-3 border-t-brand rounded-full animate-spin" />
-                <p className="text-sm text-tertiary">Loading...</p>
-              </div>
-            ) : fetchError && missedTrades.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-20 gap-3">
-                <p className="text-secondary text-sm">
-                  Something went wrong, try again
-                </p>
-                <button
-                  onClick={() => {
-                    setLoading(true);
-                    fetchMissedTrades().finally(() => setLoading(false));
-                  }}
-                  className="px-4 py-2 rounded-lg bg-surface-2 text-sm text-primary hover:bg-surface-3 transition-colors"
-                >
-                  Retry
-                </button>
-              </div>
-            ) : (
               <div key={location.pathname} className="animate-page-enter">
                 <Suspense fallback={<LazySpinner />}>
                   <Routes>
@@ -333,7 +284,6 @@ export default function App() {
                       element={
                         <div className="max-w-xl mx-auto">
                           <TradeForm
-                            onSaved={handleTradeChanged}
                             editTrade={editingTrade}
                             onEditDone={() =>
                               navigate(".", { replace: true, state: {} })
@@ -350,17 +300,13 @@ export default function App() {
                           onEdit={(trade) =>
                             navigate("/app/log", { state: { editTrade: trade } })
                           }
-                          refreshKey={tradeRefreshKey}
                         />
                       }
                     />
                     <Route
                       path="missed"
                       element={
-                        <MissedTrades
-                          missedTrades={missedTrades}
-                          onSaved={fetchMissedTrades}
-                        />
+                        <MissedTrades />
                       }
                     />
                     <Route
@@ -383,7 +329,6 @@ export default function App() {
                       path="dashboard"
                       element={
                         <Dashboard
-                          missedTrades={missedTrades}
                           onLogTrade={() => navigate("/app/log")}
                         />
                       }
@@ -392,7 +337,6 @@ export default function App() {
                   </Routes>
                 </Suspense>
               </div>
-            )}
           </div>
         </main>
       </div>

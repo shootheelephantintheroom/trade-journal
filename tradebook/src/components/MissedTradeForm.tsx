@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { cn } from "../lib/utils";
-import { supabase } from "../lib/supabase";
 import type { MissedTradeInsert } from "../types/trade";
 import TagSelect from "./TagSelect";
 import HesitationSelect from "./HesitationSelect";
 import { useToast } from "./Toast";
 import { todayLocal } from "../lib/date";
+import { useSaveMissedTrade } from "../hooks/useMutations";
 
 const empty: MissedTradeInsert = {
   ticker: "",
@@ -30,14 +30,10 @@ function calcEstimatedPnl(form: MissedTradeInsert): number | null {
   return (form.estimated_entry - form.estimated_exit) * form.estimated_shares;
 }
 
-export default function MissedTradeForm({
-  onSaved,
-}: {
-  onSaved: () => void;
-}) {
+export default function MissedTradeForm() {
   const { showToast } = useToast();
   const [form, setForm] = useState<MissedTradeInsert>({ ...empty });
-  const [saving, setSaving] = useState(false);
+  const saveMissedTrade = useSaveMissedTrade();
 
   function set<K extends keyof MissedTradeInsert>(
     key: K,
@@ -50,27 +46,25 @@ export default function MissedTradeForm({
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setSaving(true);
 
-    const { error: err } = await supabase.from("missed_trades").insert({
-      ...form,
-      ticker: form.ticker.toUpperCase().trim(),
-      estimated_entry: form.estimated_entry || null,
-      estimated_exit: form.estimated_exit || null,
-      estimated_shares: form.estimated_shares || null,
-    });
-
-    setSaving(false);
-    if (err) {
-      showToast(err.message, "error");
-    } else {
-      showToast("Missed trade saved!", "success");
-      setForm({
-        ...empty,
-        trade_date: todayLocal(),
-      });
-      onSaved();
-    }
+    saveMissedTrade.mutate(
+      {
+        ...form,
+        ticker: form.ticker.toUpperCase().trim(),
+        estimated_entry: form.estimated_entry || null,
+        estimated_exit: form.estimated_exit || null,
+        estimated_shares: form.estimated_shares || null,
+      },
+      {
+        onSuccess: () => {
+          showToast("Missed trade saved!", "success");
+          setForm({ ...empty, trade_date: todayLocal() });
+        },
+        onError: (err) => {
+          showToast(err.message, "error");
+        },
+      }
+    );
   }
 
   const inputClass =
@@ -246,10 +240,10 @@ export default function MissedTradeForm({
 
       <button
         type="submit"
-        disabled={saving}
+        disabled={saveMissedTrade.isPending}
         className="w-full bg-brand hover:bg-brand/90 text-surface-0 font-medium text-[13px] px-4 py-2.5 rounded-md transition-colors duration-150 disabled:opacity-50"
       >
-        {saving ? "Saving..." : "Save Missed Trade"}
+        {saveMissedTrade.isPending ? "Saving..." : "Save Missed Trade"}
       </button>
     </form>
   );

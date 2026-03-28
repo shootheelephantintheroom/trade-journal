@@ -1,44 +1,47 @@
 import { useState, Fragment } from "react";
 import { cn } from "../lib/utils";
-import { supabase } from "../lib/supabase";
-import type { MissedTrade } from "../types/trade";
 import { calcMissedPnl } from "../lib/calc";
 import { useToast } from "./Toast";
 import MissedTradeForm from "./MissedTradeForm";
+import { useMissedTrades as useMissedTradesQuery } from "../hooks/useTrades";
+import { useDeleteMissedTrade } from "../hooks/useMutations";
 
 // Client-side pagination — sufficient up to ~500-1000 missed trades.
 // TODO: switch to server-side pagination (Supabase .range()) when count grows beyond that.
 const PAGE_SIZE = 25;
 
-export default function MissedTrades({
-  missedTrades,
-  onSaved,
-}: {
-  missedTrades: MissedTrade[];
-  onSaved: () => void;
-}) {
+export default function MissedTrades() {
   const { showToast } = useToast();
+  const { data: missedTrades = [], isLoading } = useMissedTradesQuery();
+  const deleteMissedTrade = useDeleteMissedTrade();
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [page, setPage] = useState(1);
-  const [deleting, setDeleting] = useState<string | null>(null);
 
   async function handleDelete(id: string) {
     if (!confirm("Delete this trade? This can't be undone.")) return;
-    setDeleting(id);
-    const { error } = await supabase.from("missed_trades").delete().eq("id", id);
-    setDeleting(null);
-    if (error) {
-      showToast(error.message, "error");
-    } else {
-      showToast("Missed trade deleted", "success");
-      setExpandedId(null);
-      onSaved();
-    }
+    deleteMissedTrade.mutate(id, {
+      onSuccess: () => {
+        showToast("Missed trade deleted", "success");
+        setExpandedId(null);
+      },
+      onError: (err) => {
+        showToast(err.message, "error");
+      },
+    });
+  }
+
+  if (isLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center py-20 gap-3">
+        <div className="h-4 w-4 border-2 border-white/10 border-t-white/50 rounded-full animate-spin" />
+        <p className="text-[13px] text-tertiary">Loading missed trades...</p>
+      </div>
+    );
   }
 
   return (
     <div className="space-y-8">
-      <MissedTradeForm onSaved={onSaved} />
+      <MissedTradeForm />
 
       {/* List */}
       {missedTrades.length === 0 && (
@@ -254,14 +257,14 @@ export default function MissedTrades({
                                 <div className="md:col-span-2 flex gap-2 pt-2 border-t border-border">
                                   <button
                                     type="button"
-                                    disabled={deleting === mt.id}
+                                    disabled={deleteMissedTrade.isPending && deleteMissedTrade.variables === mt.id}
                                     onClick={(e) => {
                                       e.stopPropagation();
                                       handleDelete(mt.id);
                                     }}
                                     className="px-3 py-1.5 rounded-md text-xs font-medium bg-surface-2 text-loss hover:bg-loss-bg transition-colors duration-150 disabled:opacity-50"
                                   >
-                                    {deleting === mt.id ? "Deleting..." : "Delete"}
+                                    {deleteMissedTrade.isPending && deleteMissedTrade.variables === mt.id ? "Deleting..." : "Delete"}
                                   </button>
                                 </div>
                               </div>

@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
-import { supabase } from "../lib/supabase";
 import type { Trade, TradeInsert } from "../types/trade";
 import { calcPnl, calcRR } from "../lib/calc";
 import { useToast } from "./Toast";
 import { todayLocal } from "../lib/date";
 import { cn } from "../lib/utils";
 import { X } from "lucide-react";
+import { useSaveTrade } from "../hooks/useMutations";
 
 const empty: TradeInsert = {
   ticker: "",
@@ -37,17 +37,15 @@ const empty: TradeInsert = {
 };
 
 export default function TradeForm({
-  onSaved,
   editTrade,
   onEditDone,
 }: {
-  onSaved?: () => void;
   editTrade?: Trade | null;
   onEditDone?: () => void;
 }) {
   const { showToast } = useToast();
   const [form, setForm] = useState<TradeInsert>({ ...empty });
-  const [saving, setSaving] = useState(false);
+  const saveTrade = useSaveTrade();
 
   useEffect(() => {
     if (editTrade) {
@@ -71,7 +69,6 @@ export default function TradeForm({
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setSaving(true);
 
     const payload = {
       ...form,
@@ -79,19 +76,19 @@ export default function TradeForm({
       stop_loss_price: form.stop_loss_price || null,
     };
 
-    const { error } = editTrade
-      ? await supabase.from("trades").update(payload).eq("id", editTrade.id)
-      : await supabase.from("trades").insert(payload);
-
-    setSaving(false);
-    if (error) {
-      showToast(error.message, "error");
-    } else {
-      showToast(editTrade ? "Trade updated!" : "Trade saved!", "success");
-      setForm({ ...empty, trade_date: todayLocal() });
-      if (editTrade) onEditDone?.();
-      onSaved?.();
-    }
+    saveTrade.mutate(
+      { payload, editTradeId: editTrade?.id },
+      {
+        onSuccess: () => {
+          showToast(editTrade ? "Trade updated!" : "Trade saved!", "success");
+          setForm({ ...empty, trade_date: todayLocal() });
+          if (editTrade) onEditDone?.();
+        },
+        onError: (err) => {
+          showToast(err.message, "error");
+        },
+      }
+    );
   }
 
   const inputClass =
@@ -311,10 +308,10 @@ export default function TradeForm({
       {/* Submit */}
       <button
         type="submit"
-        disabled={saving}
+        disabled={saveTrade.isPending}
         className="w-full h-9 rounded-md bg-brand hover:bg-brand-hover text-[13px] font-medium text-white disabled:opacity-50 transition-colors cursor-pointer"
       >
-        {saving ? "Saving..." : editTrade ? "Update Trade" : "Save Trade"}
+        {saveTrade.isPending ? "Saving..." : editTrade ? "Update Trade" : "Save Trade"}
       </button>
     </form>
   );

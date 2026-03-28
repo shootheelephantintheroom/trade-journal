@@ -13,6 +13,7 @@
   "dependencies": {
     "@fontsource-variable/inter": "^5.2.8",
     "@supabase/supabase-js": "^2.99.1",
+    "@tanstack/react-query": "^5.95.2",
     "clsx": "^2.1.1",
     "geist": "^1.7.0",
     "lucide-react": "^1.7.0",
