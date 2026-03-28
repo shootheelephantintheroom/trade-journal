@@ -112,8 +112,12 @@ export default function App() {
     <>
       {/* Logo */}
       <div className="flex items-center gap-3 px-4 h-14 shrink-0">
-        <div className="h-8 w-8 rounded-md bg-brand/10 flex items-center justify-center">
-          <span className="text-brand font-bold text-sm">M</span>
+        <div className="h-8 w-8 rounded-md bg-brand/10 flex items-center justify-center overflow-hidden">
+          {profile?.avatar_url ? (
+            <img src={profile.avatar_url} alt="" className="h-full w-full object-cover" />
+          ) : (
+            <span className="text-brand font-bold text-sm">M</span>
+          )}
         </div>
         {!sidebarCollapsed && (
           <span className="text-[15px] font-semibold text-white tracking-tight">
