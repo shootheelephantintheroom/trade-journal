@@ -7,18 +7,18 @@ import { FREE_FEATURES, PRO_FEATURES, MOMENTUM_CALLOUTS, FAQS } from "../data/la
 const STEPS = [
   {
     step: "1",
-    title: "Log Your Trade",
-    desc: "Enter your ticker, entry/exit, share size, and tag your emotions and setup. Grade yourself honestly.",
+    title: "30 Seconds Per Trade",
+    desc: "Log ticker, entry/exit, size, emotions, and setup. By the end of week one, you'll see patterns you never noticed.",
   },
   {
     step: "2",
-    title: "Review Your Patterns",
-    desc: "See your win rate, streaks, daily P&L, and which mistakes keep costing you money.",
+    title: "See Where the Money Goes",
+    desc: "Your dashboard shows exactly which setups, time windows, and habits are costing you — no more guessing why you're red.",
   },
   {
     step: "3",
-    title: "Improve Your Edge",
-    desc: "Cut the bad habits, double down on what works, and watch your consistency grow.",
+    title: "Keep More of What You Make",
+    desc: "Traders who journal consistently cut their losing days in half. The data makes it obvious what to stop doing.",
   },
 ];
 
@@ -136,17 +136,17 @@ export default function LandingPage() {
 
           <div className="relative text-center max-w-2xl z-10">
             <h2 className="hero-enter text-4xl sm:text-5xl md:text-6xl font-semibold text-primary leading-[1.08] tracking-tight mb-6">
-              Stop guessing.
+              Your red days
               <br />
-              <span className="text-brand">Start knowing.</span>
+              <span className="text-brand">have a pattern.</span>
             </h2>
             <p className="hero-enter-d1 text-secondary text-base sm:text-lg max-w-xl mx-auto leading-relaxed mb-2">
-              The trade journal built for intraday momentum traders. Log trades
-              in seconds, then let the analytics show you exactly where you're
-              leaking money.
+              Most traders lose money to the same 2-3 mistakes on repeat.
+              MyTradeBook makes those mistakes impossible to ignore — so you
+              actually stop making them.
             </p>
             <p className="hero-enter-d1 text-tertiary text-[13px] max-w-md mx-auto mb-10">
-              Used by small-cap day traders who are done losing to themselves.
+              Built for small-cap momentum traders who are done giving back profits.
             </p>
             <div className="hero-enter-d2">
               <Link
@@ -166,7 +166,7 @@ export default function LandingPage() {
         <section className="px-4 py-20 sm:py-28 reveal">
           <div className="max-w-3xl mx-auto">
             <h2 className="text-2xl sm:text-3xl font-medium text-primary text-center mb-16">
-              How It Works
+              Three Steps to Fewer Red Days
             </h2>
             <div className="flex flex-col sm:flex-row sm:items-start gap-10 sm:gap-0">
               {STEPS.map((item, i) => (
@@ -216,10 +216,10 @@ export default function LandingPage() {
         <section className="px-4 py-20 sm:py-28 reveal">
           <div className="max-w-4xl mx-auto">
             <h2 className="text-2xl sm:text-3xl font-medium text-primary text-center mb-4">
-              Built for Momentum Traders
+              Outcomes Real Traders Get
             </h2>
             <p className="text-tertiary text-[13px] text-center mb-14 max-w-lg mx-auto">
-              Not a generic journal. Every feature is designed for intraday small-cap traders.
+              Not a spreadsheet with a logo. Every screen is built to change how you trade tomorrow.
             </p>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -272,10 +272,10 @@ export default function LandingPage() {
         <section id="pricing" className="px-4 py-20 sm:py-28 reveal scroll-mt-20">
           <div className="max-w-3xl mx-auto">
             <h2 className="text-2xl sm:text-3xl font-medium text-primary text-center mb-4">
-              Simple Pricing
+              One Bad Trade Costs More Than a Year of Pro
             </h2>
             <p className="text-tertiary text-[13px] text-center mb-14 max-w-md mx-auto">
-              Start free. Upgrade when the analytics pay for themselves.
+              Start free. Upgrade when the data shows you exactly where to stop bleeding.
             </p>
 
             {/* Monthly/Yearly toggle */}
@@ -392,7 +392,7 @@ export default function LandingPage() {
           <div className="max-w-3xl mx-auto text-center">
             <div className="w-12 h-px bg-brand mx-auto mb-10" />
             <p className="text-2xl sm:text-3xl md:text-4xl font-light italic text-primary/90 leading-relaxed tracking-tight">
-              "Every trade you don't journal is a lesson you'll pay for twice."
+              "I was breakeven for 8 months. Two weeks of journaling showed me I was profitable before 10 AM and a disaster after lunch."
             </p>
             <div className="w-12 h-px bg-brand mx-auto mt-10" />
           </div>
@@ -456,11 +456,11 @@ export default function LandingPage() {
         <section className="px-4 py-20 sm:py-28 reveal">
           <div className="max-w-lg mx-auto text-center">
             <h2 className="text-2xl sm:text-3xl font-medium text-primary mb-3">
-              Ready to Find Your Edge?
+              Your Next Green Month Starts Here
             </h2>
             <p className="text-secondary text-[13px] mb-8">
-              The trade journal built for momentum day traders. Free to start,
-              takes 30 seconds to sign up.
+              The traders who win long-term are the ones who know their numbers.
+              Start in 30 seconds, free forever.
             </p>
             <Link
               to="/login?mode=signup"
