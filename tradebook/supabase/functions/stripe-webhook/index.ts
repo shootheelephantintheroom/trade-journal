@@ -94,12 +94,6 @@ serve(async (req) => {
 
     case "customer.subscription.updated": {
       const subscription = event.data.object as Stripe.Subscription;
-      console.log("[DEBUG] subscription.updated payload:", {
-        id: subscription.id,
-        status: subscription.status,
-        cancel_at_period_end: subscription.cancel_at_period_end,
-        metadata: subscription.metadata,
-      });
 
       // Build update with only the fields we can reliably read
       const updateData: Record<string, unknown> = {
@@ -130,7 +124,6 @@ serve(async (req) => {
         .from("subscriptions")
         .update(updateData)
         .eq("stripe_subscription_id", subscription.id);
-      console.log("[DEBUG] subscription update result:", updateResult);
 
       // Sync profile plan
       const userId = subscription.metadata?.supabase_user_id ?? null;

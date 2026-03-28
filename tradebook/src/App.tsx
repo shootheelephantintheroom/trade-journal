@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, lazy, Suspense } from "react";
 import {
   Routes,
   Route,
@@ -25,18 +25,28 @@ import { supabase } from "./lib/supabase";
 import { invokeEdgeFunction } from "./lib/subscription";
 import type { Trade, MissedTrade } from "./types/trade";
 import TradeForm from "./components/TradeForm";
-import TradeList from "./components/TradeList";
-import Dashboard from "./components/Dashboard";
-import MissedTrades from "./components/MissedTrades";
-import Journal from "./components/Journal";
-import Analytics from "./components/Analytics";
 import PaywallGate from "./components/PaywallGate";
 import Onboarding from "./components/Onboarding";
-import Settings from "./components/Settings";
 import { useAuth } from "./contexts/AuthContext";
 import { useSubscription } from "./contexts/SubscriptionContext";
 import { useToast } from "./components/Toast";
 import { cn } from "./lib/utils";
+
+const Dashboard = lazy(() => import("./components/Dashboard"));
+const Analytics = lazy(() => import("./components/Analytics"));
+const Journal = lazy(() => import("./components/Journal"));
+const MissedTrades = lazy(() => import("./components/MissedTrades"));
+const TradeList = lazy(() => import("./components/TradeList"));
+const Settings = lazy(() => import("./components/Settings"));
+const TradeImport = lazy(() => import("./components/TradeImport"));
+
+function LazySpinner() {
+  return (
+    <div className="flex flex-col items-center justify-center py-20 gap-3">
+      <div className="h-4 w-4 border-2 border-white/10 border-t-white/50 rounded-full animate-spin" />
+    </div>
+  );
+}
 
 const navItems: { to: string; label: string; icon: LucideIcon }[] = [
   { to: "/app/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -316,70 +326,72 @@ export default function App() {
               </div>
             ) : (
               <div key={location.pathname} className="animate-page-enter">
-                <Routes>
-                  <Route index element={<Navigate to="/app/log" replace />} />
-                  <Route
-                    path="log"
-                    element={
-                      <div className="max-w-xl mx-auto">
-                        <TradeForm
-                          onSaved={handleTradeChanged}
-                          editTrade={editingTrade}
-                          onEditDone={() =>
-                            navigate(".", { replace: true, state: {} })
+                <Suspense fallback={<LazySpinner />}>
+                  <Routes>
+                    <Route index element={<Navigate to="/app/log" replace />} />
+                    <Route
+                      path="log"
+                      element={
+                        <div className="max-w-xl mx-auto">
+                          <TradeForm
+                            onSaved={handleTradeChanged}
+                            editTrade={editingTrade}
+                            onEditDone={() =>
+                              navigate(".", { replace: true, state: {} })
+                            }
+                          />
+                        </div>
+                      }
+                    />
+                    <Route
+                      path="trades"
+                      element={
+                        <TradeList
+                          onLogTrade={() => navigate("/app/log")}
+                          onEdit={(trade) =>
+                            navigate("/app/log", { state: { editTrade: trade } })
                           }
+                          refreshKey={tradeRefreshKey}
                         />
-                      </div>
-                    }
-                  />
-                  <Route
-                    path="trades"
-                    element={
-                      <TradeList
-                        onLogTrade={() => navigate("/app/log")}
-                        onEdit={(trade) =>
-                          navigate("/app/log", { state: { editTrade: trade } })
-                        }
-                        refreshKey={tradeRefreshKey}
-                      />
-                    }
-                  />
-                  <Route
-                    path="missed"
-                    element={
-                      <MissedTrades
-                        missedTrades={missedTrades}
-                        onSaved={fetchMissedTrades}
-                      />
-                    }
-                  />
-                  <Route
-                    path="journal"
-                    element={
-                      <PaywallGate feature="Journal">
-                        <Journal />
-                      </PaywallGate>
-                    }
-                  />
-                  <Route
-                    path="analytics"
-                    element={
-                      <PaywallGate feature="Analytics">
-                        <Analytics />
-                      </PaywallGate>
-                    }
-                  />
-                  <Route
-                    path="dashboard"
-                    element={
-                      <Dashboard
-                        missedTrades={missedTrades}
-                        onLogTrade={() => navigate("/app/log")}
-                      />
-                    }
-                  />
-                  <Route path="settings" element={<Settings />} />
-                </Routes>
+                      }
+                    />
+                    <Route
+                      path="missed"
+                      element={
+                        <MissedTrades
+                          missedTrades={missedTrades}
+                          onSaved={fetchMissedTrades}
+                        />
+                      }
+                    />
+                    <Route
+                      path="journal"
+                      element={
+                        <PaywallGate feature="Journal">
+                          <Journal />
+                        </PaywallGate>
+                      }
+                    />
+                    <Route
+                      path="analytics"
+                      element={
+                        <PaywallGate feature="Analytics">
+                          <Analytics />
+                        </PaywallGate>
+                      }
+                    />
+                    <Route
+                      path="dashboard"
+                      element={
+                        <Dashboard
+                          missedTrades={missedTrades}
+                          onLogTrade={() => navigate("/app/log")}
+                        />
+                      }
+                    />
+                    <Route path="settings" element={<Settings />} />
+                  </Routes>
+                </Suspense>
               </div>
             )}
           </div>

@@ -1,4 +1,4 @@
-import type { Trade } from "../types/trade";
+import type { Trade, MissedTrade } from "../types/trade";
 
 export function calcPnl(t: Pick<Trade, "side" | "entry_price" | "exit_price" | "shares">): number {
   const mult = t.side === "long" ? 1 : -1;
@@ -43,4 +43,14 @@ export function calcStreak(trades: Trade[]): { type: "win" | "loss" | "none"; co
   }
 
   return { type, count };
+}
+
+export function calcMissedPnl(mt: MissedTrade): number | null {
+  if (!mt.side || !mt.estimated_entry || !mt.estimated_exit || !mt.estimated_shares) {
+    return null;
+  }
+  if (mt.side === "long") {
+    return (mt.estimated_exit - mt.estimated_entry) * mt.estimated_shares;
+  }
+  return (mt.estimated_entry - mt.estimated_exit) * mt.estimated_shares;
 }

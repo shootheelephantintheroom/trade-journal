@@ -3,7 +3,7 @@ import { supabase } from "../lib/supabase";
 import { cn } from "../lib/utils";
 import type { Trade, MissedTrade } from "../types/trade";
 import { calcPnl, calcRR, calcStreak } from "../lib/calc";
-import { calcMissedPnl } from "./MissedTrades";
+import { calcMissedPnl } from "../lib/calc";
 import { todayLocal } from "../lib/date";
 import { useToast } from "./Toast";
 import CalendarHeatmap from "./CalendarHeatmap";
