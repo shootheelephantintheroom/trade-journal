@@ -46,6 +46,7 @@ export interface Profile {
   created_at: string;
   updated_at: string;
   onboarded: boolean;
+  avatar_url: string | null;
   trading_styles: string[];
   default_shares: number | null;
   default_commission: number | null;

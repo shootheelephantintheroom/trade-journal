@@ -175,8 +175,12 @@ export default function App() {
               sidebarCollapsed && "justify-center px-2"
             )}
           >
-            <div className="h-7 w-7 rounded-full bg-surface-3 border border-white/[0.04] flex items-center justify-center text-[11px] font-medium text-zinc-300 shrink-0">
-              {displayName ? displayName.charAt(0).toUpperCase() : "?"}
+            <div className="h-7 w-7 rounded-full bg-surface-3 border border-white/[0.04] flex items-center justify-center text-[11px] font-medium text-zinc-300 shrink-0 overflow-hidden">
+              {profile?.avatar_url ? (
+                <img src={profile.avatar_url} alt="" className="h-full w-full object-cover" />
+              ) : (
+                displayName ? displayName.charAt(0).toUpperCase() : "?"
+              )}
             </div>
             {!sidebarCollapsed && (
               <span className="text-[13px] text-zinc-400 truncate text-left flex-1">

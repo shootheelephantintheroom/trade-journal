@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { Camera } from "lucide-react";
 import { supabase } from "../lib/supabase";
 import { useAuth } from "../contexts/AuthContext";
 import { useSubscription } from "../contexts/SubscriptionContext";
@@ -60,6 +61,10 @@ export default function Settings() {
 
   // Manage subscription
   const [managingSubscription, setManagingSubscription] = useState(false);
+
+  // Avatar
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
 
   // Delete account
   const [deleteConfirm, setDeleteConfirm] = useState("");
@@ -187,6 +192,52 @@ export default function Settings() {
     setManagingSubscription(false);
   }
 
+  async function handleAvatarUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file || !user) return;
+
+    if (!file.type.startsWith("image/")) {
+      showToast("Please select an image file", "error");
+      return;
+    }
+    if (file.size > 2 * 1024 * 1024) {
+      showToast("Image must be under 2 MB", "error");
+      return;
+    }
+
+    setUploadingAvatar(true);
+    const ext = file.name.split(".").pop() ?? "jpg";
+    const path = `${user.id}/avatar.${ext}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from("avatars")
+      .upload(path, file, { upsert: true });
+
+    if (uploadError) {
+      showToast("Failed to upload image", "error");
+      setUploadingAvatar(false);
+      return;
+    }
+
+    const { data: urlData } = supabase.storage.from("avatars").getPublicUrl(path);
+    const avatarUrl = `${urlData.publicUrl}?t=${Date.now()}`;
+
+    const { error: updateError } = await supabase
+      .from("profiles")
+      .update({ avatar_url: avatarUrl })
+      .eq("id", user.id);
+
+    if (updateError) {
+      showToast("Failed to save avatar", "error");
+    } else {
+      await refetchProfile();
+      showToast("Profile picture updated", "success");
+    }
+    setUploadingAvatar(false);
+    // Reset input so the same file can be re-selected
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  }
+
   function planLabel() {
     if (isTrialing) return "Free Trial";
     if (isPro) return "Pro";
@@ -204,6 +255,53 @@ export default function Settings() {
       </button>
 
       <h2 className="text-base font-medium text-primary">Account Settings</h2>
+
+      {/* Profile Picture */}
+      <div className="space-y-3">
+        <h3 className="text-[13px] font-medium text-secondary">Profile Picture</h3>
+        <div className="flex items-center gap-4">
+          <button
+            onClick={() => fileInputRef.current?.click()}
+            disabled={uploadingAvatar}
+            className="relative h-16 w-16 rounded-full bg-surface-3 border border-white/[0.06] flex items-center justify-center overflow-hidden group hover:border-white/[0.15] transition-colors shrink-0"
+          >
+            {profile?.avatar_url ? (
+              <img
+                src={profile.avatar_url}
+                alt="Avatar"
+                className="h-full w-full object-cover"
+              />
+            ) : (
+              <span className="text-lg font-medium text-zinc-300">
+                {user?.user_metadata?.display_name?.charAt(0)?.toUpperCase() ??
+                  user?.email?.charAt(0)?.toUpperCase() ?? "?"}
+              </span>
+            )}
+            <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+              <Camera size={18} className="text-white" />
+            </div>
+          </button>
+          <div>
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              disabled={uploadingAvatar}
+              className="text-[13px] px-3 py-1.5 bg-white/[0.06] text-white rounded-[6px] hover:bg-white/[0.1] disabled:opacity-40 transition-colors"
+            >
+              {uploadingAvatar ? "Uploading..." : "Upload Photo"}
+            </button>
+            <p className="text-[11px] text-tertiary mt-1">JPG, PNG, or GIF. Max 2 MB.</p>
+          </div>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            onChange={handleAvatarUpload}
+            className="hidden"
+          />
+        </div>
+      </div>
+
+      <div className="h-px bg-white/[0.04]" />
 
       {/* Plan Status */}
       <div className="space-y-4">
