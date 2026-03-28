@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../lib/supabase";
 import { useAuth } from "../contexts/AuthContext";
@@ -30,6 +30,11 @@ export default function Settings() {
     useSubscription();
   const { showToast } = useToast();
   const navigate = useNavigate();
+
+  // Refetch subscription data on mount (catches Stripe portal changes)
+  useEffect(() => {
+    refetchProfile();
+  }, [refetchProfile]);
 
   // Display name
   const [displayName, setDisplayName] = useState(
@@ -221,7 +226,7 @@ export default function Settings() {
         {isPro && !isTrialing && subscription?.current_period_end && (
           <p className="text-[13px] text-secondary">
             {subscription.cancel_at_period_end
-              ? `Your subscription will be cancelled on ${formatRenewalDate(subscription.current_period_end)}`
+              ? `Your subscription will expire on ${formatRenewalDate(subscription.current_period_end)}`
               : `Your subscription will auto renew on ${formatRenewalDate(subscription.current_period_end)}`}
           </p>
         )}
