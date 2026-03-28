@@ -1,5 +1,4 @@
 import type { Trade } from "../types/trade";
-import { cn } from "../lib/utils";
 
 export default function TradeRowDetail({
   trade: t,

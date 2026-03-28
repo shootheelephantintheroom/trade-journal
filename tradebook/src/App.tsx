@@ -38,7 +38,6 @@ const Journal = lazy(() => import("./components/Journal"));
 const MissedTrades = lazy(() => import("./components/MissedTrades"));
 const TradeList = lazy(() => import("./components/TradeList"));
 const Settings = lazy(() => import("./components/Settings"));
-const TradeImport = lazy(() => import("./components/TradeImport"));
 
 function LazySpinner() {
   return (
