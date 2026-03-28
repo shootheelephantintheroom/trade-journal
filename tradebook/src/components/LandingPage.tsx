@@ -280,7 +280,7 @@ export default function LandingPage() {
 
             {/* Monthly/Yearly toggle */}
             <div className="flex items-center justify-center gap-3 mb-12">
-              <div className="flex items-center gap-1 rounded-full bg-surface-2/70 border border-border/50 p-1.5">
+              <div className="flex items-center gap-1 rounded-full bg-surface-2/70 border border-border/50 p-1 overflow-hidden">
                 <button
                   type="button"
                   onClick={() => setPricingPlan("monthly")}
@@ -339,9 +339,11 @@ export default function LandingPage() {
 
               {/* Pro */}
               <div className="relative bg-surface-1/60 border-2 border-brand/40 rounded-md p-5 flex flex-col">
-                <div className="absolute -top-3 left-6 bg-brand text-primary text-[11px] font-medium uppercase tracking-wider px-3 py-1 rounded-full">
-                  Recommended
-                </div>
+                {pricingPlan === "yearly" && (
+                  <div className="absolute -top-3 left-6 bg-brand text-primary text-[11px] font-medium uppercase tracking-wider px-3 py-1 rounded-full">
+                    Recommended
+                  </div>
+                )}
                 <div className="text-[13px] font-medium text-brand mb-1">Pro</div>
                 {pricingPlan === "monthly" ? (
                   <>
