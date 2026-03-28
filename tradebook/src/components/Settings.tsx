@@ -26,7 +26,7 @@ const labelClass =
 
 export default function Settings() {
   const { user, signOut } = useAuth();
-  const { profile, subscription, isPro, isTrialing, canStartTrial, daysLeftInTrial, refetchProfile } =
+  const { profile, isPro, isTrialing, canStartTrial, daysLeftInTrial, refetchProfile } =
     useSubscription();
   const { showToast } = useToast();
   const navigate = useNavigate();
