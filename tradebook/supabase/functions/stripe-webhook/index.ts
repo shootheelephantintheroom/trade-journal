@@ -100,31 +100,40 @@ serve(async (req) => {
         cancel_at_period_end: subscription.cancel_at_period_end,
         metadata: subscription.metadata,
       });
+
+      // Build update with only the fields we can reliably read
+      const updateData: Record<string, unknown> = {
+        status: subscription.status,
+        cancel_at_period_end: subscription.cancel_at_period_end,
+        updated_at: new Date().toISOString(),
+      };
+
       const customerId =
         typeof subscription.customer === "string"
           ? subscription.customer
           : subscription.customer?.id;
-      const priceId = subscription.items.data[0]?.price?.id ?? null;
-      const userId = subscription.metadata?.supabase_user_id ?? null;
+      if (customerId) updateData.stripe_customer_id = customerId;
 
-      const period = getPeriodDates(subscription);
-      const upsertResult = await supabaseAdmin.from("subscriptions").upsert(
-        {
-          stripe_subscription_id: subscription.id,
-          stripe_customer_id: customerId,
-          user_id: userId,
-          status: subscription.status,
-          price_id: priceId,
-          current_period_start: period.start,
-          current_period_end: period.end,
-          cancel_at_period_end: subscription.cancel_at_period_end,
-          updated_at: new Date().toISOString(),
-        },
-        { onConflict: "stripe_subscription_id" }
-      );
-      console.log("[DEBUG] subscription upsert result:", upsertResult);
+      const priceId = subscription.items?.data?.[0]?.price?.id ?? null;
+      if (priceId) updateData.price_id = priceId;
+
+      // Period dates may not be available depending on Stripe API version
+      try {
+        const period = getPeriodDates(subscription);
+        updateData.current_period_start = period.start;
+        updateData.current_period_end = period.end;
+      } catch {
+        console.warn("[WEBHOOK] Could not extract period dates from subscription.updated, skipping period update");
+      }
+
+      const updateResult = await supabaseAdmin
+        .from("subscriptions")
+        .update(updateData)
+        .eq("stripe_subscription_id", subscription.id);
+      console.log("[DEBUG] subscription update result:", updateResult);
 
       // Sync profile plan
+      const userId = subscription.metadata?.supabase_user_id ?? null;
       if (userId) {
         const isActive =
           subscription.status === "active" ||
