@@ -73,6 +73,8 @@ export default function TradeForm({
     const payload = {
       ...form,
       ticker: form.ticker.toUpperCase().trim(),
+      entry_time: form.entry_time || "09:30:00",
+      exit_time: form.exit_time || "10:00:00",
       stop_loss_price: form.stop_loss_price || null,
     };
 
@@ -164,16 +166,36 @@ export default function TradeForm({
         </div>
       </div>
 
-      {/* Date */}
-      <div>
-        <label className={labelClass}>Date</label>
-        <input
-          type="date"
-          className={inputClass}
-          value={form.trade_date}
-          onChange={(e) => set("trade_date", e.target.value)}
-          required
-        />
+      {/* Date & Times */}
+      <div className="grid grid-cols-3 gap-3">
+        <div>
+          <label className={labelClass}>Date</label>
+          <input
+            type="date"
+            className={inputClass}
+            value={form.trade_date}
+            onChange={(e) => set("trade_date", e.target.value)}
+            required
+          />
+        </div>
+        <div>
+          <label className={labelClass}>Entry Time</label>
+          <input
+            type="time"
+            className={inputClass}
+            value={form.entry_time}
+            onChange={(e) => set("entry_time", e.target.value)}
+          />
+        </div>
+        <div>
+          <label className={labelClass}>Exit Time</label>
+          <input
+            type="time"
+            className={inputClass}
+            value={form.exit_time}
+            onChange={(e) => set("exit_time", e.target.value)}
+          />
+        </div>
       </div>
 
       {/* Entry / Exit / Shares */}
