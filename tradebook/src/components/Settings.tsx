@@ -5,6 +5,8 @@ import { supabase } from "../lib/supabase";
 import { useAuth } from "../contexts/AuthContext";
 import { useSubscription } from "../contexts/SubscriptionContext";
 import { startProTrial, invokeEdgeFunction } from "../lib/subscription";
+import { get24hClock, set24hClock } from "../lib/clockFormat";
+import { cn } from "../lib/utils";
 import { useToast } from "./Toast";
 
 const TIMEZONES = [
@@ -65,6 +67,9 @@ export default function Settings() {
   // Avatar
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
+
+  // Clock format
+  const [use24h, setUse24h] = useState(get24hClock);
 
   // Delete account
   const [deleteConfirm, setDeleteConfirm] = useState("");
@@ -459,6 +464,37 @@ export default function Settings() {
         >
           {savingTimezone ? "Saving..." : "Save Timezone"}
         </button>
+      </div>
+
+      {/* Clock Format */}
+      <div className="h-px bg-white/[0.04]" />
+      <div className="space-y-3">
+        <h3 className="text-[13px] font-medium text-secondary">Clock Format</h3>
+        <div className="flex h-[34px] rounded-[6px] border border-white/[0.04] bg-transparent p-0.5 gap-0.5 max-w-[200px]">
+          <button
+            type="button"
+            onClick={() => { set24hClock(false); setUse24h(false); }}
+            className={cn(
+              "flex-1 rounded-[4px] text-[13px] font-medium transition-colors",
+              !use24h ? "bg-white/[0.08] text-white" : "text-zinc-500 hover:text-zinc-400"
+            )}
+          >
+            12h
+          </button>
+          <button
+            type="button"
+            onClick={() => { set24hClock(true); setUse24h(true); }}
+            className={cn(
+              "flex-1 rounded-[4px] text-[13px] font-medium transition-colors",
+              use24h ? "bg-white/[0.08] text-white" : "text-zinc-500 hover:text-zinc-400"
+            )}
+          >
+            24h
+          </button>
+        </div>
+        <p className="text-[11px] text-tertiary">
+          Controls time display across the app
+        </p>
       </div>
 
       {/* Danger Zone */}

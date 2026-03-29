@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { cn } from "../../lib/utils";
+import { get24hClock } from "../../lib/clockFormat";
 import type { Trade } from "../../types/trade";
 import { calcNetPnl } from "../../lib/calc";
 
@@ -28,7 +29,10 @@ function parseMinutes(time: string): number | null {
   return parseInt(m[1], 10) * 60 + parseInt(m[2], 10);
 }
 
-function fmt12(h24: number, m: number): string {
+function fmtTime(h24: number, m: number, use24h: boolean): string {
+  if (use24h) {
+    return `${String(h24).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
+  }
   const h = h24 > 12 ? h24 - 12 : h24 === 0 ? 12 : h24;
   return `${h}:${String(m).padStart(2, "0")}`;
 }
@@ -42,20 +46,22 @@ function fmtDollar(v: number): string {
 }
 
 // 14 x 30-min windows: 9:00 AM → 4:00 PM
-const WINDOWS: { label: string; startMin: number; endMin: number }[] = [];
+const WINDOWS: { startMin: number; endMin: number }[] = [];
 for (let h = 9; h < 16; h++) {
   for (let m = 0; m < 60; m += 30) {
     const start = h * 60 + m;
     if (start >= 960) break;
     const end = start + 30;
-    const eH = Math.floor(end / 60);
-    const eM = end % 60;
-    WINDOWS.push({
-      label: `${fmt12(h, m)}–${fmt12(eH, eM)}`,
-      startMin: start,
-      endMin: end,
-    });
+    WINDOWS.push({ startMin: start, endMin: end });
   }
+}
+
+function windowLabel(w: { startMin: number; endMin: number }, use24h: boolean): string {
+  const sH = Math.floor(w.startMin / 60);
+  const sM = w.startMin % 60;
+  const eH = Math.floor(w.endMin / 60);
+  const eM = w.endMin % 60;
+  return `${fmtTime(sH, sM, use24h)}\u2013${fmtTime(eH, eM, use24h)}`;
 }
 
 // "First 30 min" = 9:30-10:00 (market open)
@@ -65,6 +71,8 @@ const OPEN_END = 10 * 60; // 600
 /* ── component ──────────────────────────────────────────────── */
 
 export default function TimeOfDayAnalysis({ trades }: Props) {
+  const use24h = get24hClock();
+
   const { buckets, maxAbsPnl, first30, restOfDay, insights } = useMemo(() => {
     // Bucket trades
     const bucketMap = new Map<number, Trade[]>();
@@ -89,7 +97,7 @@ export default function TimeOfDayAnalysis({ trades }: Props) {
       const wins = pnls.filter((p) => p > 0).length;
       const losses = pnls.filter((p) => p <= 0).length;
       return {
-        label: w.label,
+        label: windowLabel(w, use24h),
         startMin: w.startMin,
         endMin: w.endMin,
         count: bt.length,
@@ -150,7 +158,7 @@ export default function TimeOfDayAnalysis({ trades }: Props) {
       restOfDay,
       insights: { best, worst, mostActive, dangerZones },
     };
-  }, [trades]);
+  }, [trades, use24h]);
 
   if (trades.length === 0) {
     return (
@@ -162,11 +170,15 @@ export default function TimeOfDayAnalysis({ trades }: Props) {
 
   /* ── SVG chart dimensions ─────────────────────────────────── */
   const ROW_H = 28;
-  const PAD = { t: 8, b: 8, l: 88, r: 130 };
-  const W = 600;
+  const PAD = { t: 8, b: 8, l: 100, r: 240 };
+  const W = 800;
   const chartW = W - PAD.l - PAD.r;
   const centerX = PAD.l + chartW / 2;
   const H = PAD.t + WINDOWS.length * ROW_H + PAD.b;
+
+  /* ── Subtitle helpers ──────────────────────────────────────── */
+  const first30Sub = use24h ? "09:30 \u2013 10:00" : "9:30 \u2013 10:00 AM";
+  const restSub = use24h ? "10:00 \u2013 16:00" : "10:00 AM \u2013 4:00 PM";
 
   return (
     <div className="space-y-8">
@@ -219,7 +231,7 @@ export default function TimeOfDayAnalysis({ trades }: Props) {
 
                 {/* time label */}
                 <text
-                  x={PAD.l - 6}
+                  x={PAD.l - 8}
                   y={cy + 4}
                   fill="#9ca3af"
                   fontSize="10"
@@ -242,38 +254,39 @@ export default function TimeOfDayAnalysis({ trades }: Props) {
                   />
                 )}
 
-                {/* P&L value on bar */}
-                {b.count > 0 && (
+                {/* Combined P&L + stats — right-aligned to avoid overlap */}
+                {b.count > 0 ? (
                   <text
-                    x={
-                      isProfit
-                        ? centerX + barW + 5
-                        : centerX - barW - 5
-                    }
+                    x={W - 12}
                     y={cy + 3.5}
-                    fill={barColor}
-                    fontSize="10"
-                    fontWeight="600"
-                    textAnchor={isProfit ? "start" : "end"}
-                    fontFamily="ui-monospace, SFMono-Regular, monospace"
+                    textAnchor="end"
+                    fontSize="9.5"
+                    fontFamily="Inter, sans-serif"
                   >
-                    {fmtDollar(b.netPnl)}
+                    <tspan
+                      fill={barColor}
+                      fontWeight="600"
+                      fontFamily="ui-monospace, SFMono-Regular, monospace"
+                      fontSize="10"
+                    >
+                      {fmtDollar(b.netPnl)}
+                    </tspan>
+                    <tspan fill="#52525b">
+                      {"  \u00b7  "}{b.count} trade{b.count !== 1 ? "s" : ""}  \u00b7  {b.winRate.toFixed(0)}% W
+                    </tspan>
+                  </text>
+                ) : (
+                  <text
+                    x={W - 12}
+                    y={cy + 3.5}
+                    textAnchor="end"
+                    fontSize="9.5"
+                    fill="#3f3f46"
+                    fontFamily="Inter, sans-serif"
+                  >
+                    —
                   </text>
                 )}
-
-                {/* right stats: count + win rate */}
-                <text
-                  x={W - PAD.r + 8}
-                  y={cy + 4}
-                  fill="#52525b"
-                  fontSize="9.5"
-                  textAnchor="start"
-                  fontFamily="Inter, sans-serif"
-                >
-                  {b.count > 0
-                    ? `${b.count} trade${b.count !== 1 ? "s" : ""}  ·  ${b.winRate.toFixed(0)}% W`
-                    : "—"}
-                </text>
               </g>
             );
           })}
@@ -289,12 +302,12 @@ export default function TimeOfDayAnalysis({ trades }: Props) {
         <div className="grid grid-cols-2 gap-4">
           <ComparisonColumn
             title="First 30 min"
-            subtitle="9:30 – 10:00 AM"
+            subtitle={first30Sub}
             stats={first30}
           />
           <ComparisonColumn
             title="Rest of Day"
-            subtitle="10:00 AM – 4:00 PM"
+            subtitle={restSub}
             stats={restOfDay}
           />
         </div>
