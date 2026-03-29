@@ -75,6 +75,7 @@ export default function TradeForm({
       ticker: form.ticker.toUpperCase().trim(),
       entry_time: form.entry_time || "09:30:00",
       exit_time: form.exit_time || "10:00:00",
+      grade: form.grade || "B",
       stop_loss_price: form.stop_loss_price || null,
     };
 
@@ -293,15 +294,37 @@ export default function TradeForm({
         </div>
       )}
 
-      {/* Setup Tag */}
-      <div>
-        <label className={labelClass}>Setup</label>
-        <input
-          className={inputClass}
-          placeholder="e.g. VWAP reclaim, breakout, red-to-green"
-          value={form.setup}
-          onChange={(e) => set("setup", e.target.value)}
-        />
+      {/* Setup & Grade */}
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <label className={labelClass}>Setup</label>
+          <input
+            className={inputClass}
+            placeholder="e.g. VWAP reclaim, breakout, red-to-green"
+            value={form.setup}
+            onChange={(e) => set("setup", e.target.value)}
+          />
+        </div>
+        <div>
+          <label className={labelClass}>Grade</label>
+          <div className="flex h-[34px] rounded-[6px] border border-white/[0.04] bg-transparent p-0.5 gap-0.5">
+            {(["A", "B", "C", "D"] as const).map((g) => (
+              <button
+                key={g}
+                type="button"
+                onClick={() => set("grade", g)}
+                className={cn(
+                  "flex-1 rounded-[4px] text-[13px] font-medium transition-colors",
+                  form.grade === g
+                    ? "bg-white/[0.08] text-white"
+                    : "text-zinc-500 hover:text-zinc-400"
+                )}
+              >
+                {g}
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
 
       {/* Emotion Tag */}
