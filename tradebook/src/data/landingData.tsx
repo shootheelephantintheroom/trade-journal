@@ -74,7 +74,7 @@ export const FAQS = [
   },
   {
     q: "What results do Pro users see?",
-    a: "Pro gives you the analytics that turn raw trade logs into actionable changes: time-of-day analysis to find your best hours, tilt detection to flag spiraling days early, hold-time breakdowns to fix your exits, and catalyst + float tracking to learn which setups actually fit your edge. It's $29/mo or $249/yr with a 14-day free trial.",
+    a: "Pro gives you the analytics that turn raw trade logs into actionable changes: time-of-day analysis to find your best hours, tilt detection to flag spiraling days early, hold-time breakdowns to fix your exits, and catalyst + float tracking to learn which setups actually fit your edge. It's $9/mo or $79/yr with a 14-day free trial.",
   },
   {
     q: "Can I cancel anytime?",
