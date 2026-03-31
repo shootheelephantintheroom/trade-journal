@@ -124,14 +124,9 @@ export default function LandingPage() {
       <main className="flex-1">
         {/* ───── Hero ───── */}
         <section className="relative flex flex-col items-center justify-center px-4 pt-24 pb-8 sm:pt-36 sm:pb-12 overflow-hidden">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none">
-            <div className="hero-glow w-[500px] h-[350px] sm:w-[700px] sm:h-[450px] rounded-full bg-brand/20 blur-[120px]" />
-          </div>
-          {/* Floating orbs */}
-          <div className="absolute inset-0 pointer-events-none overflow-hidden">
-            <div className="hero-orb-1 absolute top-[20%] left-[15%] w-[180px] h-[180px] rounded-full bg-brand/8 blur-[80px]" />
-            <div className="hero-orb-2 absolute top-[60%] right-[10%] w-[140px] h-[140px] rounded-full bg-emerald-400/6 blur-[70px]" />
-            <div className="hero-orb-3 absolute top-[30%] right-[25%] w-[120px] h-[120px] rounded-full bg-brand/5 blur-[60px]" />
+          {/* Linear-style gradient: subtle radial glow at top fading into the page */}
+          <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(59,130,246,0.15),transparent)]" />
           </div>
 
           <div className="relative text-center max-w-2xl z-10">
