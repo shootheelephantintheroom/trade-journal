@@ -7,18 +7,18 @@ import { FREE_FEATURES, PRO_FEATURES, MOMENTUM_CALLOUTS, FAQS } from "../data/la
 const STEPS = [
   {
     step: "1",
-    title: "30 Seconds Per Trade",
-    desc: "Log ticker, entry/exit, size, emotions, and setup. By the end of week one, you'll see patterns you never noticed.",
+    title: "Log in 30 Seconds",
+    desc: "Ticker, entry/exit, size, setup, emotions. One week of data is all it takes to surface patterns you've been missing.",
   },
   {
     step: "2",
-    title: "See Where the Money Goes",
-    desc: "Your dashboard shows exactly which setups, time windows, and habits are costing you — no more guessing why you're red.",
+    title: "See What's Costing You",
+    desc: "Your dashboard breaks down performance by setup, time of day, and behavior. Stop guessing, start cutting.",
   },
   {
     step: "3",
     title: "Keep More of What You Make",
-    desc: "Traders who journal consistently cut their losing days in half. The data makes it obvious what to stop doing.",
+    desc: "Consistent journaling cuts losing days in half. The data makes it obvious what to stop doing.",
   },
 ];
 
@@ -136,12 +136,11 @@ export default function LandingPage() {
               <span className="text-brand">have a pattern.</span>
             </h2>
             <p className="hero-enter-d1 text-secondary text-base sm:text-lg max-w-xl mx-auto leading-relaxed mb-2">
-              Most traders lose money to the same 2-3 mistakes on repeat.
-              MyTradeBook makes those mistakes impossible to ignore — so you
-              actually stop making them.
+              Most traders lose money to the same 2–3 mistakes on repeat.
+              MyTradeBook makes them impossible to ignore.
             </p>
             <p className="hero-enter-d1 text-tertiary text-[13px] max-w-md mx-auto mb-10">
-              Built for small-cap momentum traders who are done giving back profits.
+              Built for small-cap momentum traders.
             </p>
             <div className="hero-enter-d2">
               <Link
@@ -151,7 +150,7 @@ export default function LandingPage() {
                 Start Free — No Credit Card
               </Link>
               <p className="text-tertiary text-xs mt-3 tracking-wide">
-                Free forever. Upgrade to Pro when you're ready.
+                Free forever. Upgrade when you're ready.
               </p>
             </div>
           </div>
@@ -161,7 +160,7 @@ export default function LandingPage() {
         <section className="px-4 py-20 sm:py-28 reveal">
           <div className="max-w-3xl mx-auto">
             <h2 className="text-2xl sm:text-3xl font-medium text-primary text-center mb-16">
-              Three Steps to Fewer Red Days
+              How It Works
             </h2>
             <div className="flex flex-col sm:flex-row sm:items-start gap-10 sm:gap-0">
               {STEPS.map((item, i) => (
@@ -211,10 +210,10 @@ export default function LandingPage() {
         <section className="px-4 py-20 sm:py-28 reveal">
           <div className="max-w-4xl mx-auto">
             <h2 className="text-2xl sm:text-3xl font-medium text-primary text-center mb-4">
-              Outcomes Real Traders Get
+              Built for Momentum Traders
             </h2>
             <p className="text-tertiary text-[13px] text-center mb-14 max-w-lg mx-auto">
-              Not a spreadsheet with a logo. Every screen is built to change how you trade tomorrow.
+              Every feature is designed to change how you trade tomorrow.
             </p>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -257,7 +256,7 @@ export default function LandingPage() {
               One Bad Trade Costs More Than a Year of Pro
             </h2>
             <p className="text-tertiary text-[13px] text-center mb-14 max-w-md mx-auto">
-              Start free. Upgrade when the data shows you exactly where to stop bleeding.
+              Start free. Upgrade when your data tells you to.
             </p>
 
             {/* Monthly/Yearly toggle */}
@@ -443,8 +442,7 @@ export default function LandingPage() {
               Your Next Green Month Starts Here
             </h2>
             <p className="text-secondary text-[13px] mb-8">
-              The traders who win long-term are the ones who know their numbers.
-              Start in 30 seconds, free forever.
+              Traders who win long-term know their numbers.
             </p>
             <Link
               to="/login?mode=signup"
@@ -453,7 +451,7 @@ export default function LandingPage() {
               Start Free — No Credit Card
             </Link>
             <p className="text-tertiary text-xs mt-4">
-              Free tier forever. Upgrade to Pro anytime — 14-day trial available.
+              Free forever. 14-day Pro trial available anytime.
             </p>
           </div>
         </section>
