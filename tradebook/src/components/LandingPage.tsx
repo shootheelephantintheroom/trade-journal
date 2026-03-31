@@ -49,6 +49,24 @@ export default function LandingPage() {
     return () => observer.disconnect();
   }, [loading]);
 
+  useEffect(() => {
+    const cards = document.querySelectorAll('.feature-card');
+    const handleMouseMove = (e: MouseEvent) => {
+      const card = e.currentTarget as HTMLElement;
+      const rect = card.getBoundingClientRect();
+      card.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
+      card.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
+    };
+    cards.forEach((card) => {
+      card.addEventListener('mousemove', handleMouseMove as EventListener);
+    });
+    return () => {
+      cards.forEach((card) => {
+        card.removeEventListener('mousemove', handleMouseMove as EventListener);
+      });
+    };
+  }, [loading]);
+
   if (loading) {
     return (
       <div className="min-h-screen bg-surface-0 flex items-center justify-center">
@@ -105,6 +123,13 @@ export default function LandingPage() {
       <main className="flex-1">
         {/* ───── Hero ───── */}
         <section className="relative flex flex-col items-center justify-center px-4 pt-32 pb-20 sm:pt-44 sm:pb-28 overflow-hidden">
+          {/* Ambient floating orbs */}
+          <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
+            <div className="hero-orb hero-orb-1" />
+            <div className="hero-orb hero-orb-2" />
+            <div className="hero-orb hero-orb-3" />
+          </div>
+
           {/* Subtle dot grid */}
           <div className="hero-grid" aria-hidden="true" />
 
@@ -112,7 +137,7 @@ export default function LandingPage() {
             <h2 className="hero-enter text-4xl sm:text-5xl md:text-6xl font-semibold text-primary leading-[1.08] tracking-tight mb-6">
               Your red days
               <br />
-              <span className="text-brand">have a pattern.</span>
+              <span className="text-brand hero-shimmer">have a pattern.</span>
             </h2>
             <p className="hero-enter-d1 text-secondary text-base sm:text-lg max-w-xl mx-auto leading-relaxed mb-10">
               Most traders lose money to the same 2–3 mistakes on repeat.
@@ -129,6 +154,8 @@ export default function LandingPage() {
           </div>
         </section>
 
+        <div className="gradient-line" />
+
         {/* ───── Built for Momentum Traders ───── */}
         <section className="px-4 py-20 sm:py-28 reveal">
           <div className="max-w-4xl mx-auto">
@@ -143,8 +170,9 @@ export default function LandingPage() {
               {MOMENTUM_CALLOUTS.map((item) => (
                 <div
                   key={item.title}
-                  className="feature-card bg-surface-1/40 border border-border rounded-md p-5"
+                  className="feature-card group relative bg-surface-1/40 border border-border rounded-md p-5 overflow-hidden"
                 >
+                  <div className="absolute inset-0 rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: 'radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(59,130,246,0.06), transparent 40%)' }} />
                   <div className="w-10 h-10 rounded-md bg-brand/10 border border-brand/20 flex items-center justify-center mb-5">
                     <svg
                       className="w-5 h-5 text-brand"
@@ -167,6 +195,8 @@ export default function LandingPage() {
             </div>
           </div>
         </section>
+
+        <div className="gradient-line" />
 
         {/* ───── Pricing ───── */}
         <section id="pricing" className="px-4 py-20 sm:py-28 reveal scroll-mt-20">
