@@ -1,26 +1,8 @@
-import { useState, useEffect, Fragment } from "react";
+import { useState, useEffect } from "react";
 import { Navigate, Link } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { cn } from "../lib/utils";
-import { FREE_FEATURES, PRO_FEATURES, MOMENTUM_CALLOUTS, FAQS } from "../data/landingData";
-
-const STEPS = [
-  {
-    step: "1",
-    title: "Log in 30 Seconds",
-    desc: "Ticker, entry/exit, size, setup, emotions. One week of data is all it takes to surface patterns you've been missing.",
-  },
-  {
-    step: "2",
-    title: "See What's Costing You",
-    desc: "Your dashboard breaks down performance by setup, time of day, and behavior. Stop guessing, start cutting.",
-  },
-  {
-    step: "3",
-    title: "Keep More of What You Make",
-    desc: "Consistent journaling cuts losing days in half. The data makes it obvious what to stop doing.",
-  },
-];
+import { FREE_FEATURES, PRO_FEATURES, MOMENTUM_CALLOUTS } from "../data/landingData";
 
 /* ── Helpers ── */
 
@@ -43,7 +25,6 @@ function CheckIcon({ className = "mt-0.5 h-4 w-4 shrink-0 text-brand" }: { class
 export default function LandingPage() {
   const { user, loading } = useAuth();
   const [scrolled, setScrolled] = useState(false);
-  const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [pricingPlan, setPricingPlan] = useState<"monthly" | "yearly">("yearly");
 
   useEffect(() => {
@@ -123,11 +104,9 @@ export default function LandingPage() {
 
       <main className="flex-1">
         {/* ───── Hero ───── */}
-        <section className="relative flex flex-col items-center justify-center px-4 pt-24 pb-8 sm:pt-36 sm:pb-12 overflow-hidden">
-          {/* Linear-style gradient: subtle radial glow at top fading into the page */}
-          <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(59,130,246,0.15),transparent)]" />
-          </div>
+        <section className="relative flex flex-col items-center justify-center px-4 pt-32 pb-20 sm:pt-44 sm:pb-28 overflow-hidden">
+          {/* Subtle dot grid */}
+          <div className="hero-grid" aria-hidden="true" />
 
           <div className="relative text-center max-w-2xl z-10">
             <h2 className="hero-enter text-4xl sm:text-5xl md:text-6xl font-semibold text-primary leading-[1.08] tracking-tight mb-6">
@@ -135,12 +114,9 @@ export default function LandingPage() {
               <br />
               <span className="text-brand">have a pattern.</span>
             </h2>
-            <p className="hero-enter-d1 text-secondary text-base sm:text-lg max-w-xl mx-auto leading-relaxed mb-2">
+            <p className="hero-enter-d1 text-secondary text-base sm:text-lg max-w-xl mx-auto leading-relaxed mb-10">
               Most traders lose money to the same 2–3 mistakes on repeat.
               MyTradeBook makes them impossible to ignore.
-            </p>
-            <p className="hero-enter-d1 text-tertiary text-[13px] max-w-md mx-auto mb-10">
-              Built for small-cap momentum traders.
             </p>
             <div className="hero-enter-d2">
               <Link
@@ -149,62 +125,9 @@ export default function LandingPage() {
               >
                 Start Free — No Credit Card
               </Link>
-              <p className="text-tertiary text-xs mt-3 tracking-wide">
-                Free forever. Upgrade when you're ready.
-              </p>
             </div>
           </div>
         </section>
-
-        {/* ───── How It Works ───── */}
-        <section className="px-4 py-20 sm:py-28 reveal">
-          <div className="max-w-3xl mx-auto">
-            <h2 className="text-2xl sm:text-3xl font-medium text-primary text-center mb-16">
-              How It Works
-            </h2>
-            <div className="flex flex-col sm:flex-row sm:items-start gap-10 sm:gap-0">
-              {STEPS.map((item, i) => (
-                <Fragment key={item.step}>
-                  <div className="flex-1 text-center">
-                    <div className="w-12 h-12 rounded-full bg-surface-0 border-2 border-brand/40 flex items-center justify-center mx-auto mb-5 relative z-10">
-                      <span className="text-brand font-medium">
-                        {item.step}
-                      </span>
-                    </div>
-                    <h3 className="text-base font-medium text-primary mb-2">
-                      {item.title}
-                    </h3>
-                    <p className="text-[13px] text-secondary leading-relaxed max-w-[240px] mx-auto">
-                      {item.desc}
-                    </p>
-                  </div>
-                  {i < STEPS.length - 1 && (
-                    <div className={cn("hidden sm:flex items-center shrink-0 mt-[18px]", `step-connector${i === 1 ? " step-connector-2" : ""}`)}>
-                      <div className="w-8 h-px bg-brand/25" />
-                      <svg
-                        className="w-3 h-3 text-brand/40 shrink-0 -mx-0.5"
-                        fill="none"
-                        viewBox="0 0 12 12"
-                      >
-                        <path
-                          d="M4 2l4 4-4 4"
-                          stroke="currentColor"
-                          strokeWidth="1.5"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </svg>
-                      <div className="w-8 h-px bg-brand/25" />
-                    </div>
-                  )}
-                </Fragment>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* ───── Divider ───── */}
-        <div className="section-divider" />
 
         {/* ───── Built for Momentum Traders ───── */}
         <section className="px-4 py-20 sm:py-28 reveal">
@@ -244,10 +167,6 @@ export default function LandingPage() {
             </div>
           </div>
         </section>
-
-
-        {/* ───── Divider ───── */}
-        <div className="section-divider" />
 
         {/* ───── Pricing ───── */}
         <section id="pricing" className="px-4 py-20 sm:py-28 reveal scroll-mt-20">
@@ -366,71 +285,6 @@ export default function LandingPage() {
                   Start a 14-day Pro trial anytime from Account Settings
                 </p>
               </div>
-            </div>
-          </div>
-        </section>
-
-        {/* ───── Bold Quote ───── */}
-        <section className="px-4 py-20 sm:py-32 reveal">
-          <div className="max-w-3xl mx-auto text-center">
-            <div className="w-12 h-px bg-brand mx-auto mb-10" />
-            <p className="text-2xl sm:text-3xl md:text-4xl font-light italic text-primary/90 leading-relaxed tracking-tight">
-              "I was breakeven for 8 months. Two weeks of journaling showed me I was profitable before 10 AM and a disaster after lunch."
-            </p>
-            <div className="w-12 h-px bg-brand mx-auto mt-10" />
-          </div>
-        </section>
-
-        {/* ───── FAQ ───── */}
-        <section className="px-4 py-20 sm:py-28 reveal">
-          <div className="max-w-2xl mx-auto">
-            <h2 className="text-2xl sm:text-3xl font-medium text-primary text-center mb-14">
-              Frequently Asked Questions
-            </h2>
-            <div className="space-y-2">
-              {FAQS.map((faq, i) => (
-                <div
-                  key={i}
-                  className="border border-border/60 rounded-md overflow-hidden"
-                >
-                  <button
-                    onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                    className="w-full text-left px-5 py-4 flex items-center justify-between gap-4 hover:bg-surface-1/40 transition-colors cursor-pointer"
-                  >
-                    <span className="text-[13px] font-medium text-primary">
-                      {faq.q}
-                    </span>
-                    <svg
-                      className={cn(
-                        "w-4 h-4 text-tertiary shrink-0 transition-transform duration-150",
-                        openFaq === i ? "rotate-180" : ""
-                      )}
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      strokeWidth={2}
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M19 9l-7 7-7-7"
-                      />
-                    </svg>
-                  </button>
-                  <div
-                    className={cn(
-                      "grid transition-all duration-150",
-                      openFaq === i ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
-                    )}
-                  >
-                    <div className="overflow-hidden">
-                      <p className="px-5 pb-4 text-[13px] text-secondary leading-relaxed">
-                        {faq.a}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              ))}
             </div>
           </div>
         </section>
