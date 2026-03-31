@@ -251,19 +251,6 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* ───── Dashboard Preview ───── */}
-        <section className="px-4 py-20 sm:py-28 reveal">
-          <div className="max-w-4xl mx-auto dashboard-wrapper">
-            <div className="dashboard-float relative">
-              <img
-                src="/dashboard-preview.png"
-                alt="MyTradeBook dashboard showing P&L, win rate, equity curve, and trade history"
-                className="w-full rounded-md border border-border relative z-10"
-              />
-              <div className="absolute -bottom-8 left-[10%] right-[10%] h-24 bg-brand/10 rounded-full blur-[60px]" />
-            </div>
-          </div>
-        </section>
 
         {/* ───── Divider ───── */}
         <div className="section-divider" />
