@@ -424,98 +424,6 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   transform: translateY(0);
 }
 
-/* Feature cards — subtle hover lift */
-.feature-card {
-  transition: border-color 0.2s ease, transform 0.2s ease;
-}
-
-.feature-card:hover {
-  border-color: rgba(255, 255, 255, 0.08);
-  transform: translateY(-2px);
-}
-
-/* CTA button breathing glow */
-.cta-btn {
-  transition: all 0.2s ease;
-  animation: cta-breathe 3s ease-in-out infinite;
-}
-
-.cta-btn:hover {
-  box-shadow: 0 0 30px rgba(59, 130, 246, 0.25);
-  animation: none;
-}
-
-@keyframes cta-breathe {
-  0%, 100% { box-shadow: 0 0 15px rgba(59, 130, 246, 0.08); }
-  50% { box-shadow: 0 0 25px rgba(59, 130, 246, 0.15); }
-}
-
-/* Dot grid background for hero */
-.hero-grid {
-  position: absolute;
-  inset: 0;
-  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
-  background-size: 24px 24px;
-  mask-image: linear-gradient(to bottom, black 0%, transparent 60%);
-  -webkit-mask-image: linear-gradient(to bottom, black 0%, transparent 60%);
-  pointer-events: none;
-}
-
-/* ── Centered hero glow ── */
-.hero-glow {
-  position: absolute;
-  top: 30%;
-  left: 50%;
-  translate: -50% -50%;
-  width: 600px;
-  height: 300px;
-  background: radial-gradient(ellipse, rgba(59, 130, 246, 0.08) 0%, transparent 70%);
-  pointer-events: none;
-}
-
-/* ── Text shimmer sweep ── */
-.hero-shimmer {
-  position: relative;
-  display: inline-block;
-  background: linear-gradient(
-    90deg,
-    #3b82f6 0%,
-    #3b82f6 40%,
-    #93c5fd 50%,
-    #3b82f6 60%,
-    #3b82f6 100%
-  );
-  background-size: 200% 100%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  animation: shimmer-sweep 4s ease-in-out infinite;
-}
-
-@keyframes shimmer-sweep {
-  0%, 100% { background-position: 100% center; }
-  50% { background-position: 0% center; }
-}
-
-/* ── Animated gradient divider line ── */
-.gradient-line {
-  height: 1px;
-  max-width: 600px;
-  margin: 0 auto;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(59, 130, 246, 0.3) 50%,
-    transparent 100%
-  );
-  background-size: 200% 100%;
-  animation: line-slide 3s ease-in-out infinite;
-}
-
-@keyframes line-slide {
-  0%, 100% { background-position: -100% center; }
-  50% { background-position: 100% center; }
-}
 
 /* ── Respect reduced motion preference ── */
 @media (prefers-reduced-motion: reduce) {
@@ -523,15 +431,12 @@ input[type="time"]::-webkit-calendar-picker-indicator {
     animation: none !important;
     display: none;
   }
-  .hero-shimmer,
-  .cta-btn,
-  .gradient-line {
+  .hero-enter,
+  .hero-enter-d1,
+  .hero-enter-d2 {
+    opacity: 1;
+    transform: none;
     animation: none !important;
-  }
-  .hero-shimmer {
-    -webkit-text-fill-color: unset;
-    background: none;
-    color: var(--color-brand);
   }
   .reveal {
     opacity: 1;

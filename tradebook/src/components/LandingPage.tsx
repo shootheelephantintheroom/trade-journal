@@ -56,23 +56,6 @@ export default function LandingPage() {
     return () => observer.disconnect();
   }, [loading]);
 
-  useEffect(() => {
-    const cards = document.querySelectorAll('.feature-card');
-    const handleMouseMove = (e: MouseEvent) => {
-      const card = e.currentTarget as HTMLElement;
-      const rect = card.getBoundingClientRect();
-      card.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
-      card.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
-    };
-    cards.forEach((card) => {
-      card.addEventListener('mousemove', handleMouseMove as EventListener);
-    });
-    return () => {
-      cards.forEach((card) => {
-        card.removeEventListener('mousemove', handleMouseMove as EventListener);
-      });
-    };
-  }, [loading]);
 
   if (loading) {
     return (
@@ -134,27 +117,21 @@ export default function LandingPage() {
 
       <main className="flex-1">
         {/* ───── Hero ───── */}
-        <section className="relative flex flex-col items-center justify-center px-4 pt-32 pb-20 sm:pt-44 sm:pb-28 overflow-hidden">
-          {/* Ambient glow behind hero text */}
-          <div className="hero-glow" aria-hidden="true" />
-
-          {/* Subtle dot grid */}
-          <div className="hero-grid" aria-hidden="true" />
-
-          <div className="relative text-center max-w-2xl z-10">
-            <h2 className="hero-enter text-4xl sm:text-5xl md:text-6xl font-semibold text-primary leading-[1.08] tracking-tight mb-6">
+        <section className="flex flex-col items-center justify-center px-4 pt-32 pb-20 sm:pt-44 sm:pb-28">
+          <div className="text-center max-w-2xl">
+            <h2 className="hero-enter text-4xl sm:text-5xl font-semibold text-primary leading-[1.08] tracking-tight mb-6">
               Your red days
               <br />
-              <span className="text-brand hero-shimmer">have a pattern.</span>
+              <span className="text-brand">have a pattern.</span>
             </h2>
-            <p className="hero-enter-d1 text-secondary text-base sm:text-lg max-w-xl mx-auto leading-relaxed mb-10">
+            <p className="hero-enter-d1 text-secondary text-[15px] max-w-lg mx-auto leading-relaxed mb-10">
               Most traders lose money to the same 2–3 mistakes on repeat.
               MyTradeBook makes them impossible to ignore.
             </p>
             <div className="hero-enter-d2">
               <Link
                 to="/login?mode=signup"
-                className="cta-btn inline-block bg-brand hover:bg-brand/90 text-surface-0 font-semibold text-base sm:text-lg px-10 py-4 rounded-md"
+                className="inline-block bg-brand hover:bg-brand/90 text-surface-0 font-medium text-sm px-8 py-3 rounded-md transition-colors"
               >
                 Start Free — No Credit Card
               </Link>
@@ -162,7 +139,7 @@ export default function LandingPage() {
           </div>
         </section>
 
-        <div className="gradient-line" />
+        <div className="mx-auto max-w-xs border-t border-white/[0.04]" />
 
         {/* ───── Built for Momentum Traders ───── */}
         <section className="px-4 py-20 sm:py-28 reveal">
@@ -174,16 +151,12 @@ export default function LandingPage() {
               Every feature is designed to change how you trade tomorrow.
             </p>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-10 gap-y-8">
               {MOMENTUM_CALLOUTS.map((item) => (
-                <div
-                  key={item.title}
-                  className="feature-card group relative bg-surface-1/40 border border-border rounded-md p-5 overflow-hidden"
-                >
-                  <div className="absolute inset-0 rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: 'radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(59,130,246,0.06), transparent 40%)' }} />
-                  <div className="w-10 h-10 rounded-md bg-brand/10 border border-brand/20 flex items-center justify-center mb-5">
+                <div key={item.title} className="pl-4 border-l-2 border-white/[0.06]">
+                  <div className="flex items-center gap-2.5 mb-2">
                     <svg
-                      className="w-5 h-5 text-brand"
+                      className="w-4 h-4 text-brand shrink-0"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
@@ -191,10 +164,10 @@ export default function LandingPage() {
                     >
                       {item.icon}
                     </svg>
+                    <h3 className="text-[13px] font-medium text-primary">
+                      {item.title}
+                    </h3>
                   </div>
-                  <h3 className="text-base font-medium text-primary mb-2">
-                    {item.title}
-                  </h3>
                   <p className="text-[13px] text-secondary leading-relaxed">
                     {item.desc}
                   </p>
@@ -204,7 +177,7 @@ export default function LandingPage() {
           </div>
         </section>
 
-        <div className="gradient-line" />
+        <div className="mx-auto max-w-xs border-t border-white/[0.04]" />
 
         {/* ───── Pricing ───── */}
         <section id="pricing" className="px-4 py-20 sm:py-28 reveal scroll-mt-20">
@@ -315,7 +288,7 @@ export default function LandingPage() {
                 </ul>
                 <Link
                   to="/login?mode=signup"
-                  className="cta-btn mt-8 block w-full text-center rounded-md bg-brand hover:bg-brand/90 px-6 py-3.5 text-[13px] font-medium text-surface-0 transition-colors"
+                  className="mt-8 block w-full text-center rounded-md bg-brand hover:bg-brand/90 px-6 py-3.5 text-[13px] font-medium text-surface-0 transition-colors"
                 >
                   Get Started Free
                 </Link>
@@ -330,7 +303,7 @@ export default function LandingPage() {
         {/* ───── Final CTA ───── */}
         <section className="px-4 py-20 sm:py-28 reveal">
           <div className="max-w-lg mx-auto text-center">
-            <h2 className="text-2xl sm:text-3xl font-medium text-primary mb-3">
+            <h2 className="text-xl sm:text-2xl font-medium text-primary mb-3">
               Your Next Green Month Starts Here
             </h2>
             <p className="text-secondary text-[13px] mb-8">
@@ -338,7 +311,7 @@ export default function LandingPage() {
             </p>
             <Link
               to="/login?mode=signup"
-              className="cta-btn inline-block bg-brand hover:bg-brand/90 text-surface-0 font-semibold text-base px-10 py-4 rounded-md"
+              className="inline-block bg-brand hover:bg-brand/90 text-surface-0 font-medium text-sm px-8 py-3 rounded-md transition-colors"
             >
               Start Free — No Credit Card
             </Link>
