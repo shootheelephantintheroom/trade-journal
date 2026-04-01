@@ -64,6 +64,10 @@ export default function Settings() {
   // Manage subscription
   const [managingSubscription, setManagingSubscription] = useState(false);
 
+  // Upgrade
+  const [upgradePlan, setUpgradePlan] = useState<"monthly" | "yearly">("yearly");
+  const [upgrading, setUpgrading] = useState(false);
+
   // Avatar
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
@@ -197,6 +201,21 @@ export default function Settings() {
     setManagingSubscription(false);
   }
 
+  async function handleUpgrade() {
+    setUpgrading(true);
+    try {
+      const { data, error } = await invokeEdgeFunction("create-checkout-session", { plan: upgradePlan });
+      if (error || !data?.url) {
+        showToast(error ?? "Failed to start checkout", "error");
+      } else {
+        window.location.href = data.url;
+      }
+    } catch {
+      showToast("Something went wrong. Please try again.", "error");
+    }
+    setUpgrading(false);
+  }
+
   async function handleAvatarUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file || !user) return;
@@ -310,13 +329,12 @@ export default function Settings() {
 
       {/* Plan Status */}
       <div className="space-y-4">
-        <h3 className="text-[13px] font-medium text-secondary mb-3">Current Plan</h3>
+        <h3 className="text-[13px] font-medium text-secondary">Current Plan</h3>
         <div className="flex items-center gap-3">
           <span className="text-[11px] px-1.5 py-0.5 bg-brand/10 text-brand rounded-[4px] font-medium">
             {planLabel()}
           </span>
         </div>
-
 
         {/* Trial info */}
         {isTrialing && (
@@ -325,34 +343,74 @@ export default function Settings() {
           </p>
         )}
 
-        {/* Free user prompt */}
-        {!isPro && !isTrialing && (
-          <p className="text-[13px] text-secondary">
-            Upgrade to unlock all features
-          </p>
+        {/* Pro — manage subscription */}
+        {isPro && !isTrialing && (
+          <button
+            onClick={handleManageSubscription}
+            disabled={managingSubscription}
+            className="text-[13px] px-3 py-1.5 bg-white/[0.06] text-white rounded-[6px] hover:bg-white/[0.1] disabled:opacity-40 transition-colors"
+          >
+            {managingSubscription ? "Opening..." : "Manage Subscription"}
+          </button>
         )}
 
-        {/* Actions */}
-        <div className="flex items-center gap-3">
-          {canStartTrial && (
+        {/* Upgrade section for non-paid users */}
+        {(!isPro || isTrialing) && (
+          <div className="space-y-3">
+            {canStartTrial && (
+              <button
+                onClick={handleStartTrial}
+                disabled={startingTrial}
+                className="w-full text-[13px] px-3 py-2 border border-brand/20 bg-brand-muted text-brand rounded-[6px] hover:bg-brand/15 disabled:opacity-40 transition-colors"
+              >
+                {startingTrial ? "Starting..." : "Start 14-Day Pro Trial"}
+              </button>
+            )}
+
+            <div className="flex h-[34px] rounded-[6px] border border-white/[0.04] bg-transparent p-0.5 gap-0.5">
+              <button
+                type="button"
+                onClick={() => setUpgradePlan("monthly")}
+                className={cn(
+                  "flex-1 rounded-[4px] text-[13px] font-medium transition-colors",
+                  upgradePlan === "monthly"
+                    ? "bg-white/[0.08] text-white"
+                    : "text-zinc-500 hover:text-zinc-400"
+                )}
+              >
+                Monthly
+              </button>
+              <button
+                type="button"
+                onClick={() => setUpgradePlan("yearly")}
+                className={cn(
+                  "flex-1 rounded-[4px] text-[13px] font-medium transition-colors",
+                  upgradePlan === "yearly"
+                    ? "bg-white/[0.08] text-white"
+                    : "text-zinc-500 hover:text-zinc-400"
+                )}
+              >
+                Yearly
+              </button>
+            </div>
+
+            {upgradePlan === "yearly" && (
+              <p className="text-[11px] text-profit font-medium">Save 27% with annual billing</p>
+            )}
+
             <button
-              onClick={handleStartTrial}
-              disabled={startingTrial}
-              className="text-[13px] px-3 py-1.5 bg-white/[0.06] text-white rounded-[6px] hover:bg-white/[0.1] disabled:opacity-40 transition-colors"
+              onClick={handleUpgrade}
+              disabled={upgrading}
+              className="w-full rounded-[6px] bg-brand px-3 py-2 text-[13px] font-medium text-surface-0 transition-colors hover:bg-brand/90 disabled:opacity-40"
             >
-              {startingTrial ? "Starting..." : "Start 14-Day Pro Trial"}
+              {upgrading
+                ? "Redirecting..."
+                : upgradePlan === "monthly"
+                  ? "Upgrade to Pro — $9/mo"
+                  : "Upgrade to Pro — $79/yr"}
             </button>
-          )}
-          {isPro && !isTrialing && (
-            <button
-              onClick={handleManageSubscription}
-              disabled={managingSubscription}
-              className="text-[13px] px-3 py-1.5 bg-white/[0.06] text-white rounded-[6px] hover:bg-white/[0.1] disabled:opacity-40 transition-colors"
-            >
-              {managingSubscription ? "Opening..." : "Manage Subscription"}
-            </button>
-          )}
-        </div>
+          </div>
+        )}
       </div>
 
       {/* Display Name */}
