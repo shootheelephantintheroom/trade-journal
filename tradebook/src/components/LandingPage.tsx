@@ -26,6 +26,13 @@ export default function LandingPage() {
   const { user, loading } = useAuth();
   const [scrolled, setScrolled] = useState(false);
   const [pricingPlan, setPricingPlan] = useState<"monthly" | "yearly">("yearly");
+  const [showReveal, setShowReveal] = useState(() => {
+    try { return !sessionStorage.getItem("mtb_revealed"); } catch { return false; }
+  });
+
+  useEffect(() => {
+    if (showReveal) sessionStorage.setItem("mtb_revealed", "1");
+  }, [showReveal]);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 80);
@@ -78,7 +85,12 @@ export default function LandingPage() {
   if (user) return <Navigate to="/app" replace />;
 
   return (
-    <div className="min-h-screen bg-surface-0 text-primary flex flex-col">
+    <div className={cn("min-h-screen bg-surface-0 text-primary flex flex-col", showReveal && "has-cinematic-reveal")}>
+      {/* ───── Cinematic page-load reveal ───── */}
+      {showReveal && (
+        <div className="cinematic-overlay" onAnimationEnd={() => setShowReveal(false)} />
+      )}
+
       {/* ───── Header ───── */}
       <header
         className={cn(
