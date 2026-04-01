@@ -135,12 +135,8 @@ export default function LandingPage() {
       <main className="flex-1">
         {/* ───── Hero ───── */}
         <section className="relative flex flex-col items-center justify-center px-4 pt-32 pb-20 sm:pt-44 sm:pb-28 overflow-hidden">
-          {/* Ambient floating orbs */}
-          <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
-            <div className="hero-orb hero-orb-1" />
-            <div className="hero-orb hero-orb-2" />
-            <div className="hero-orb hero-orb-3" />
-          </div>
+          {/* Ambient glow behind hero text */}
+          <div className="hero-glow" aria-hidden="true" />
 
           {/* Subtle dot grid */}
           <div className="hero-grid" aria-hidden="true" />
