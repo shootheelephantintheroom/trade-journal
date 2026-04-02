@@ -28,6 +28,12 @@ create table if not exists trades (
 
 alter table trades enable row level security;
 
+drop policy if exists "Allow all access" on trades;
+drop policy if exists "Users can view own trades" on trades;
+drop policy if exists "Users can insert own trades" on trades;
+drop policy if exists "Users can update own trades" on trades;
+drop policy if exists "Users can delete own trades" on trades;
+
 create policy "Users can view own trades"
   on trades for select
   using (auth.uid() = user_id);
@@ -59,6 +65,12 @@ create table if not exists missed_trades (
 );
 
 alter table missed_trades enable row level security;
+
+drop policy if exists "Allow all access" on missed_trades;
+drop policy if exists "Users can view own missed trades" on missed_trades;
+drop policy if exists "Users can insert own missed trades" on missed_trades;
+drop policy if exists "Users can update own missed trades" on missed_trades;
+drop policy if exists "Users can delete own missed trades" on missed_trades;
 
 create policy "Users can view own missed trades"
   on missed_trades for select
