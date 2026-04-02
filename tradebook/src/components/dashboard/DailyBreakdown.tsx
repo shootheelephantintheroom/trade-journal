@@ -27,7 +27,7 @@ export default function DailyBreakdown({
                 Win Rate
               </th>
               <th className="pb-2 text-[13px] font-medium text-secondary text-right">
-                P&L
+                Profit / Loss
               </th>
             </tr>
           </thead>

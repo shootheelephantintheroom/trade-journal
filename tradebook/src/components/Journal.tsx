@@ -254,7 +254,7 @@ export default function Journal() {
               Trades <span className="text-[13px] font-medium text-primary ml-1">{tradeCount}</span>
             </span>
             <span className="text-[13px] font-medium text-secondary">
-              P&L{" "}
+              Profit / Loss{" "}
               <span className={cn("text-[13px] font-medium font-mono ml-1", totalPnl >= 0 ? "text-profit" : "text-loss")}>
                 {totalPnl >= 0 ? "+" : ""}${totalPnl.toFixed(2)}
               </span>

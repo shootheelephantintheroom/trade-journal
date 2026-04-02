@@ -82,7 +82,7 @@ function TodaySummary({ trades }: { trades: Trade[] }) {
           </p>
         </div>
         <div>
-          <p className="text-[12px] text-tertiary">P&L</p>
+          <p className="text-[12px] text-tertiary">Profit / Loss</p>
           <p
             className={cn(
               "text-base font-medium tabular-nums",
@@ -148,7 +148,7 @@ export default function Dashboard({
         </h2>
         <p className="text-[13px] text-zinc-500 text-center max-w-xs">
           Your dashboard will come alive once you start logging trades — win
-          rate, P&L, streaks, and more.
+          rate, profit / loss, streaks, and more.
         </p>
         {onLogTrade && (
           <button
@@ -324,7 +324,7 @@ export default function Dashboard({
             <SectionHeader title="Overview" />
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
               <StatCard
-                label="Total P&L"
+                label="Total Profit / Loss"
                 value={`${totalPnl >= 0 ? "+" : ""}$${totalPnl.toFixed(2)}`}
                 color={totalPnl >= 0 ? "text-profit" : "text-loss"}
                 icon={DollarSign}
@@ -517,7 +517,7 @@ export default function Dashboard({
                   : null;
               return (
                 <StatCard
-                  label="Missed P&L"
+                  label="Missed Profit / Loss"
                   value={
                     totalMissedPnl !== null
                       ? `${totalMissedPnl >= 0 ? "+" : ""}$${totalMissedPnl.toFixed(2)}`

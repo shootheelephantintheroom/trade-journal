@@ -377,7 +377,7 @@ export default function TradeList({
                     className={cn(thClass, "text-right cursor-pointer hover:text-secondary transition-colors")}
                     onClick={() => toggleSort("pnl")}
                   >
-                    P&L <SortIcon col="pnl" />
+                    Profit / Loss <SortIcon col="pnl" />
                   </th>
                   <th className={cn(thClass, "text-right")}>
                     R:R

@@ -108,7 +108,7 @@ export default function MissedTrades() {
                       Est. Exit
                     </th>
                     <th className="px-4 py-3 text-[13px] font-medium text-secondary">
-                      Est. P&L
+                      Est. Profit / Loss
                     </th>
                     <th className="px-4 py-3 text-[13px] font-medium text-secondary">
                       Hesitation

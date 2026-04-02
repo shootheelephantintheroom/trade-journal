@@ -240,7 +240,7 @@ export default function HoldTimeAnalysis({ trades }: Props) {
       {/* ── Scatter plot ──────────────────────────────────────── */}
       <div className="border-t border-white/[0.04] pt-4">
         <h3 className="text-[13px] font-medium text-secondary mb-4">
-          Hold Time vs P&L
+          Hold Time vs Profit / Loss
         </h3>
 
         <div ref={containerRef} className="relative">
@@ -384,7 +384,7 @@ export default function HoldTimeAnalysis({ trades }: Props) {
                   </span>
                 </p>
                 <p className="text-secondary">
-                  P&L:{" "}
+                  Profit / Loss:{" "}
                   <span
                     className={cn(
                       "font-mono",
@@ -420,7 +420,7 @@ export default function HoldTimeAnalysis({ trades }: Props) {
           <table className="w-full text-[13px] text-left">
             <thead>
               <tr className="border-b border-border">
-                {["Duration", "Trades", "Win Rate", "Avg P&L", "Total P&L"].map(
+                {["Duration", "Trades", "Win Rate", "Avg Profit / Loss", "Total Profit / Loss"].map(
                   (h, i) => (
                     <th
                       key={h}
@@ -519,7 +519,7 @@ export default function HoldTimeAnalysis({ trades }: Props) {
                 <span className="text-primary font-medium">
                   {sweetSpot.label}
                 </span>{" "}
-                (<span className="font-mono">{fmtDollar(sweetSpot.avgPnl)}</span> avg P&L, {sweetSpot.count}{" "}
+                (<span className="font-mono">{fmtDollar(sweetSpot.avgPnl)}</span> avg profit / loss, {sweetSpot.count}{" "}
                 trades)
               </span>
             </div>

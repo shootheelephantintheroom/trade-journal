@@ -265,7 +265,7 @@ export default function TradeForm({
         <div className="flex items-center gap-6 rounded-md border border-white/[0.04] bg-surface-2 px-4 py-3">
           <div>
             <span className="text-[13px] font-medium text-secondary">
-              P&L
+              Profit / Loss
             </span>
             <p
               className={cn(

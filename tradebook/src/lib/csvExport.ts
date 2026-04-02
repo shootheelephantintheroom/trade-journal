@@ -16,7 +16,7 @@ export function exportTradesToCsv(trades: Trade[]) {
     "Entry",
     "Exit",
     "Size",
-    "P&L",
+    "Profit / Loss",
     "R:R",
     "Grade",
     "Setup",

@@ -393,7 +393,7 @@ export default function Onboarding() {
                 parseInt(exampleTrade.shares) > 0 && (
                   <div className="rounded-[6px] border border-white/[0.04] px-3 py-2">
                     <span className="text-[13px] font-medium text-secondary">
-                      P&L{" "}
+                      Profit / Loss{" "}
                       <span
                         className={cn(
                           "text-[13px] font-medium font-mono ml-1",

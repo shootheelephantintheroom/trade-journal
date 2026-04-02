@@ -184,7 +184,7 @@ export default function MissedTradeForm() {
       {estimatedPnl !== null && (
         <div className="flex items-center gap-2">
           <span className="text-[13px] font-medium text-secondary">
-            Est. P&L
+            Est. Profit / Loss
           </span>
           <span
             className={cn(

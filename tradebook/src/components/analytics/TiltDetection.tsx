@@ -271,7 +271,7 @@ export default function TiltDetection({ trades }: Props) {
 
           <div className="border-t border-white/[0.04] pt-4">
             <p className="text-[13px] font-medium text-secondary mb-1.5">
-              Post-Tilt Avg P&L
+              Post-Tilt Avg Profit / Loss
             </p>
             <p
               className={cn(
@@ -344,7 +344,7 @@ export default function TiltDetection({ trades }: Props) {
         ) : (
           <div className="space-y-2">
             <p className="text-[13px] text-secondary">
-              After {threshold} consecutive losses, your average post-tilt P&L
+              After {threshold} consecutive losses, your average post-tilt profit / loss
               is{" "}
               <span className="font-medium font-mono text-loss">
                 {fmtDollar(postTiltAvgPnl)}
@@ -501,13 +501,13 @@ export default function TiltDetection({ trades }: Props) {
                 {/* Episode summary */}
                 <div className="flex gap-4 mt-3 pt-2 border-t border-border">
                   <span className="text-[10px] text-tertiary">
-                    Streak P&L:{" "}
+                    Streak Profit / Loss:{" "}
                     <span className="text-loss font-medium font-mono">
                       {fmtDollar(ep.streakPnls.reduce((s, p) => s + p, 0))}
                     </span>
                   </span>
                   <span className="text-[10px] text-tertiary">
-                    Post-tilt P&L:{" "}
+                    Post-tilt Profit / Loss:{" "}
                     <span
                       className={cn(
                         "font-medium font-mono",

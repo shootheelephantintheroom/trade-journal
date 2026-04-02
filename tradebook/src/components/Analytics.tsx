@@ -125,10 +125,10 @@ function CatalystPerformance({ trades }: { trades: Trade[] }) {
               Win Rate
             </th>
             <th className="pb-2.5 text-[13px] font-medium text-secondary text-right">
-              Avg P&L
+              Avg Profit / Loss
             </th>
             <th className="pb-2.5 text-[13px] font-medium text-secondary text-right">
-              Total P&L
+              Total Profit / Loss
             </th>
           </tr>
         </thead>
@@ -254,10 +254,10 @@ function FloatSizePerformance({ trades }: { trades: Trade[] }) {
               Win Rate
             </th>
             <th className="pb-2.5 text-[13px] font-medium text-secondary text-right">
-              Avg P&L
+              Avg Profit / Loss
             </th>
             <th className="pb-2.5 text-[13px] font-medium text-secondary text-right">
-              Total P&L
+              Total Profit / Loss
             </th>
           </tr>
         </thead>

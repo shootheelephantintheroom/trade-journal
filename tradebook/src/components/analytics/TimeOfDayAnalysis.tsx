@@ -185,7 +185,7 @@ export default function TimeOfDayAnalysis({ trades }: Props) {
       {/* ── Bar chart ───────────────────────────────────────── */}
       <div className="border-t border-white/[0.04] pt-4">
         <h3 className="text-[13px] font-medium text-secondary mb-4">
-          P&L by Time of Day
+          Profit / Loss by Time of Day
         </h3>
 
         <svg
@@ -272,7 +272,7 @@ export default function TimeOfDayAnalysis({ trades }: Props) {
                       {fmtDollar(b.netPnl)}
                     </tspan>
                     <tspan fill="#52525b">
-                      {"  \u00b7  "}{b.count} trade{b.count !== 1 ? "s" : ""}  \u00b7  {b.winRate.toFixed(0)}% W
+                      {"  \u00b7  "}{b.count} trade{b.count !== 1 ? "s" : ""}  \u00b7  {b.winRate.toFixed(0)}% Win Rate
                     </tspan>
                   </text>
                 ) : (
@@ -397,7 +397,7 @@ function ComparisonColumn({
       <p className="text-[10px] text-tertiary mb-3">{subtitle}</p>
 
       <div className="space-y-2">
-        <StatRow label="Total P&L" value={fmtDollar(stats.totalPnl)} color={pnlColor} />
+        <StatRow label="Total Profit / Loss" value={fmtDollar(stats.totalPnl)} color={pnlColor} />
         <StatRow
           label="Win Rate"
           value={stats.count > 0 ? `${stats.winRate.toFixed(1)}%` : "—"}

@@ -24,10 +24,10 @@ export default function SetupPerformance({
                 Win Rate
               </th>
               <th className="pb-2 text-[13px] font-medium text-secondary text-right">
-                Avg P&L
+                Avg Profit / Loss
               </th>
               <th className="pb-2 text-[13px] font-medium text-secondary text-right">
-                Total P&L
+                Total Profit / Loss
               </th>
               <th className="pb-2 text-[13px] font-medium text-secondary text-right">
                 Avg R:R
