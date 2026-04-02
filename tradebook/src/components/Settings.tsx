@@ -506,12 +506,12 @@ export default function Settings() {
             onChange={(e) => setTimezone(e.target.value)}
           >
             {TIMEZONES.map((tz) => (
-              <option key={tz.value} value={tz.value}>
+              <option key={tz.value} value={tz.value} className="bg-[#1a1a1a] text-white">
                 {tz.label}
               </option>
             ))}
             {!TIMEZONES.some((tz) => tz.value === timezone) && (
-              <option value={timezone}>{timezone}</option>
+              <option value={timezone} className="bg-[#1a1a1a] text-white">{timezone}</option>
             )}
           </select>
         </div>
