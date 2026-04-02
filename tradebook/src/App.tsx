@@ -73,9 +73,10 @@ export default function App() {
     <div className="h-screen flex bg-surface-0 text-primary overflow-hidden">
       {/* Desktop sidebar */}
       <aside
+        onDoubleClick={() => sidebarCollapsed && setSidebarCollapsed(false)}
         className={cn(
           "hidden sm:flex flex-col border-r border-white/[0.04] bg-surface-0 shrink-0 transition-[width] duration-200 ease-[cubic-bezier(0.16,1,0.3,1)]",
-          sidebarCollapsed ? "w-[60px]" : "w-[220px]"
+          sidebarCollapsed ? "w-[60px] cursor-pointer" : "w-[220px]"
         )}
       >
         <Sidebar
