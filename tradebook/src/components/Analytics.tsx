@@ -14,43 +14,39 @@ import HoldTimeAnalysis from "./analytics/HoldTimeAnalysis";
 import TiltDetection from "./analytics/TiltDetection";
 import { useAllTrades } from "../hooks/useTrades";
 
-/* -- Collapsible Section ---------------------------------------- */
+/* -- Tab Navigation --------------------------------------------- */
 
-function Section({
-  title,
-  children,
+const TABS = [
+  { key: "timing", label: "Timing" },
+  { key: "edge", label: "Edge" },
+  { key: "behavior", label: "Behavior" },
+] as const;
+
+type TabKey = (typeof TABS)[number]["key"];
+
+function TabBar({
+  active,
+  onChange,
 }: {
-  title: string;
-  children: React.ReactNode;
+  active: TabKey;
+  onChange: (tab: TabKey) => void;
 }) {
-  const [open, setOpen] = useState(true);
   return (
-    <div className="border-t border-white/[0.04] pt-4">
-      <button
-        onClick={() => setOpen((o) => !o)}
-        className="w-full flex items-center justify-between group"
-      >
-        <h3 className="text-[13px] font-medium text-secondary">
-          {title}
-        </h3>
-        <svg
+    <div className="flex gap-1 p-0.5 rounded-lg bg-white/[0.03] border border-white/[0.04] w-fit">
+      {TABS.map((tab) => (
+        <button
+          key={tab.key}
+          onClick={() => onChange(tab.key)}
           className={cn(
-            "h-4 w-4 text-tertiary transition-transform",
-            open && "rotate-180",
+            "px-4 py-1.5 rounded-md text-[13px] font-medium transition-all duration-150",
+            active === tab.key
+              ? "bg-white/[0.08] text-white shadow-sm"
+              : "text-zinc-500 hover:text-zinc-300"
           )}
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          strokeWidth={2}
         >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="m19.5 8.25-7.5 7.5-7.5-7.5"
-          />
-        </svg>
-      </button>
-      {open && <div className="mt-4">{children}</div>}
+          {tab.label}
+        </button>
+      ))}
     </div>
   );
 }
@@ -357,8 +353,10 @@ export default function Analytics() {
     );
   }
 
+  const [activeTab, setActiveTab] = useState<TabKey>("timing");
+
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <h2 className="text-base font-medium text-primary tracking-tight">
@@ -382,26 +380,44 @@ export default function Analytics() {
         to={filters.to}
       />
 
-      {/* Sections */}
-      <Section title="Time of Day Analysis">
-        <TimeOfDayAnalysis trades={filteredTrades} />
-      </Section>
+      {/* Tabs */}
+      <TabBar active={activeTab} onChange={setActiveTab} />
 
-      <Section title="Hold Time Analysis">
-        <HoldTimeAnalysis trades={filteredTrades} />
-      </Section>
+      {/* Tab content */}
+      <div className="space-y-8">
+        {activeTab === "timing" && (
+          <>
+            <div>
+              <h3 className="text-[13px] font-medium text-secondary mb-4">Time of Day</h3>
+              <TimeOfDayAnalysis trades={filteredTrades} />
+            </div>
+            <div className="border-t border-white/[0.04] pt-6">
+              <h3 className="text-[13px] font-medium text-secondary mb-4">Hold Time</h3>
+              <HoldTimeAnalysis trades={filteredTrades} />
+            </div>
+          </>
+        )}
 
-      <Section title="Tilt Detection">
-        <TiltDetection trades={filteredTrades} />
-      </Section>
+        {activeTab === "edge" && (
+          <>
+            <div>
+              <h3 className="text-[13px] font-medium text-secondary mb-4">Catalyst Performance</h3>
+              <CatalystPerformance trades={filteredTrades} />
+            </div>
+            <div className="border-t border-white/[0.04] pt-6">
+              <h3 className="text-[13px] font-medium text-secondary mb-4">Float Size</h3>
+              <FloatSizePerformance trades={filteredTrades} />
+            </div>
+          </>
+        )}
 
-      <Section title="Catalyst Performance">
-        <CatalystPerformance trades={filteredTrades} />
-      </Section>
-
-      <Section title="Float Size Performance">
-        <FloatSizePerformance trades={filteredTrades} />
-      </Section>
+        {activeTab === "behavior" && (
+          <div>
+            <h3 className="text-[13px] font-medium text-secondary mb-4">Tilt Detection</h3>
+            <TiltDetection trades={filteredTrades} />
+          </div>
+        )}
+      </div>
     </div>
   );
 }
