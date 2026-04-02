@@ -42,9 +42,9 @@ export default function Journal() {
   entryRef.current = entry;
 
   // Query hooks
-  const { data: queryEntry, isLoading: entryLoading } = useJournalEntry(selectedDate);
-  const { data: datesWithEntries = new Set<string>() } = useJournalDates();
-  const { data: dayTrades = [] } = useTradesForDate(selectedDate);
+  const { data: queryEntry, isLoading: entryLoading, isError: entryError, refetch: refetchEntry } = useJournalEntry(selectedDate);
+  const { data: datesWithEntries = new Set<string>(), isError: datesError, refetch: refetchDates } = useJournalDates();
+  const { data: dayTrades = [], isError: tradesError, refetch: refetchTrades } = useTradesForDate(selectedDate);
   const saveJournalEntry = useSaveJournalEntry();
 
   // Sync query data into local state for editing
@@ -173,6 +173,13 @@ export default function Journal() {
             })}
           </div>
 
+          {datesError && (
+            <p className="text-[11px] text-loss mt-2 text-center">
+              Failed to load dates.{" "}
+              <button onClick={() => refetchDates()} className="underline hover:text-white transition-colors">Retry</button>
+            </p>
+          )}
+
           {/* Quick nav */}
           <button
             onClick={() => {
@@ -227,6 +234,19 @@ export default function Journal() {
           </div>
         )}
 
+        {/* Trades error */}
+        {tradesError && (
+          <div className="flex items-center gap-3 text-[13px]">
+            <span className="text-loss">Failed to load trades for this day</span>
+            <button
+              onClick={() => refetchTrades()}
+              className="text-tertiary hover:text-white transition-colors text-[12px]"
+            >
+              Retry
+            </button>
+          </div>
+        )}
+
         {/* Trades summary */}
         {tradeCount > 0 && (
           <div className="border-t border-white/[0.04] pt-3 flex flex-wrap gap-x-6 gap-y-1.5">
@@ -245,7 +265,17 @@ export default function Journal() {
           </div>
         )}
 
-        {entryLoading ? (
+        {entryError ? (
+          <div className="flex flex-col items-center justify-center py-16 gap-3">
+            <p className="text-[13px] text-loss">Failed to load journal entry</p>
+            <button
+              onClick={() => refetchEntry()}
+              className="text-[12px] text-tertiary hover:text-white transition-colors"
+            >
+              Retry
+            </button>
+          </div>
+        ) : entryLoading ? (
           <div className="flex flex-col items-center justify-center py-16 gap-3">
             <div className="h-4 w-4 border-2 border-white/10 border-t-white/50 rounded-full animate-spin" />
             <p className="text-[13px] text-secondary">Loading...</p>

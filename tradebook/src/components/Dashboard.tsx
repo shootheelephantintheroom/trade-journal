@@ -106,13 +106,27 @@ export default function Dashboard({
   const proUser = isPro || isTrialing;
   const [filters, updateFilters] = useDashboardFilters();
 
-  const { data: trades = [], isLoading } = useAllTrades(filters.from, filters.to);
-  const { data: missedTrades = [] } = useMissedTrades();
+  const { data: trades = [], isLoading, isError, refetch } = useAllTrades(filters.from, filters.to);
+  const { data: missedTrades = [], isError: missedError, refetch: refetchMissed } = useMissedTrades();
 
   const filteredTrades = useMemo(
     () => proUser ? applyFilters(trades, filters) : trades,
     [trades, filters, proUser]
   );
+
+  if (isError) {
+    return (
+      <div className="flex flex-col items-center justify-center py-20 gap-3">
+        <p className="text-[13px] text-loss">Failed to load trades</p>
+        <button
+          onClick={() => refetch()}
+          className="text-[12px] text-tertiary hover:text-white transition-colors"
+        >
+          Retry
+        </button>
+      </div>
+    );
+  }
 
   if (isLoading) {
     return (
@@ -469,6 +483,17 @@ export default function Dashboard({
       )}
 
       {/* ── Missed Opportunities ── */}
+      {missedError && (
+        <div className="flex items-center gap-3 text-[13px]">
+          <span className="text-loss">Failed to load missed trades</span>
+          <button
+            onClick={() => refetchMissed()}
+            className="text-tertiary hover:text-white transition-colors text-[12px]"
+          >
+            Retry
+          </button>
+        </div>
+      )}
       {proUser && missedTrades.length > 0 && (
         <section className="space-y-4">
           <SectionHeader

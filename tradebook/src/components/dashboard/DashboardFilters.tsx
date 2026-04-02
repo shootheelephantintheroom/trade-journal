@@ -16,14 +16,15 @@ const CATALYST_OPTIONS: { value: CatalystType; label: string }[] = [
   { value: "other", label: "Other" },
 ];
 
-type QuickRange = "30d" | "90d" | "6mo" | "1yr" | "All";
+type QuickRange = "7d" | "30d" | "60d" | "90d" | "1yr" | "All";
 
 const QUICK_LABELS: Record<QuickRange, string> = {
-  "30d": "30 days",
-  "90d": "90 days",
-  "6mo": "6 months",
-  "1yr": "1 year",
-  "All": "All time",
+  "7d": "7D",
+  "30d": "30D",
+  "60d": "60D",
+  "90d": "90D",
+  "1yr": "1Y",
+  "All": "All",
 };
 
 function toDateStr(d: Date): string {
@@ -34,7 +35,7 @@ function getQuickRange(key: QuickRange): { from: string; to: string } {
   const now = new Date();
   const to = toDateStr(now);
   if (key === "All") return { from: "", to: "" };
-  const days = key === "30d" ? 30 : key === "90d" ? 90 : key === "6mo" ? 180 : 365;
+  const days = key === "7d" ? 7 : key === "30d" ? 30 : key === "60d" ? 60 : key === "90d" ? 90 : 365;
   const from = new Date(now);
   from.setDate(from.getDate() - days);
   return { from: toDateStr(from), to };
@@ -42,7 +43,7 @@ function getQuickRange(key: QuickRange): { from: string; to: string } {
 
 function defaultFrom(): string {
   const d = new Date();
-  d.setDate(d.getDate() - 90);
+  d.setDate(d.getDate() - 30);
   return toDateStr(d);
 }
 
@@ -62,7 +63,7 @@ export interface DashboardFilterState {
 function activeQuickRange(from: string, to: string): QuickRange | null {
   const today = toDateStr(new Date());
   if (!from && !to) return "All";
-  for (const key of ["30d", "90d", "6mo", "1yr"] as QuickRange[]) {
+  for (const key of ["7d", "30d", "60d", "90d", "1yr"] as QuickRange[]) {
     const r = getQuickRange(key);
     if (r.from === from && (to === today || to === r.to)) return key;
   }
@@ -130,7 +131,7 @@ export function applyFilters(trades: Trade[], f: DashboardFilterState): Trade[] 
   });
 }
 
-const QUICK_KEYS: QuickRange[] = ["30d", "90d", "6mo", "1yr", "All"];
+const QUICK_KEYS: QuickRange[] = ["7d", "30d", "60d", "90d", "1yr", "All"];
 const SIDES = ["all", "long", "short"] as const;
 
 const pillBase =

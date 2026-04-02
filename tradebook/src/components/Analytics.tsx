@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { BarChart3 } from "lucide-react";
 import { cn } from "../lib/utils";
 import type { Trade, CatalystType } from "../types/trade";
 import { calcPnl } from "../lib/calc";
@@ -310,18 +311,48 @@ function FloatSizePerformance({ trades }: { trades: Trade[] }) {
 export default function Analytics() {
   const [filters, updateFilters] = useDashboardFilters();
 
-  const { data: trades = [], isLoading } = useAllTrades(filters.from, filters.to);
+  const { data: trades = [], isLoading, isError, refetch } = useAllTrades(filters.from, filters.to);
 
   const filteredTrades = useMemo(
     () => applyFilters(trades, filters),
     [trades, filters],
   );
 
+  if (isError) {
+    return (
+      <div className="flex flex-col items-center justify-center py-20 gap-3">
+        <p className="text-[13px] text-loss">Failed to load trades</p>
+        <button
+          onClick={() => refetch()}
+          className="text-[12px] text-tertiary hover:text-white transition-colors"
+        >
+          Retry
+        </button>
+      </div>
+    );
+  }
+
   if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center py-20 gap-3">
         <div className="h-4 w-4 border-2 border-white/10 border-t-white/50 rounded-full animate-spin" />
         <p className="text-[13px] text-tertiary">Loading analytics...</p>
+      </div>
+    );
+  }
+
+  if (trades.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center py-20 gap-4">
+        <div className="w-12 h-12 rounded-[6px] flex items-center justify-center">
+          <BarChart3 size={24} strokeWidth={1.5} className="text-zinc-600" />
+        </div>
+        <h2 className="text-base font-medium text-primary tracking-tight">
+          No trades to analyze
+        </h2>
+        <p className="text-[13px] text-zinc-500 text-center max-w-xs">
+          Analytics will appear here once you have trade data in the selected date range.
+        </p>
       </div>
     );
   }

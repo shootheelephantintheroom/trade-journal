@@ -12,7 +12,7 @@ const PAGE_SIZE = 25;
 
 export default function MissedTrades() {
   const { showToast } = useToast();
-  const { data: missedTrades = [], isLoading } = useMissedTradesQuery();
+  const { data: missedTrades = [], isLoading, isError, refetch } = useMissedTradesQuery();
   const deleteMissedTrade = useDeleteMissedTrade();
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [page, setPage] = useState(1);
@@ -28,6 +28,20 @@ export default function MissedTrades() {
         showToast(err.message, "error");
       },
     });
+  }
+
+  if (isError) {
+    return (
+      <div className="flex flex-col items-center justify-center py-20 gap-3">
+        <p className="text-[13px] text-loss">Failed to load missed trades</p>
+        <button
+          onClick={() => refetch()}
+          className="text-[12px] text-tertiary hover:text-white transition-colors"
+        >
+          Retry
+        </button>
+      </div>
+    );
   }
 
   if (isLoading) {

@@ -63,15 +63,11 @@ export default function TradeList({
     return () => clearTimeout(timer);
   }, [tickerInput]);
 
-  const { data, isLoading, isFetching, error } = usePaginatedTrades(filters, page);
+  const { data, isLoading, isFetching, isError, refetch } = usePaginatedTrades(filters, page);
   const trades = data?.trades ?? [];
   const totalCount = data?.totalCount ?? 0;
 
   const deleteTrade = useDeleteTrade();
-
-  if (error) {
-    showToast("Failed to load trades", "error");
-  }
 
   // Delete handler
   async function handleDelete(tradeId: string) {
@@ -105,6 +101,21 @@ export default function TradeList({
       return;
     }
     exportTradesToCsv((data as Trade[]) || []);
+  }
+
+  // Error state
+  if (isError) {
+    return (
+      <div className="flex flex-col items-center justify-center py-20 gap-3">
+        <p className="text-[13px] text-loss">Failed to load trades</p>
+        <button
+          onClick={() => refetch()}
+          className="text-[12px] text-tertiary hover:text-white transition-colors"
+        >
+          Retry
+        </button>
+      </div>
+    );
   }
 
   // Initial loading spinner
