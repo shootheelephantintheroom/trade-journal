@@ -7,6 +7,7 @@
 
 create table if not exists trades (
   id uuid default gen_random_uuid() primary key,
+  user_id uuid references auth.users(id) default auth.uid(),
   ticker text not null,
   side text not null check (side in ('long', 'short')),
   entry_price numeric(12, 4) not null,
@@ -27,15 +28,28 @@ create table if not exists trades (
 
 alter table trades enable row level security;
 
-create policy "Allow all access" on trades
-  for all
-  using (true)
-  with check (true);
+create policy "Users can view own trades"
+  on trades for select
+  using (auth.uid() = user_id);
+
+create policy "Users can insert own trades"
+  on trades for insert
+  with check (auth.uid() = user_id);
+
+create policy "Users can update own trades"
+  on trades for update
+  using (auth.uid() = user_id)
+  with check (auth.uid() = user_id);
+
+create policy "Users can delete own trades"
+  on trades for delete
+  using (auth.uid() = user_id);
 
 -- ─── Missed trades table ────────────────────────────────────
 
 create table if not exists missed_trades (
   id uuid default gen_random_uuid() primary key,
+  user_id uuid references auth.users(id) default auth.uid(),
   ticker text not null,
   trade_date date not null,
   setup text default '',
@@ -46,10 +60,22 @@ create table if not exists missed_trades (
 
 alter table missed_trades enable row level security;
 
-create policy "Allow all access" on missed_trades
-  for all
-  using (true)
-  with check (true);
+create policy "Users can view own missed trades"
+  on missed_trades for select
+  using (auth.uid() = user_id);
+
+create policy "Users can insert own missed trades"
+  on missed_trades for insert
+  with check (auth.uid() = user_id);
+
+create policy "Users can update own missed trades"
+  on missed_trades for update
+  using (auth.uid() = user_id)
+  with check (auth.uid() = user_id);
+
+create policy "Users can delete own missed trades"
+  on missed_trades for delete
+  using (auth.uid() = user_id);
 
 
 -- =============================================================
