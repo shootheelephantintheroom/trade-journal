@@ -73,7 +73,7 @@ export default function UserMenu({ sidebarCollapsed }: UserMenuProps) {
                     showToast("Failed to open billing portal", "error");
                     return;
                   }
-                  if (data.url) window.location.href = data.url;
+                  if (data?.url) window.location.href = data.url;
                 } catch {
                   showToast("Failed to open billing portal", "error");
                 }
