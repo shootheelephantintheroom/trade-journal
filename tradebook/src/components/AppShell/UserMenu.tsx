@@ -68,7 +68,7 @@ export default function UserMenu({ sidebarCollapsed }: UserMenuProps) {
               onClick={async () => {
                 setMenuOpen(false);
                 try {
-                  const { data, error } = await invokeEdgeFunction("create-portal-session");
+                  const { data, error } = await invokeEdgeFunction<{ url: string }>("create-portal-session");
                   if (error) {
                     showToast("Failed to open billing portal", "error");
                     return;

@@ -39,16 +39,16 @@ export default function PaywallGate({ feature, children }: PaywallGateProps) {
   async function handleUpgrade() {
     setLoading(true);
     try {
-      const { data, error } = await invokeEdgeFunction(
+      const { data, error } = await invokeEdgeFunction<{ url: string }>(
         "create-checkout-session",
         { plan }
       );
 
       if (error) throw new Error(error);
-      if (data.url) {
+      if (data?.url) {
         window.location.href = data.url;
       } else {
-        throw new Error(data.error || "Failed to create checkout session");
+        throw new Error("Failed to create checkout session");
       }
     } catch (err) {
       console.error("Upgrade error:", err);

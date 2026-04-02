@@ -1,10 +1,10 @@
 import { supabase } from "./supabase";
 
 /** Call a Supabase Edge Function with a guaranteed-fresh auth token */
-export async function invokeEdgeFunction(
+export async function invokeEdgeFunction<T = unknown>(
   functionName: string,
   body?: Record<string, unknown>
-): Promise<{ data: any; error: string | null }> {
+): Promise<{ data: T | null; error: string | null }> {
   // refreshSession() forces a token refresh so we never send an expired JWT
   let session: { access_token: string } | null = null;
   const { data: refreshed } = await supabase.auth.refreshSession();
@@ -111,7 +111,7 @@ export function canStartTrial(profile: Profile | null): boolean {
 
 /** Starts a 14-day Pro trial for the user via Edge Function */
 export async function startProTrial(): Promise<{ success: boolean; error?: string }> {
-  const { error } = await invokeEdgeFunction("start-trial");
+  const { error } = await invokeEdgeFunction<void>("start-trial");
   if (error) return { success: false, error };
   return { success: true };
 }

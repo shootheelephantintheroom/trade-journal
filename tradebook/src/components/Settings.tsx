@@ -154,7 +154,7 @@ export default function Settings() {
     if (deleteConfirm !== "DELETE") return;
     setDeleting(true);
     try {
-      const { error } = await invokeEdgeFunction("delete-account");
+      const { error } = await invokeEdgeFunction<void>("delete-account");
       if (error) {
         throw new Error("Failed to delete account");
       }
@@ -189,7 +189,7 @@ export default function Settings() {
   async function handleManageSubscription() {
     setManagingSubscription(true);
     try {
-      const { data, error } = await invokeEdgeFunction("create-portal-session");
+      const { data, error } = await invokeEdgeFunction<{ url: string }>("create-portal-session");
       if (error || !data?.url) {
         showToast(error ?? "Failed to open billing portal", "error");
       } else {
@@ -204,7 +204,7 @@ export default function Settings() {
   async function handleUpgrade() {
     setUpgrading(true);
     try {
-      const { data, error } = await invokeEdgeFunction("create-checkout-session", { plan: upgradePlan });
+      const { data, error } = await invokeEdgeFunction<{ url: string }>("create-checkout-session", { plan: upgradePlan });
       if (error || !data?.url) {
         showToast(error ?? "Failed to start checkout", "error");
       } else {
