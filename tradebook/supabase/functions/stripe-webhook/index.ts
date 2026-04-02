@@ -11,10 +11,12 @@ const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
 const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 
 /** Extract period dates — newer Stripe API versions moved these to the item level */
-function getPeriodDates(sub: any): { start: string; end: string } {
-  const item = sub.items?.data?.[0];
-  const periodStart = sub.current_period_start ?? item?.current_period_start;
-  const periodEnd = sub.current_period_end ?? item?.current_period_end;
+function getPeriodDates(sub: Stripe.Subscription): { start: string; end: string } {
+  const item = sub.items.data[0];
+  const periodStart = item?.current_period_start
+    ?? (sub as unknown as Record<string, number>).current_period_start;
+  const periodEnd = item?.current_period_end
+    ?? (sub as unknown as Record<string, number>).current_period_end;
   return {
     start: new Date(periodStart * 1000).toISOString(),
     end: new Date(periodEnd * 1000).toISOString(),
