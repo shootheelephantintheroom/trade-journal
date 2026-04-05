@@ -12,8 +12,8 @@ const CELL = 14;
 const GAP = 3;
 const STEP = CELL + GAP;
 const WEEKS = 18;
-const LABEL_LEFT = 22;
-const LABEL_TOP = 18;
+const LABEL_LEFT = 32;
+const LABEL_TOP = 28;
 
 export default function CalendarHeatmap({
   dailyStats,
@@ -67,23 +67,33 @@ export default function CalendarHeatmap({
       : `rgba(239,68,68,${opacity})`;
   }
 
-  const monthLabels: { label: string; col: number }[] = [];
+  // Top labels: "Jan 6", "20", "Feb 3", "17", ... — show month name at month
+  // boundaries, day-of-month every other week otherwise
+  const topLabels: { label: string; col: number }[] = [];
   let prevMonth = -1;
   for (const d of days) {
-    if (d.row === 0 && d.month !== prevMonth) {
-      const dt = new Date(d.dateStr + "T00:00");
-      monthLabels.push({
-        label: dt.toLocaleString("default", { month: "short" }),
+    if (d.row !== 0) continue;
+    const dt = new Date(d.dateStr + "T00:00");
+    const dayNum = dt.getDate();
+    if (d.month !== prevMonth) {
+      topLabels.push({
+        label: `${dt.toLocaleString("default", { month: "short" })} ${dayNum}`,
         col: d.col,
       });
       prevMonth = d.month;
+    } else if (d.col % 2 === 0) {
+      topLabels.push({ label: String(dayNum), col: d.col });
     }
   }
 
   const dayLabels: { label: string; row: number }[] = [
-    { label: "M", row: 0 },
-    { label: "W", row: 2 },
-    { label: "F", row: 4 },
+    { label: "Mon", row: 0 },
+    { label: "Tue", row: 1 },
+    { label: "Wed", row: 2 },
+    { label: "Thu", row: 3 },
+    { label: "Fri", row: 4 },
+    { label: "Sat", row: 5 },
+    { label: "Sun", row: 6 },
   ];
 
   const svgW = LABEL_LEFT + WEEKS * STEP;
@@ -117,25 +127,36 @@ export default function CalendarHeatmap({
         className="w-full"
         style={{ maxWidth: svgW, height: svgH }}
       >
-        {monthLabels.map((m, i) => (
+        {topLabels.map((m, i) => (
           <text
             key={i}
             x={LABEL_LEFT + m.col * STEP + CELL / 2}
-            y={11}
-            fill="#52525b"
+            y={10}
+            fill={m.label.length > 2 ? "#a1a1aa" : "#52525b"}
             fontSize="10"
+            fontWeight={m.label.length > 2 ? 500 : 400}
             textAnchor="middle"
           >
             {m.label}
           </text>
         ))}
 
+        {/* Separator line between labels and grid */}
+        <line
+          x1={LABEL_LEFT}
+          y1={LABEL_TOP - 6}
+          x2={LABEL_LEFT + WEEKS * STEP - GAP}
+          y2={LABEL_TOP - 6}
+          stroke="rgba(255,255,255,0.04)"
+          strokeWidth={1}
+        />
+
         {dayLabels.map((d) => (
           <text
             key={d.label}
             x={LABEL_LEFT - 6}
             y={LABEL_TOP + d.row * STEP + CELL / 2 + 3.5}
-            fill="#52525b"
+            fill={d.row === 5 || d.row === 6 ? "#3f3f46" : "#52525b"}
             fontSize="10"
             textAnchor="end"
           >
