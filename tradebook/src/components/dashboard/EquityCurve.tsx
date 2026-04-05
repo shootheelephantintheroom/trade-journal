@@ -134,7 +134,7 @@ export default function EquityCurve({
 
           <Tooltip
             content={<ChartTooltip />}
-            cursor={{ stroke: "rgba(255,255,255,0.08)", strokeWidth: 1 }}
+            cursor={false}
           />
 
           <Area
