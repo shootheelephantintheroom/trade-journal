@@ -72,20 +72,26 @@ function isWeekday(d: Date): boolean {
 // ---------------------------------------------------------------------------
 // Constants
 // ---------------------------------------------------------------------------
-const TICKERS = [
-  "LUNR", "SMCI", "MARA", "RIVN", "GRAB", "SOFI", "PLTR", "IONQ", "DNA",
-  "DRUG", "NVAX", "OPEN", "WISH", "CLOV", "BBIG", "MULN", "ATER", "GSAT",
-  "SOUN", "RKLB", "AFRM", "LCID", "NKLA", "WKHS", "SKLZ", "SPCE", "LAZR",
-  "VUZI", "BYND", "SNAP", "PROG", "FCEL", "PLUG", "BLNK", "QS", "RDW",
-  "BKKT", "DM", "ENVX", "ORGN", "APLD", "BTBT", "BITF", "CIFR", "HUT",
-  "IOVA", "XPEV", "NIO", "LI", "GOEV",
+// Small caps & momentum names — the bread and butter
+const SMALL_CAPS = [
+  "LUNR", "SMCI", "MARA", "RIVN", "SOFI", "IONQ", "SOUN", "RKLB",
+  "AFRM", "LCID", "PLUG", "BITF", "CIFR", "HUT", "NIO", "FFIE",
+  "MULN", "ATER", "GSAT", "DNA",
 ];
 
-const BIG_TICKERS = ["SMCI", "TSLA", "NVDA", "AMD", "META", "AAPL", "GOOGL", "AMZN"];
+// Bigger names that show up in a real trader's log
+const BIG_NAMES = ["SPY", "QQQ", "TSLA", "NVDA", "AMD", "META"];
+
+// Crypto-adjacent tickers
+const CRYPTO_TICKERS = ["MARA", "RIOT", "BITF", "CIFR", "HUT", "COIN", "MSTR"];
+
+// Combined pool with realistic weighting (small caps most common)
+const TICKERS = [...SMALL_CAPS, ...SMALL_CAPS, ...BIG_NAMES, ...CRYPTO_TICKERS];
 
 const SETUPS = [
-  "VWAP reclaim", "opening range breakout", "dip buy", "short squeeze",
-  "red-to-green", "breakdown short", "gap and go", "ABCD pattern",
+  "VWAP reclaim", "opening range breakout", "dip buy",
+  "red-to-green", "gap and go", "ABCD pattern",
+  "break of premarket high", "pullback to 9 EMA",
 ];
 
 const EMOTIONS = [
@@ -115,11 +121,11 @@ const JOURNAL_GRADES = ["A", "B", "C", "D"] as const;
 const JOURNAL_GRADE_WEIGHTS = [0.10, 0.40, 0.40, 0.10];
 
 // ---------------------------------------------------------------------------
-// Generate trading days (last 90 calendar days, weekdays only)
+// Generate trading days (last ~18 calendar days ≈ 2.5 weeks of weekdays)
 // ---------------------------------------------------------------------------
 const today = new Date();
 const tradingDays: string[] = [];
-for (let i = 90; i >= 0; i--) {
+for (let i = 18; i >= 1; i--) {
   const d = new Date(today);
   d.setDate(d.getDate() - i);
   if (isWeekday(d)) tradingDays.push(formatDate(d));
@@ -159,153 +165,199 @@ interface TradeRow {
 }
 
 function generateTrades(): TradeRow[] {
-  const totalTrades = randInt(150, 200);
+  const totalTrades = randInt(45, 55);
   const trades: TradeRow[] = [];
 
-  // Distribute trades across trading days — heavier on some days
-  const dayWeights = tradingDays.map(() => rand(0.3, 3));
-  const totalWeight = dayWeights.reduce((a, b) => a + b, 0);
-
-  // Assign trade counts per day
-  const tradesPerDay: number[] = dayWeights.map((w) =>
-    Math.max(0, Math.round((w / totalWeight) * totalTrades))
-  );
-  // Adjust to hit target
-  let currentTotal = tradesPerDay.reduce((a, b) => a + b, 0);
-  while (currentTotal < totalTrades) {
-    tradesPerDay[randInt(0, tradesPerDay.length - 1)]++;
-    currentTotal++;
+  // --- Day distribution ---
+  // Most days: 2-4 trades. Pick 2-3 "overtrading" days with 6-8 trades.
+  const overtradeCount = randInt(2, 3);
+  const overtradeDayIdxs = new Set<number>();
+  while (overtradeDayIdxs.size < overtradeCount) {
+    overtradeDayIdxs.add(randInt(0, tradingDays.length - 1));
   }
-  while (currentTotal > totalTrades) {
+
+  const tradesPerDay: number[] = tradingDays.map((_, idx) => {
+    if (overtradeDayIdxs.has(idx)) return randInt(6, 8);
+    return randInt(2, 4);
+  });
+
+  // Adjust total to target range
+  let currentTotal = tradesPerDay.reduce((a, b) => a + b, 0);
+  while (currentTotal > totalTrades + 3) {
     const idx = randInt(0, tradesPerDay.length - 1);
-    if (tradesPerDay[idx] > 0) {
+    if (!overtradeDayIdxs.has(idx) && tradesPerDay[idx] > 1) {
       tradesPerDay[idx]--;
       currentTotal--;
     }
   }
+  while (currentTotal < totalTrades - 3) {
+    const idx = randInt(0, tradesPerDay.length - 1);
+    if (!overtradeDayIdxs.has(idx) && tradesPerDay[idx] < 5) {
+      tradesPerDay[idx]++;
+      currentTotal++;
+    }
+  }
 
-  // Track recent days for improvement arc
-  const totalDays = tradingDays.length;
+  // Give a couple days 0 trades (days off)
+  const daysOff = randInt(1, 2);
+  for (let i = 0; i < daysOff; i++) {
+    let idx: number;
+    do { idx = randInt(0, tradesPerDay.length - 1); } while (overtradeDayIdxs.has(idx));
+    tradesPerDay[idx] = 0;
+  }
 
   for (let dayIdx = 0; dayIdx < tradingDays.length; dayIdx++) {
     const tradeDate = tradingDays[dayIdx];
     const count = tradesPerDay[dayIdx];
     if (count === 0) continue;
 
-    // Improvement arc: win rate improves from ~52% to ~62% over the 90 days
-    const dayProgress = dayIdx / totalDays;
-    const baseWinRate = 0.52 + dayProgress * 0.10;
+    const isOvertradeDay = overtradeDayIdxs.has(dayIdx);
 
     for (let t = 0; t < count; t++) {
-      const side: "long" | "short" = Math.random() < 0.75 ? "long" : "short";
+      const side: "long" | "short" = Math.random() < 0.82 ? "long" : "short";
       const ticker = pick(TICKERS);
 
-      // Entry price: skew toward $3-$25 range
+      // --- Entry price: realistic per ticker type ---
       let entryPrice: number;
-      const priceRoll = Math.random();
-      if (priceRoll < 0.15) entryPrice = rand(1.5, 3);
-      else if (priceRoll < 0.75) entryPrice = rand(3, 25);
-      else if (priceRoll < 0.92) entryPrice = rand(25, 50);
-      else entryPrice = rand(50, 80);
-      entryPrice = roundTo(entryPrice, 2);
+      if (BIG_NAMES.includes(ticker)) {
+        // SPY ~550, QQQ ~480, TSLA ~250, NVDA ~120, etc.
+        const bigPrices: Record<string, [number, number]> = {
+          SPY: [545, 560], QQQ: [475, 490], TSLA: [240, 280],
+          NVDA: [110, 130], AMD: [95, 115], META: [580, 620],
+        };
+        const range = bigPrices[ticker] ?? [100, 200];
+        entryPrice = roundTo(rand(range[0], range[1]), 2);
+      } else if (CRYPTO_TICKERS.includes(ticker)) {
+        if (ticker === "COIN") entryPrice = roundTo(rand(200, 260), 2);
+        else if (ticker === "MSTR") entryPrice = roundTo(rand(350, 420), 2);
+        else entryPrice = roundTo(rand(3, 25), 2); // miners
+      } else {
+        // Small caps: mostly $2-$20
+        const priceRoll = Math.random();
+        if (priceRoll < 0.20) entryPrice = rand(1.5, 4);
+        else if (priceRoll < 0.80) entryPrice = rand(4, 20);
+        else entryPrice = rand(20, 40);
+        entryPrice = roundTo(entryPrice, 2);
+      }
 
-      // Shares: inversely proportional to price
-      let shares: number;
-      if (entryPrice < 5) shares = randInt(1000, 5000);
-      else if (entryPrice < 15) shares = randInt(500, 3000);
-      else if (entryPrice < 30) shares = randInt(200, 1500);
-      else shares = randInt(100, 800);
-      // Round to nearest 100
-      shares = Math.round(shares / 100) * 100;
-      if (shares === 0) shares = 100;
+      // --- Shares: scale to price so position sizes are ~$2k-$8k ---
+      const targetNotional = rand(2000, 8000);
+      let shares = Math.round(targetNotional / entryPrice / 10) * 10;
+      if (shares < 10) shares = 10;
+      if (entryPrice < 5) shares = Math.round(shares / 100) * 100 || 100;
 
-      // Win/loss determination
-      const isWinner = Math.random() < baseWinRate;
+      // --- Morning vs afternoon determines win/loss ---
+      // Morning (9:30-11:30): ~70% win rate
+      // Afternoon (12:00-16:00): ~35% win rate
+      // Overtrading days: afternoon trades are even worse
+      let entryHour: number, entryMin: number;
+      let isMorning: boolean;
+      if (Math.random() < 0.55) {
+        // Morning session
+        isMorning = true;
+        entryHour = 9;
+        entryMin = randInt(30, 59);
+        if (Math.random() < 0.45) {
+          entryHour = 10;
+          entryMin = randInt(0, 59);
+        }
+        if (Math.random() < 0.2) {
+          entryHour = 11;
+          entryMin = randInt(0, 30);
+        }
+      } else {
+        // Afternoon session
+        isMorning = false;
+        entryHour = randInt(12, 15);
+        entryMin = randInt(0, 59);
+        if (entryHour === 15) entryMin = randInt(0, 45);
+      }
+      const entryTime = formatTime(entryHour, entryMin);
+
+      // Win rate: THE KEY PATTERN — mornings print, afternoons bleed
+      let winRate: number;
+      if (isMorning) {
+        winRate = 0.70;
+      } else if (isOvertradeDay) {
+        winRate = 0.25; // tilt trades
+      } else {
+        winRate = 0.35;
+      }
+      const isWinner = Math.random() < winRate;
+
       const grade = weightedPick([...GRADES], [...GRADE_WEIGHTS]);
-
-      // Correlate grade with outcome — A grades mostly winners, D grades mostly losers
       let finalWinner = isWinner;
-      if (grade === "A" && Math.random() < 0.85) finalWinner = true;
-      if (grade === "D" && Math.random() < 0.70) finalWinner = false;
+      if (grade === "A" && Math.random() < 0.80) finalWinner = true;
+      if (grade === "D" && Math.random() < 0.65) finalWinner = false;
 
-      // Exit price
+      // --- P&L sizing ---
       let pctMove: number;
       if (finalWinner) {
-        // Most winners: +2-5%, some big: +10-15%
-        if (Math.random() < 0.15) pctMove = rand(0.10, 0.15);
-        else pctMove = rand(0.015, 0.05);
+        if (BIG_NAMES.includes(ticker)) {
+          pctMove = rand(0.003, 0.012); // big names move less
+        } else if (Math.random() < 0.12) {
+          pctMove = rand(0.08, 0.15); // occasional big winner
+        } else {
+          pctMove = rand(0.015, 0.05);
+        }
       } else {
-        // Most losers: -1-3%, some blowups: -5-8%
-        if (Math.random() < 0.12) pctMove = -rand(0.05, 0.08);
-        else pctMove = -rand(0.01, 0.03);
+        if (isOvertradeDay && !isMorning) {
+          // Overtrading losses are bigger — wider stops, chasing
+          pctMove = -rand(0.03, 0.07);
+        } else if (BIG_NAMES.includes(ticker)) {
+          pctMove = -rand(0.002, 0.008);
+        } else {
+          pctMove = -rand(0.01, 0.035);
+        }
       }
 
       let exitPrice: number;
       if (side === "long") {
         exitPrice = roundTo(entryPrice * (1 + pctMove), 2);
       } else {
-        // Short: profit when price goes down
         exitPrice = roundTo(entryPrice * (1 - pctMove), 2);
       }
       if (exitPrice < 0.01) exitPrice = 0.01;
 
-      // Entry time: cluster around market open (9:30-10:30) and afternoon (13:00-15:00)
-      let entryHour: number, entryMin: number;
-      if (Math.random() < 0.65) {
-        // Morning cluster
-        entryHour = 9;
-        entryMin = randInt(30, 59);
-        if (Math.random() < 0.4) {
-          entryHour = 10;
-          entryMin = randInt(0, 30);
-        }
-      } else {
-        // Afternoon cluster
-        entryHour = randInt(13, 15);
-        entryMin = randInt(0, 59);
-        if (entryHour === 15) entryMin = randInt(0, 30);
-      }
-      const entryTime = formatTime(entryHour, entryMin);
-
-      // Exit time: 5 min to 3 hours after entry
+      // Exit time: scalps to swing-ish (3 min to 2 hours)
       const entryMinutes = entryHour * 60 + entryMin;
-      const holdMinutes = randInt(5, 180);
+      const holdMinutes = randInt(3, 120);
       let exitMinutes = entryMinutes + holdMinutes;
-      // Cap at 4 PM
-      if (exitMinutes > 16 * 60) exitMinutes = 16 * 60 - randInt(1, 15);
+      if (exitMinutes > 16 * 60) exitMinutes = 16 * 60 - randInt(1, 10);
       const exitHour = Math.floor(exitMinutes / 60);
       const exitMin = exitMinutes % 60;
       const exitTime = formatTime(exitHour, exitMin);
 
       // Setup
-      const setup = side === "short"
-        ? pick(["breakdown short", "short squeeze", "VWAP reclaim", "ABCD pattern"])
-        : pick(SETUPS);
+      const setup = pick(SETUPS);
 
-      // Emotion — correlated with outcome
+      // Emotion — correlated with session and outcome
       let emotion: string;
-      if (finalWinner) {
+      if (isOvertradeDay && !isMorning) {
         emotion = weightedPick(
-          ["confident", "disciplined", "patient", "calm", "nervous", "fomo"],
-          [3, 3, 2, 2, 1, 1]
+          ["frustrated", "revenge trading", "fomo", "nervous"],
+          [3, 3, 2, 1]
+        );
+      } else if (finalWinner) {
+        emotion = weightedPick(
+          ["confident", "disciplined", "patient", "calm"],
+          [3, 3, 2, 2]
         );
       } else {
         emotion = weightedPick(
-          ["frustrated", "nervous", "fomo", "revenge trading", "disciplined", "calm"],
-          [3, 2, 2, 2, 1, 1]
+          ["frustrated", "nervous", "fomo", "disciplined"],
+          [3, 2, 2, 1]
         );
       }
 
       // Tags
       const numTags = randInt(1, 3);
-      const tags: string[] = [];
-      const shuffled = [...TAGS_POOL].sort(() => Math.random() - 0.5);
-      for (let i = 0; i < numTags; i++) tags.push(shuffled[i]);
+      const tags = [...TAGS_POOL].sort(() => Math.random() - 0.5).slice(0, numTags);
 
       // Catalyst
       const catalystType = pick([...CATALYST_TYPES]);
       const catalystDescriptions: Record<string, string[]> = {
-        earnings: ["Beat earnings estimates", "Missed revenue, but guidance raised", "Surprise profit", "Earnings gap up"],
+        earnings: ["Beat earnings estimates", "Missed revenue, guidance raised", "Surprise profit", "Earnings gap up"],
         news_pr: ["FDA approval news", "Partnership announced", "CEO on CNBC", "Contract win PR", "Analyst upgrade"],
         technical: ["Bounced off 200 SMA", "Broke out of consolidation", "Golden cross forming", "Gap fill setup"],
         short_squeeze: ["High short interest + volume spike", "Utilization at 99%", "CTB spiking", "Shorts trapped above VWAP"],
@@ -313,44 +365,58 @@ function generateTrades(): TradeRow[] {
       };
       const catalyst = pick(catalystDescriptions[catalystType]);
 
-      // Stop loss (~70%)
+      // Stop loss (~65%)
       let stopLossPrice: number | null = null;
-      if (Math.random() < 0.70) {
+      if (Math.random() < 0.65) {
         const stopPct = rand(0.01, 0.03);
         if (side === "long") stopLossPrice = roundTo(entryPrice * (1 - stopPct), 2);
         else stopLossPrice = roundTo(entryPrice * (1 + stopPct), 2);
       }
 
-      // Float shares (~40%)
+      // Float shares — only for small caps
       let floatShares: number | null = null;
-      if (Math.random() < 0.40) {
-        floatShares = roundTo(rand(1_000_000, 50_000_000), 0);
+      if (SMALL_CAPS.includes(ticker) && Math.random() < 0.45) {
+        floatShares = roundTo(rand(1_000_000, 40_000_000), 0);
       }
 
-      // Commission
       const commission = Math.random() < 0.85 ? 0 : roundTo(rand(1, 5), 2);
 
-      // Notes
-      const winnerNotes = [
-        "Clean setup, executed plan perfectly.",
-        "Took partial at 2R, let runner go. Good discipline.",
-        "Quick scalp, saw the volume come in and pulled trigger.",
-        "VWAP held, added on the bounce. Textbook.",
-        "Waited for confirmation, entered on the break. Solid trade.",
-        "Morning momentum was strong, rode it for a nice gain.",
-        "Risk was tight, reward was there. Good R:R.",
+      // --- Notes: more natural, match the story ---
+      const morningWinnerNotes = [
+        "Clean setup, followed the plan. Took profit into the push.",
+        "Saw volume come in at open, pulled trigger. Textbook.",
+        "VWAP held, entered on the bounce. Let it ride to 2R.",
+        "Gap and go worked perfectly. Sold into strength.",
+        "Quick scalp off the open. In and out, no stress.",
+        "Premarket levels held, took the long. Easy money.",
+        "Morning momentum was clean. Took partials on the way up.",
       ];
-      const loserNotes = [
-        "Stopped out. Setup was there but timing was off.",
-        "Should have waited for better entry. Chased a bit.",
-        "Market reversed hard, stop was too wide.",
-        "Oversize on this one. Need to stick to position sizing rules.",
-        "Revenge trade after the last loss. Recognized it too late.",
-        "News dropped mid-trade, couldn't react fast enough.",
+      const afternoonLoserNotes = [
+        "Shouldn't have been trading this late. Market was choppy.",
+        "Tried to catch a move but it faded. Afternoon = no edge.",
+        "Chased this one. Knew better. Need to stop trading after lunch.",
+        "Overtraded today. This was a revenge trade after the 1pm loss.",
+        "Boredom trade. No real setup. Just wanted to be in something.",
+        "Market was dead, forced this. Small loss but shouldn't have been in it.",
+        "Afternoon chop got me again. Literally giving back morning profits.",
+      ];
+      const generalWinnerNotes = [
+        "Good R:R, risk was tight. Executed the plan.",
+        "Waited for confirmation, entered on the break. Solid.",
+        "Partial at 1.5R, let the rest ride. Discipline paying off.",
+      ];
+      const generalLoserNotes = [
+        "Setup was there but timing was off. Stopped out.",
+        "Should have waited for a better entry. Chased it.",
+        "Stop was too wide. Need to be tighter.",
         "Broke my rules on this one. Lesson learned.",
-        "Choppy price action, should have sat this one out.",
       ];
-      const notes = finalWinner ? pick(winnerNotes) : pick(loserNotes);
+
+      let notes: string;
+      if (isMorning && finalWinner) notes = pick(morningWinnerNotes);
+      else if (!isMorning && !finalWinner) notes = pick(afternoonLoserNotes);
+      else if (finalWinner) notes = pick(generalWinnerNotes);
+      else notes = pick(generalLoserNotes);
 
       trades.push({
         user_id: USER_ID,
@@ -411,10 +477,10 @@ interface MissedTradeRow {
 }
 
 function generateMissedTrades(): MissedTradeRow[] {
-  const count = randInt(20, 30);
+  const count = randInt(5, 10);
   const missed: MissedTradeRow[] = [];
 
-  // Spread across the 90 days
+  // Spread across the trading days
   const usedDays = new Set<string>();
   for (let i = 0; i < count; i++) {
     let day: string;
@@ -423,7 +489,7 @@ function generateMissedTrades(): MissedTradeRow[] {
     } while (usedDays.has(day) && usedDays.size < tradingDays.length);
     usedDays.add(day);
 
-    const ticker = pick([...BIG_TICKERS, ...TICKERS.slice(0, 10)]);
+    const ticker = pick([...BIG_NAMES, ...SMALL_CAPS.slice(0, 8)]);
 
     const entryPrice = roundTo(rand(5, 60), 2);
     // Missed trades had big moves — 5-20% gains
@@ -482,7 +548,7 @@ interface JournalRow {
 }
 
 function generateJournalEntries(trades: TradeRow[]): JournalRow[] {
-  const count = randInt(30, 40);
+  const count = randInt(8, 12);
   const entries: JournalRow[] = [];
 
   // Pick days that have trades for more realistic journals
@@ -514,7 +580,7 @@ function generateJournalEntries(trades: TradeRow[]): JournalRow[] {
     // Premarket plan
     const watchlistTickers = tickers.length > 0
       ? tickers.slice(0, 3).join(", ")
-      : pick(TICKERS.slice(0, 5)) + ", " + pick(TICKERS.slice(5, 10));
+      : pick(SMALL_CAPS.slice(0, 5)) + ", " + pick(SMALL_CAPS.slice(5, 10));
 
     const premarketPlans = [
       `Watchlist: ${watchlistTickers}. Looking for ${pick(SETUPS).toLowerCase()} setups. Gap scanners showing some nice names. Will focus on A+ setups only and keep size small until I get a winner.`,
@@ -531,17 +597,17 @@ function generateJournalEntries(trades: TradeRow[]): JournalRow[] {
       : `-$${Math.abs(dayPnl).toFixed(0)}`;
 
     const greenReviews = [
-      `Solid day. ${pnlStr} on ${tradeCount} trades. Stuck to the plan and it paid off. Best trade was the ${pick(SETUPS).toLowerCase()} on ${tickers[0] ?? pick(TICKERS)}.`,
-      `Green day ${pnlStr}. Executed well on the morning setups. Took profits too early on one trade but overall disciplined.`,
-      `Nice day ${pnlStr}. ${tradeCount} trades, mostly winners. The ${pick(SETUPS).toLowerCase()} pattern worked great today. Feeling good about my process.`,
-      `${pnlStr} today. Good patience waiting for setups. Didn't chase anything. ${tradeCount > 3 ? "Might have overtaded slightly but all were quality setups." : "Kept it clean."}`,
+      `Solid day. ${pnlStr} on ${tradeCount} trades. Morning setups printed again. Shut it down before lunch and locked in green.`,
+      `Green day ${pnlStr}. Executed well on the open, took profits into the push. Didn't trade the afternoon — that's the move.`,
+      `Nice day ${pnlStr}. ${tradeCount} trades. The ${pick(SETUPS).toLowerCase()} on ${tickers[0] ?? pick(SMALL_CAPS)} was the highlight. Feeling good.`,
+      `${pnlStr} today. Morning was clean. Resisted the urge to trade after 11:30. Best decision I made all day.`,
     ];
 
     const redReviews = [
-      `Tough day. ${pnlStr} on ${tradeCount} trades. Got chopped up in the morning. Should have stopped trading after the second loss.`,
-      `Red day ${pnlStr}. Overtraded after the morning losses. Need to respect my daily loss limit. The setups were there but my timing was off.`,
-      `${pnlStr}. Frustrating session. Revenge traded after the first loss and it snowballed. Need to walk away when I'm down 2 trades.`,
-      `Down ${pnlStr}. Market was choppy all day and I kept trying to force trades. Should have recognized the conditions and sat on my hands.`,
+      `Tough day. ${pnlStr} on ${tradeCount} trades. ${tradeCount >= 6 ? "Way too many trades. Gave back all my morning gains and then some in the afternoon." : "Got chopped up. Should have stopped earlier."}`,
+      `Red day ${pnlStr}. Was green going into lunch then kept trading and gave it all back. The pattern is so obvious — mornings work, afternoons don't.`,
+      `${pnlStr}. ${tradeCount >= 6 ? "Overtraded like crazy. Revenge traded after the 1pm loss and it snowballed." : "Frustrating. One bad trade wiped out the morning."} Need to walk away.`,
+      `Down ${pnlStr}. Afternoon was brutal. ${tradeCount >= 6 ? `${tradeCount} trades is insane, I know better than this.` : "Chased setups that weren't there."} Morning P&L was fine.`,
     ];
 
     const postmarketReview = tradeCount === 0
@@ -552,22 +618,18 @@ function generateJournalEntries(trades: TradeRow[]): JournalRow[] {
 
     // Lessons
     const allLessons = [
-      "Need to size down after 2 consecutive losses.",
-      "Morning setups are clearly my edge — stop forcing afternoon trades.",
-      "Stopped revenge trading today — progress.",
-      "VWAP is a better reference point than arbitrary support levels.",
-      "Position sizing is everything. Small size = clear head.",
-      "Must respect the daily loss limit. No exceptions.",
-      "Wait for the setup to come to me instead of chasing.",
-      "Green days come from discipline, not from big winners.",
-      "Need to journal more consistently — it helps me see patterns.",
-      "Taking partial profits earlier is reducing my drawdowns.",
-      "The first 15 minutes are for watching, not trading.",
-      "My win rate improves when I'm patient. Patience = edge.",
-      "Stop loss placement is key. Too tight = stopped out, too wide = big losses.",
-      "Quality over quantity. 2 good trades > 6 mediocre ones.",
+      "Morning is where my edge is. Stop trading after 11:30.",
+      "Afternoon trades are -EV for me. The data will prove it eventually.",
+      "Overtrading is my biggest leak. 3-4 trades max per day.",
       "When I trade my plan, I win. When I go off-script, I lose.",
-      "Overtrading is my biggest leak. Must track # of trades per day.",
+      "Green days come from discipline, not from big winners.",
+      "Need to size down after 2 consecutive losses.",
+      "Revenge trading after lunch is literally burning money.",
+      "Position sizing is everything. Small size = clear head.",
+      "Quality over quantity. 2 good trades > 6 mediocre ones.",
+      "The first 5 minutes are for watching, not trading.",
+      "Stop loss placement is key. Too tight = stopped out, too wide = big losses.",
+      "When I trade past noon I'm not trading setups, I'm trading boredom.",
     ];
     const numLessons = randInt(1, 2);
     const lessons = [...allLessons]
@@ -577,17 +639,14 @@ function generateJournalEntries(trades: TradeRow[]): JournalRow[] {
 
     // Goals for tomorrow
     const allGoals = [
-      "Max 4 trades. Only A+ setups.",
-      "Focus on morning session only. Close screens by 11:30.",
-      "Size down 25% until I string together 3 green days.",
+      "Max 3 trades. Close screens by 11:30. No exceptions.",
+      "Morning session only. If I'm green at lunch, walk away.",
       "No trading in the first 5 minutes. Wait for the dust to settle.",
       "Review my top setups before the open. Have levels pre-planned.",
       "Daily max loss: $150. Walk away if I hit it.",
-      "Take at least one screenshot per trade for review.",
+      "If I'm up on the day, do NOT give it back in the afternoon.",
       "Focus on one ticker at a time. No flipping between charts.",
-      "Journal this session before doing anything else tomorrow.",
       "Trade the process, not the P&L. Focus on execution quality.",
-      "Start the day with 50% position size. Scale up only after a green trade.",
       "Prepare watchlist tonight. Morning should be execution only.",
     ];
     const numGoals = randInt(1, 3);
@@ -698,23 +757,35 @@ async function main() {
   const missedTrades = generateMissedTrades();
   const journalEntries = generateJournalEntries(trades);
 
-  // Quick stats
-  const totalPnl = trades.reduce((sum, t) => {
-    const pnl =
-      t.side === "long"
-        ? (t.exit_price - t.entry_price) * t.shares
-        : (t.entry_price - t.exit_price) * t.shares;
-    return sum + pnl;
-  }, 0);
-  const winners = trades.filter((t) => {
-    const pnl =
-      t.side === "long"
-        ? (t.exit_price - t.entry_price) * t.shares
-        : (t.entry_price - t.exit_price) * t.shares;
-    return pnl > 0;
-  });
+  // Quick stats with morning/afternoon breakdown
+  const pnlOf = (t: TradeRow) =>
+    t.side === "long"
+      ? (t.exit_price - t.entry_price) * t.shares
+      : (t.entry_price - t.exit_price) * t.shares;
+
+  const totalPnl = trades.reduce((sum, t) => sum + pnlOf(t), 0);
+  const winners = trades.filter((t) => pnlOf(t) > 0);
+
+  const morningTrades = trades.filter((t) => parseInt(t.entry_time) < 12);
+  const afternoonTrades = trades.filter((t) => parseInt(t.entry_time) >= 12);
+  const morningPnl = morningTrades.reduce((sum, t) => sum + pnlOf(t), 0);
+  const afternoonPnl = afternoonTrades.reduce((sum, t) => sum + pnlOf(t), 0);
+  const morningWins = morningTrades.filter((t) => pnlOf(t) > 0);
+  const afternoonWins = afternoonTrades.filter((t) => pnlOf(t) > 0);
+
+  // Overtrading days
+  const dayGroups = new Map<string, TradeRow[]>();
+  for (const t of trades) {
+    if (!dayGroups.has(t.trade_date)) dayGroups.set(t.trade_date, []);
+    dayGroups.get(t.trade_date)!.push(t);
+  }
+  const overtradeDays = [...dayGroups.entries()].filter(([, ts]) => ts.length >= 6);
+
   console.log(`  ${trades.length} trades (${winners.length} winners, ${((winners.length / trades.length) * 100).toFixed(1)}% win rate)`);
   console.log(`  Total P&L: $${totalPnl.toFixed(2)}`);
+  console.log(`  Morning (before noon): ${morningTrades.length} trades, ${morningWins.length} wins (${morningTrades.length ? ((morningWins.length / morningTrades.length) * 100).toFixed(0) : 0}%), P&L: $${morningPnl.toFixed(2)}`);
+  console.log(`  Afternoon (noon+):     ${afternoonTrades.length} trades, ${afternoonWins.length} wins (${afternoonTrades.length ? ((afternoonWins.length / afternoonTrades.length) * 100).toFixed(0) : 0}%), P&L: $${afternoonPnl.toFixed(2)}`);
+  console.log(`  Overtrading days (6+): ${overtradeDays.length} days`);
   console.log(`  ${missedTrades.length} missed trades`);
   console.log(`  ${journalEntries.length} journal entries`);
 
@@ -752,12 +823,12 @@ async function main() {
   // Summary
   console.log("\n" + "=".repeat(50));
   console.log("SEED COMPLETE");
-  console.log(`  ${trades.length} trades`);
-  console.log(`  ${missedTrades.length} missed trades`);
-  console.log(`  ${journalEntries.length} journal entries`);
+  console.log(`  ${trades.length} trades | ${missedTrades.length} missed | ${journalEntries.length} journal entries`);
   console.log(`  Date range: ${tradingDays[0]} to ${tradingDays[tradingDays.length - 1]}`);
-  console.log(`  Win rate: ${((winners.length / trades.length) * 100).toFixed(1)}%`);
-  console.log(`  Total P&L: $${totalPnl.toFixed(2)}`);
+  console.log(`  Overall: ${((winners.length / trades.length) * 100).toFixed(0)}% win rate, $${totalPnl.toFixed(0)} P&L`);
+  console.log(`  Morning:   ${morningTrades.length ? ((morningWins.length / morningTrades.length) * 100).toFixed(0) : 0}% win rate, $${morningPnl.toFixed(0)} P&L`);
+  console.log(`  Afternoon: ${afternoonTrades.length ? ((afternoonWins.length / afternoonTrades.length) * 100).toFixed(0) : 0}% win rate, $${afternoonPnl.toFixed(0)} P&L`);
+  console.log(`  Overtrading blowups: ${overtradeDays.length} days`);
   console.log("=".repeat(50) + "\n");
 }
 

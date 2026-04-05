@@ -12,6 +12,7 @@ export function StatCard({
   color,
   sub,
   trend,
+  large,
 }: {
   label: string;
   value: string;
@@ -19,16 +20,18 @@ export function StatCard({
   sub?: string;
   trend?: TrendBadge;
   icon?: LucideIcon;
+  large?: boolean;
 }) {
   return (
-    <div className="py-2 pl-3 border-l-2 border-white/[0.06]">
+    <div className={cn("py-2 pl-3 border-l-2 border-white/[0.06]", large && "py-3")}>
       <p className="text-[12px] text-tertiary mb-0.5">
         {label}
       </p>
       <div className="flex items-baseline gap-2">
         <p
           className={cn(
-            "text-xl font-medium font-mono tabular-nums leading-tight tracking-tight",
+            "font-medium font-mono tabular-nums leading-tight tracking-tight",
+            large ? "text-3xl" : "text-xl",
             color || "text-primary"
           )}
         >
