@@ -139,6 +139,27 @@ export default function LandingPage() {
           </div>
         </section>
 
+        {/* ───── Hero Visual — Journal Screenshot ───── */}
+        <section className="px-4 pb-20 sm:pb-28 hero-enter-d2">
+          <div className="max-w-4xl mx-auto">
+            <div className="screenshot-glow">
+              <div className="screenshot-frame">
+                <div className="screenshot-dots">
+                  <span /><span /><span />
+                </div>
+                <img
+                  src="/journal-preview.png"
+                  alt="MyTradeBook journal — plan your day, review trades, track lessons learned"
+                  loading="eager"
+                />
+              </div>
+            </div>
+            <p className="text-center text-tertiary text-xs mt-5">
+              Plan your day. Review every trade. Build the habits that pay.
+            </p>
+          </div>
+        </section>
+
         <div className="mx-auto max-w-xs border-t border-white/[0.04]" />
 
         {/* ───── Built for Momentum Traders ───── */}
@@ -173,6 +194,30 @@ export default function LandingPage() {
                   </p>
                 </div>
               ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ───── Dashboard Visual ───── */}
+        <section className="px-4 py-20 sm:py-28 reveal">
+          <div className="max-w-4xl mx-auto">
+            <h2 className="text-2xl sm:text-3xl font-medium text-primary text-center mb-4">
+              Track Your Edge
+            </h2>
+            <p className="text-tertiary text-[13px] text-center mb-12 max-w-lg mx-auto">
+              P&L, win rate, equity curve, and activity heatmap — everything you need to know if you're improving, at a glance.
+            </p>
+            <div className="screenshot-glow">
+              <div className="screenshot-frame">
+                <div className="screenshot-dots">
+                  <span /><span /><span />
+                </div>
+                <img
+                  src="/dashboard-preview.png"
+                  alt="MyTradeBook dashboard — P&L, win rate, equity curve, and activity heatmap"
+                  loading="lazy"
+                />
+              </div>
             </div>
           </div>
         </section>

@@ -424,6 +424,57 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   transform: translateY(0);
 }
 
+/* ── Screenshot mockup frame ── */
+.screenshot-frame {
+  position: relative;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+  background: var(--color-surface-1);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.04),
+    0 8px 40px rgba(0, 0, 0, 0.5),
+    0 2px 12px rgba(0, 0, 0, 0.3);
+}
+
+.screenshot-frame img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* Subtle brand glow behind the frame */
+.screenshot-glow {
+  position: relative;
+}
+
+.screenshot-glow::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  background: radial-gradient(ellipse at 50% 0%, rgba(59, 130, 246, 0.12) 0%, transparent 60%);
+  border-radius: 12px;
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* Browser dots decoration */
+.screenshot-dots {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  background: var(--color-surface-2);
+}
+
+.screenshot-dots span {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+}
+
 
 /* ── Respect reduced motion preference ── */
 @media (prefers-reduced-motion: reduce) {
