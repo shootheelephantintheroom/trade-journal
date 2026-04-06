@@ -12,7 +12,7 @@ create table if not exists trades (
   side text not null check (side in ('long', 'short')),
   entry_price numeric(12, 4) not null,
   exit_price numeric(12, 4) not null,
-  shares integer not null,
+  shares numeric(12, 4) not null,
   trade_date date not null,
   entry_time time,
   exit_time time,

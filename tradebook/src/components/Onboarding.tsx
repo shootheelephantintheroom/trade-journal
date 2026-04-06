@@ -226,8 +226,8 @@ export default function Onboarding() {
               <div>
                 <label className={labelClass}>Default Position Size</label>
                 <input
-                  type="number"
-                  min="1"
+                  type="text"
+                  inputMode="decimal"
                   className={inputClass}
                   placeholder="e.g. 100"
                   value={defaultShares}
@@ -238,9 +238,8 @@ export default function Onboarding() {
               <div>
                 <label className={labelClass}>Default Commission</label>
                 <input
-                  type="number"
-                  step="any"
-                  min="0"
+                  type="text"
+                  inputMode="decimal"
                   className={inputClass}
                   placeholder="$0.00"
                   value={defaultCommission}
@@ -339,8 +338,8 @@ export default function Onboarding() {
                 <div>
                   <label className={labelClass}>Entry</label>
                   <input
-                    type="number"
-                    step="any"
+                    type="text"
+                    inputMode="decimal"
                     className={inputClass}
                     value={exampleTrade.entry_price}
                     onChange={(e) => setTrade("entry_price", e.target.value)}
@@ -349,8 +348,8 @@ export default function Onboarding() {
                 <div>
                   <label className={labelClass}>Exit</label>
                   <input
-                    type="number"
-                    step="any"
+                    type="text"
+                    inputMode="decimal"
                     className={inputClass}
                     value={exampleTrade.exit_price}
                     onChange={(e) => setTrade("exit_price", e.target.value)}
@@ -359,8 +358,8 @@ export default function Onboarding() {
                 <div>
                   <label className={labelClass}>Shares</label>
                   <input
-                    type="number"
-                    min="1"
+                    type="text"
+                    inputMode="decimal"
                     className={inputClass}
                     value={exampleTrade.shares}
                     onChange={(e) => setTrade("shares", e.target.value)}

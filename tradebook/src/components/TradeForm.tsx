@@ -7,6 +7,11 @@ import { cn } from "../lib/utils";
 import { X } from "lucide-react";
 import { useSaveTrade } from "../hooks/useMutations";
 
+/** Strip commas so users can type "1,234.56" */
+function parseNum(v: string): number {
+  return parseFloat(v.replace(/,/g, "")) || 0;
+}
+
 const empty: TradeInsert = {
   ticker: "",
   side: "long",
@@ -47,12 +52,26 @@ export default function TradeForm({
   const [form, setForm] = useState<TradeInsert>({ ...empty });
   const saveTrade = useSaveTrade();
 
+  // Raw string state for numeric fields so users can type commas/decimals freely
+  const [rawEntry, setRawEntry] = useState("");
+  const [rawExit, setRawExit] = useState("");
+  const [rawShares, setRawShares] = useState("");
+  const [rawStopLoss, setRawStopLoss] = useState("");
+
   useEffect(() => {
     if (editTrade) {
       const { id, created_at, ...rest } = editTrade;
       setForm(rest);
+      setRawEntry(editTrade.entry_price ? String(editTrade.entry_price) : "");
+      setRawExit(editTrade.exit_price ? String(editTrade.exit_price) : "");
+      setRawShares(editTrade.shares ? String(editTrade.shares) : "");
+      setRawStopLoss(editTrade.stop_loss_price ? String(editTrade.stop_loss_price) : "");
     } else {
       setForm({ ...empty, trade_date: todayLocal() });
+      setRawEntry("");
+      setRawExit("");
+      setRawShares("");
+      setRawStopLoss("");
     }
   }, [editTrade]);
 
@@ -60,12 +79,18 @@ export default function TradeForm({
     setForm((prev) => ({ ...prev, [key]: value }));
   }
 
+  // Parse raw strings for calculations
+  const entryNum = parseNum(rawEntry);
+  const exitNum = parseNum(rawExit);
+  const sharesNum = parseNum(rawShares);
+  const stopLossNum = rawStopLoss ? parseNum(rawStopLoss) : null;
+
   const pnl =
-    form.entry_price > 0 && form.exit_price > 0 && form.shares > 0
-      ? calcPnl(form)
+    entryNum > 0 && exitNum > 0 && sharesNum > 0
+      ? calcPnl({ ...form, entry_price: entryNum, exit_price: exitNum, shares: sharesNum })
       : null;
 
-  const rr = form.stop_loss_price ? calcRR(form) : null;
+  const rr = stopLossNum ? calcRR({ ...form, entry_price: entryNum, exit_price: exitNum, stop_loss_price: stopLossNum }) : null;
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -73,10 +98,13 @@ export default function TradeForm({
     const payload = {
       ...form,
       ticker: form.ticker.toUpperCase().trim(),
+      entry_price: entryNum,
+      exit_price: exitNum,
+      shares: sharesNum,
+      stop_loss_price: stopLossNum,
       entry_time: form.entry_time || "09:30:00",
       exit_time: form.exit_time || "10:00:00",
       grade: form.grade || "B",
-      stop_loss_price: form.stop_loss_price || null,
     };
 
     saveTrade.mutate(
@@ -85,6 +113,10 @@ export default function TradeForm({
         onSuccess: () => {
           showToast(editTrade ? "Trade updated!" : "Trade saved!", "success");
           setForm({ ...empty, trade_date: todayLocal() });
+          setRawEntry("");
+          setRawExit("");
+          setRawShares("");
+          setRawStopLoss("");
           if (editTrade) onEditDone?.();
         },
         onError: (err) => {
@@ -204,38 +236,36 @@ export default function TradeForm({
         <div>
           <label className={labelClass}>Entry Price</label>
           <input
-            type="number"
-            step="any"
-            min="0"
+            type="text"
+            inputMode="decimal"
             className={inputClass}
             placeholder="0.00"
-            value={form.entry_price || ""}
-            onChange={(e) => set("entry_price", parseFloat(e.target.value) || 0)}
+            value={rawEntry}
+            onChange={(e) => setRawEntry(e.target.value)}
             required
           />
         </div>
         <div>
           <label className={labelClass}>Exit Price</label>
           <input
-            type="number"
-            step="any"
-            min="0"
+            type="text"
+            inputMode="decimal"
             className={inputClass}
             placeholder="0.00"
-            value={form.exit_price || ""}
-            onChange={(e) => set("exit_price", parseFloat(e.target.value) || 0)}
+            value={rawExit}
+            onChange={(e) => setRawExit(e.target.value)}
             required
           />
         </div>
         <div>
           <label className={labelClass}>Shares / Contracts</label>
           <input
-            type="number"
-            min="1"
+            type="text"
+            inputMode="decimal"
             className={inputClass}
             placeholder="0"
-            value={form.shares || ""}
-            onChange={(e) => set("shares", parseInt(e.target.value) || 0)}
+            value={rawShares}
+            onChange={(e) => setRawShares(e.target.value)}
             required
           />
         </div>
@@ -248,15 +278,12 @@ export default function TradeForm({
           <span className="text-zinc-600 font-normal">(enables R:R)</span>
         </label>
         <input
-          type="number"
-          step="any"
-          min="0"
+          type="text"
+          inputMode="decimal"
           className={cn(inputClass, "max-w-[200px]")}
           placeholder="Optional"
-          value={form.stop_loss_price ?? ""}
-          onChange={(e) =>
-            set("stop_loss_price", e.target.value ? parseFloat(e.target.value) : null)
-          }
+          value={rawStopLoss}
+          onChange={(e) => setRawStopLoss(e.target.value)}
         />
       </div>
 

@@ -7,6 +7,10 @@ import { useToast } from "./Toast";
 import { todayLocal } from "../lib/date";
 import { useSaveMissedTrade } from "../hooks/useMutations";
 
+function parseNum(v: string): number {
+  return parseFloat(v.replace(/,/g, "")) || 0;
+}
+
 const empty: MissedTradeInsert = {
   ticker: "",
   trade_date: todayLocal(),
@@ -20,20 +24,14 @@ const empty: MissedTradeInsert = {
   hesitation_reasons: [],
 };
 
-function calcEstimatedPnl(form: MissedTradeInsert): number | null {
-  if (!form.side || !form.estimated_entry || !form.estimated_exit || !form.estimated_shares) {
-    return null;
-  }
-  if (form.side === "long") {
-    return (form.estimated_exit - form.estimated_entry) * form.estimated_shares;
-  }
-  return (form.estimated_entry - form.estimated_exit) * form.estimated_shares;
-}
-
 export default function MissedTradeForm() {
   const { showToast } = useToast();
   const [form, setForm] = useState<MissedTradeInsert>({ ...empty });
   const saveMissedTrade = useSaveMissedTrade();
+
+  const [rawEntry, setRawEntry] = useState("");
+  const [rawExit, setRawExit] = useState("");
+  const [rawShares, setRawShares] = useState("");
 
   function set<K extends keyof MissedTradeInsert>(
     key: K,
@@ -42,7 +40,16 @@ export default function MissedTradeForm() {
     setForm((prev) => ({ ...prev, [key]: value }));
   }
 
-  const estimatedPnl = calcEstimatedPnl(form);
+  const entryNum = parseNum(rawEntry) || null;
+  const exitNum = parseNum(rawExit) || null;
+  const sharesNum = parseNum(rawShares) || null;
+
+  const estimatedPnl = (() => {
+    if (!form.side || !entryNum || !exitNum || !sharesNum) return null;
+    return form.side === "long"
+      ? (exitNum - entryNum) * sharesNum
+      : (entryNum - exitNum) * sharesNum;
+  })();
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -51,14 +58,17 @@ export default function MissedTradeForm() {
       {
         ...form,
         ticker: form.ticker.toUpperCase().trim(),
-        estimated_entry: form.estimated_entry || null,
-        estimated_exit: form.estimated_exit || null,
-        estimated_shares: form.estimated_shares || null,
+        estimated_entry: entryNum,
+        estimated_exit: exitNum,
+        estimated_shares: sharesNum,
       },
       {
         onSuccess: () => {
           showToast("Missed trade saved!", "success");
           setForm({ ...empty, trade_date: todayLocal() });
+          setRawEntry("");
+          setRawExit("");
+          setRawShares("");
         },
         onError: (err) => {
           showToast(err.message, "error");
@@ -140,42 +150,34 @@ export default function MissedTradeForm() {
         <div>
           <label className={labelClass}>Est. Entry</label>
           <input
-            type="number"
-            step="any"
-            min="0"
+            type="text"
+            inputMode="decimal"
             className={inputClass}
             placeholder="0.00"
-            value={form.estimated_entry ?? ""}
-            onChange={(e) =>
-              set("estimated_entry", e.target.value ? parseFloat(e.target.value) : null)
-            }
+            value={rawEntry}
+            onChange={(e) => setRawEntry(e.target.value)}
           />
         </div>
         <div>
           <label className={labelClass}>Est. Exit</label>
           <input
-            type="number"
-            step="any"
-            min="0"
+            type="text"
+            inputMode="decimal"
             className={inputClass}
             placeholder="0.00"
-            value={form.estimated_exit ?? ""}
-            onChange={(e) =>
-              set("estimated_exit", e.target.value ? parseFloat(e.target.value) : null)
-            }
+            value={rawExit}
+            onChange={(e) => setRawExit(e.target.value)}
           />
         </div>
         <div>
           <label className={labelClass}>Shares</label>
           <input
-            type="number"
-            min="1"
+            type="text"
+            inputMode="decimal"
             className={inputClass}
             placeholder="0"
-            value={form.estimated_shares ?? ""}
-            onChange={(e) =>
-              set("estimated_shares", e.target.value ? parseInt(e.target.value) : null)
-            }
+            value={rawShares}
+            onChange={(e) => setRawShares(e.target.value)}
           />
         </div>
       </div>
