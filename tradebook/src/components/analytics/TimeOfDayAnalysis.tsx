@@ -45,6 +45,11 @@ function fmtDollar(v: number): string {
   return `${sign}$${abs.toFixed(0)}`;
 }
 
+/* ── thresholds (eyeball these) ─────────────────────────────── */
+
+const MIN_SLOT_SAMPLE = 5;              // trades needed in a slot before win rate / avg P&L display as meaningful
+const DANGER_ZONE_WIN_RATE_PCT = 35;    // slots with ≥ MIN_SLOT_SAMPLE and win rate below this get flagged
+
 // 14 x 30-min windows: 9:00 AM → 4:00 PM
 const WINDOWS: { startMin: number; endMin: number }[] = [];
 for (let h = 9; h < 16; h++) {
@@ -136,19 +141,21 @@ export default function TimeOfDayAnalysis({ trades }: Props) {
     const first30 = buildGroupStats(first30Trades);
     const restOfDay = buildGroupStats(restTrades);
 
-    // Insights
-    const active = buckets.filter((b) => b.count > 0);
-    const best = active.length
-      ? active.reduce((a, b) => (b.avgPnl > a.avgPnl ? b : a))
+    // Insights — best/worst only picked from slots with enough samples to be meaningful;
+    // mostActive stays across any active slot (popularity is factual regardless of n).
+    const activeBuckets = buckets.filter((b) => b.count > 0);
+    const significantBuckets = buckets.filter((b) => b.count >= MIN_SLOT_SAMPLE);
+    const best = significantBuckets.length
+      ? significantBuckets.reduce((a, b) => (b.avgPnl > a.avgPnl ? b : a))
       : null;
-    const worst = active.length
-      ? active.reduce((a, b) => (b.avgPnl < a.avgPnl ? b : a))
+    const worst = significantBuckets.length
+      ? significantBuckets.reduce((a, b) => (b.avgPnl < a.avgPnl ? b : a))
       : null;
-    const mostActive = active.length
-      ? active.reduce((a, b) => (b.count > a.count ? b : a))
+    const mostActive = activeBuckets.length
+      ? activeBuckets.reduce((a, b) => (b.count > a.count ? b : a))
       : null;
     const dangerZones = buckets.filter(
-      (b) => b.count > 3 && b.winRate < 35,
+      (b) => b.count >= MIN_SLOT_SAMPLE && b.winRate < DANGER_ZONE_WIN_RATE_PCT,
     );
 
     return {
@@ -215,6 +222,8 @@ export default function TimeOfDayAnalysis({ trades }: Props) {
             const isProfit = b.netPnl >= 0;
             const barX = isProfit ? centerX : centerX - barW;
             const barColor = isProfit ? "#22c55e" : "#ef4444";
+            const hasEnough = b.count >= MIN_SLOT_SAMPLE;
+            const isInsufficient = b.count > 0 && !hasEnough;
 
             return (
               <g key={b.startMin}>
@@ -241,7 +250,7 @@ export default function TimeOfDayAnalysis({ trades }: Props) {
                   {b.label}
                 </text>
 
-                {/* bar */}
+                {/* bar — dimmed when sample is insufficient */}
                 {barW > 0 && (
                   <rect
                     x={barX}
@@ -250,12 +259,44 @@ export default function TimeOfDayAnalysis({ trades }: Props) {
                     height={16}
                     rx={3}
                     fill={barColor}
-                    fillOpacity={0.75}
+                    fillOpacity={isInsufficient ? 0.3 : 0.75}
                   />
                 )}
 
-                {/* Combined P&L + stats — right-aligned to avoid overlap */}
-                {b.count > 0 ? (
+                {/* Right-aligned label — three states: empty / insufficient / enough */}
+                {b.count === 0 ? (
+                  <text
+                    x={W - 12}
+                    y={cy + 3.5}
+                    textAnchor="end"
+                    fontSize="9.5"
+                    fill="#3f3f46"
+                    fontFamily="Inter, sans-serif"
+                  >
+                    —
+                  </text>
+                ) : isInsufficient ? (
+                  <text
+                    x={W - 12}
+                    y={cy + 3.5}
+                    textAnchor="end"
+                    fontSize="9.5"
+                    fontFamily="Inter, sans-serif"
+                  >
+                    <tspan
+                      fill={barColor}
+                      fontWeight="600"
+                      fontFamily="ui-monospace, SFMono-Regular, monospace"
+                      fontSize="10"
+                      fillOpacity={0.5}
+                    >
+                      {fmtDollar(b.netPnl)}
+                    </tspan>
+                    <tspan fill="#52525b">
+                      {"  ·  need more trades in this slot ("}{b.count}/{MIN_SLOT_SAMPLE}{")"}
+                    </tspan>
+                  </text>
+                ) : (
                   <text
                     x={W - 12}
                     y={cy + 3.5}
@@ -272,19 +313,8 @@ export default function TimeOfDayAnalysis({ trades }: Props) {
                       {fmtDollar(b.netPnl)}
                     </tspan>
                     <tspan fill="#52525b">
-                      {"  \u00b7  "}{b.count} trade{b.count !== 1 ? "s" : ""}  \u00b7  {b.winRate.toFixed(0)}% Win Rate
+                      {"  ·  "}{b.count} trade{b.count !== 1 ? "s" : ""}  ·  {b.winRate.toFixed(0)}% Win Rate
                     </tspan>
-                  </text>
-                ) : (
-                  <text
-                    x={W - 12}
-                    y={cy + 3.5}
-                    textAnchor="end"
-                    fontSize="9.5"
-                    fill="#3f3f46"
-                    fontFamily="Inter, sans-serif"
-                  >
-                    —
                   </text>
                 )}
               </g>
@@ -304,11 +334,13 @@ export default function TimeOfDayAnalysis({ trades }: Props) {
             title="First 30 min"
             subtitle={first30Sub}
             stats={first30}
+            hasEnoughSamples={first30.count >= MIN_SLOT_SAMPLE}
           />
           <ComparisonColumn
             title="Rest of Day"
             subtitle={restSub}
             stats={restOfDay}
+            hasEnoughSamples={restOfDay.count >= MIN_SLOT_SAMPLE}
           />
         </div>
       </div>
@@ -374,6 +406,7 @@ function ComparisonColumn({
   title,
   subtitle,
   stats,
+  hasEnoughSamples,
 }: {
   title: string;
   subtitle: string;
@@ -383,6 +416,7 @@ function ComparisonColumn({
     winRate: number;
     avgTrade: number;
   };
+  hasEnoughSamples: boolean;
 }) {
   const pnlColor =
     stats.totalPnl > 0
@@ -391,31 +425,42 @@ function ComparisonColumn({
         ? "text-loss"
         : "text-secondary";
 
+  // Three states: empty (count===0) / insufficient (0<count<MIN) / enough
+  const showStats = stats.count > 0 && hasEnoughSamples;
+
   return (
     <div className="border-t border-white/[0.04] pt-4">
       <p className="text-xs font-medium text-primary">{title}</p>
       <p className="text-[10px] text-tertiary mb-3">{subtitle}</p>
 
       <div className="space-y-2">
-        <StatRow label="Total Profit / Loss" value={fmtDollar(stats.totalPnl)} color={pnlColor} />
+        <StatRow label="Total Profit / Loss" value={stats.count > 0 ? fmtDollar(stats.totalPnl) : "—"} color={pnlColor} />
         <StatRow
           label="Win Rate"
-          value={stats.count > 0 ? `${stats.winRate.toFixed(1)}%` : "—"}
-          color={stats.winRate >= 50 ? "text-profit" : "text-loss"}
+          value={showStats ? `${stats.winRate.toFixed(1)}%` : "—"}
+          color={showStats && stats.winRate >= 50 ? "text-profit" : showStats ? "text-loss" : "text-tertiary"}
         />
         <StatRow
           label="Avg Trade"
-          value={stats.count > 0 ? fmtDollar(stats.avgTrade) : "—"}
+          value={showStats ? fmtDollar(stats.avgTrade) : "—"}
           color={
-            stats.avgTrade > 0
-              ? "text-profit"
-              : stats.avgTrade < 0
-                ? "text-loss"
-                : "text-secondary"
+            !showStats
+              ? "text-tertiary"
+              : stats.avgTrade > 0
+                ? "text-profit"
+                : stats.avgTrade < 0
+                  ? "text-loss"
+                  : "text-secondary"
           }
         />
         <StatRow label="Trades" value={String(stats.count)} color="text-secondary" />
       </div>
+
+      {stats.count > 0 && !hasEnoughSamples && (
+        <p className="text-[10px] text-tertiary mt-3 leading-relaxed">
+          Need more trades in this slot — {stats.count} of {MIN_SLOT_SAMPLE} logged.
+        </p>
+      )}
     </div>
   );
 }
