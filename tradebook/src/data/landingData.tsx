@@ -74,7 +74,7 @@ export const FAQS = [
   },
   {
     q: "What does Pro include?",
-    a: "Time-of-day analysis, tilt detection, hold-time breakdowns, catalyst and float tracking, screenshot attachments, and advanced filters. $9/mo or $79/yr with a 14-day free trial.",
+    a: "Time-of-day analysis, tilt detection, hold-time breakdowns, catalyst and float tracking, screenshot attachments, and advanced filters. $15/mo or $129/yr with a 14-day free trial.",
   },
   {
     q: "Can I cancel anytime?",

@@ -395,7 +395,7 @@ export default function Settings() {
             </div>
 
             {upgradePlan === "yearly" && (
-              <p className="text-[11px] text-profit font-medium">Save 27% with annual billing</p>
+              <p className="text-[11px] text-profit font-medium">Save 28% with annual billing</p>
             )}
 
             <button
@@ -406,8 +406,8 @@ export default function Settings() {
               {upgrading
                 ? "Redirecting..."
                 : upgradePlan === "monthly"
-                  ? "Upgrade to Pro — $9/mo"
-                  : "Upgrade to Pro — $79/yr"}
+                  ? "Upgrade to Pro — $15/mo"
+                  : "Upgrade to Pro — $129/yr"}
             </button>
           </div>
         )}

@@ -264,7 +264,7 @@ export default function LandingPage() {
               </div>
               {pricingPlan === "yearly" && (
                 <span className="inline-flex items-center rounded-full bg-emerald-500/15 border border-emerald-500/30 px-3 py-1.5 text-xs font-medium text-emerald-400 tracking-wide">
-                  Save 27%
+                  Save 28%
                 </span>
               )}
             </div>
@@ -304,7 +304,7 @@ export default function LandingPage() {
                 {pricingPlan === "monthly" ? (
                   <>
                     <div className="text-4xl font-semibold text-primary mb-1">
-                      $9<span className="text-lg font-normal text-secondary">/mo</span>
+                      $15<span className="text-lg font-normal text-secondary">/mo</span>
                     </div>
                     <div className="text-xs text-tertiary mb-8">
                       14-day free trial available
@@ -314,12 +314,12 @@ export default function LandingPage() {
                   <>
                     <div className="flex items-baseline gap-2 mb-1">
                       <span className="text-4xl font-semibold text-primary">
-                        $79<span className="text-lg font-normal text-secondary">/yr</span>
+                        $129<span className="text-lg font-normal text-secondary">/yr</span>
                       </span>
-                      <span className="text-base text-tertiary line-through">$108</span>
+                      <span className="text-base text-tertiary line-through">$180</span>
                     </div>
                     <div className="text-xs text-tertiary mb-8">
-                      ~$6.58/mo · 14-day free trial available
+                      ~$10.75/mo · 14-day free trial available
                     </div>
                   </>
                 )}
