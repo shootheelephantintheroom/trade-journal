@@ -15,8 +15,19 @@ interface TiltEpisode {
   postPnls: number[];
   postSizeIncrease: number | null; // percentage
   impulseEntry: boolean;
+  impulseEntryGapMin: number | null; // minutes between last streak exit and first post-tilt entry
   deviatedSetup: boolean;
 }
+
+/* ── thresholds (eyeball these) ─────────────────────────────── */
+
+const DEFAULT_TILT_THRESHOLD = 3;              // consecutive losses to trigger an episode (slider still 2–4)
+const MIN_POST_TILT_SAMPLE = 10;               // post-tilt trades needed before firing the aggregate verdict
+const REVENGE_SIZE_THRESHOLD_PCT = 15;         // per-episode: post-streak avg size > streak avg by this % → flagged (onset, not late-stage)
+const IMPULSE_ENTRY_THRESHOLD_MIN = 2;         // per-episode: re-entry within this many minutes of last stop-out → flagged
+const DISCIPLINED_SIZE_THRESHOLD_PCT = 15;     // aggregate: avg size increase across episodes must stay below this for "disciplined"
+const DISCIPLINED_PNL_RATIO = 0.8;             // aggregate: post-tilt avg P/L must be ≥ this × normal avg P/L
+const DISCIPLINED_WIN_RATE_RATIO = 0.8;        // aggregate: post-tilt win rate must be ≥ this × normal win rate
 
 /* ── helpers ────────────────────────────────────────────────── */
 
@@ -35,10 +46,44 @@ function fmtDollar(v: number): string {
   return `${sign}$${abs.toFixed(0)}`;
 }
 
+function fmtImpulseGap(gapMin: number): string {
+  const safe = Math.max(0, gapMin);
+  if (safe < 1) return `${Math.round(safe * 60)}s`;
+  return `${safe.toFixed(1)} min`;
+}
+
+function buildTiltExplainer(ep: TiltEpisode, threshold: number): string {
+  const parts: string[] = [
+    `${ep.losingStreak.length} consecutive losses (threshold: ${threshold})`,
+  ];
+
+  if (ep.impulseEntry && ep.impulseEntryGapMin !== null) {
+    parts.push(
+      `re-entered ${fmtImpulseGap(ep.impulseEntryGapMin)} after last stop-out (threshold: <${IMPULSE_ENTRY_THRESHOLD_MIN} min)`,
+    );
+  }
+
+  if (ep.postSizeIncrease !== null && ep.postSizeIncrease > REVENGE_SIZE_THRESHOLD_PCT) {
+    parts.push(
+      `post-streak sizing was +${ep.postSizeIncrease.toFixed(0)}% vs streak avg (threshold: +${REVENGE_SIZE_THRESHOLD_PCT}%)`,
+    );
+  }
+
+  if (ep.deviatedSetup) {
+    parts.push(`traded outside your top 3 setups`);
+  }
+
+  if (parts.length === 1) {
+    parts.push(`no behavioral red flags — may be variance, not tilt`);
+  }
+
+  return parts.join(" → ");
+}
+
 /* ── component ──────────────────────────────────────────────── */
 
 export default function TiltDetection({ trades }: Props) {
-  const [threshold, setThreshold] = useState(2);
+  const [threshold, setThreshold] = useState(DEFAULT_TILT_THRESHOLD);
 
   const analysis = useMemo(() => {
     if (trades.length === 0) return null;
@@ -114,15 +159,18 @@ export default function TiltDetection({ trades }: Props) {
               ? ((avgPostSize - avgStreakSize) / avgStreakSize) * 100
               : null;
 
-          // Impulse entry: next trade entered within 2 min of last loss exit
+          // Impulse entry: next trade entered within IMPULSE_ENTRY_THRESHOLD_MIN of last loss exit
           const lastLoss = losingStreak[losingStreak.length - 1];
           const firstPost = postTiltTrades[0];
           const lastLossExit = parseMinutes(lastLoss.exit_time);
           const firstPostEntry = parseMinutes(firstPost.entry_time);
+          const impulseEntryGapMin =
+            lastLossExit !== null && firstPostEntry !== null
+              ? firstPostEntry - lastLossExit
+              : null;
           const impulseEntry =
-            lastLossExit !== null &&
-            firstPostEntry !== null &&
-            firstPostEntry - lastLossExit < 2;
+            impulseEntryGapMin !== null &&
+            impulseEntryGapMin < IMPULSE_ENTRY_THRESHOLD_MIN;
 
           // Setup deviation
           const deviatedSetup = postTiltTrades.some(
@@ -137,6 +185,7 @@ export default function TiltDetection({ trades }: Props) {
             postPnls,
             postSizeIncrease,
             impulseEntry,
+            impulseEntryGapMin,
             deviatedSetup,
           });
 
@@ -173,6 +222,10 @@ export default function TiltDetection({ trades }: Props) {
       normalPnls.length > 0
         ? normalPnls.reduce((s, p) => s + p, 0) / normalPnls.length
         : 0;
+    // Clean (uncontaminated) baseline win rate for comparison to post-tilt
+    const normalWins = normalPnls.filter((p) => p > 0).length;
+    const normalWinRate =
+      normalPnls.length > 0 ? normalWins / normalPnls.length : 0;
 
     // Cost of tilt: total P&L of post-tilt trades that were losses
     const costOfTilt = allPostTiltPnls
@@ -195,12 +248,16 @@ export default function TiltDetection({ trades }: Props) {
         ? postTiltWins / allPostTiltPnls.length
         : 0;
 
-    // Is the user disciplined post-loss?
+    // Enough post-tilt trades to trust the aggregate verdict?
+    const hasEnoughSamples = allPostTiltTrades.length >= MIN_POST_TILT_SAMPLE;
+
+    // Is the user disciplined post-loss? Compared to the clean (non-tilt) baseline.
+    // normalWinRate === 0 guard: if user has no non-tilt winners, don't penalize on win-rate ratio.
     const isDisciplined =
-      episodes.length === 0 ||
-      (postTiltAvgPnl >= overallAvgPnl * 0.8 &&
-        postTiltWinRate >= overallWinRate * 0.8 &&
-        avgSizeIncrease < 15);
+      postTiltAvgPnl >= normalAvgPnl * DISCIPLINED_PNL_RATIO &&
+      (normalWinRate === 0 ||
+        postTiltWinRate >= normalWinRate * DISCIPLINED_WIN_RATE_RATIO) &&
+      avgSizeIncrease < DISCIPLINED_SIZE_THRESHOLD_PCT;
 
     return {
       episodes,
@@ -210,7 +267,9 @@ export default function TiltDetection({ trades }: Props) {
       avgSizeIncrease,
       postTiltWinRate,
       overallWinRate,
+      normalWinRate,
       isDisciplined,
+      hasEnoughSamples,
       allPostTiltTrades,
     };
   }, [trades, threshold]);
@@ -227,7 +286,7 @@ export default function TiltDetection({ trades }: Props) {
 
   if (!analysis) return null;
 
-  const { episodes, postTiltAvgPnl, normalAvgPnl, costOfTilt, avgSizeIncrease, isDisciplined } = analysis;
+  const { episodes, postTiltAvgPnl, normalAvgPnl, costOfTilt, avgSizeIncrease, isDisciplined, hasEnoughSamples, allPostTiltTrades } = analysis;
 
   return (
     <div className="space-y-8">
@@ -312,7 +371,7 @@ export default function TiltDetection({ trades }: Props) {
             <p
               className={cn(
                 "text-xl font-medium font-mono tabular-nums",
-                avgSizeIncrease > 10 ? "text-amber" : "text-primary",
+                avgSizeIncrease > REVENGE_SIZE_THRESHOLD_PCT ? "text-amber" : "text-primary",
               )}
             >
               {episodes.length > 0 ? `${avgSizeIncrease >= 0 ? "+" : ""}${avgSizeIncrease.toFixed(0)}%` : "—"}
@@ -328,15 +387,29 @@ export default function TiltDetection({ trades }: Props) {
       <div
         className={cn(
           "border-t border-white/[0.04] pt-4 border-l-2",
-          isDisciplined
+          episodes.length === 0 || (hasEnoughSamples && isDisciplined)
             ? "border-l-brand"
-            : "border-l-amber",
+            : !hasEnoughSamples
+              ? "border-l-white/10"
+              : "border-l-amber",
         )}
       >
         <h3 className="text-[13px] font-medium text-secondary mb-2">
           Tilt Rules
         </h3>
-        {isDisciplined ? (
+        {episodes.length === 0 ? (
+          <p className="text-[13px] text-secondary">
+            Your post-loss trading is disciplined — no tilt pattern detected.
+            Keep it up.
+          </p>
+        ) : !hasEnoughSamples ? (
+          <p className="text-[13px] text-secondary">
+            Need more trades to detect a pattern — keep logging.
+            <span className="block text-[11px] text-tertiary mt-1">
+              {allPostTiltTrades.length} of {MIN_POST_TILT_SAMPLE} post-tilt trades logged.
+            </span>
+          </p>
+        ) : isDisciplined ? (
           <p className="text-[13px] text-secondary">
             Your post-loss trading is disciplined — no tilt pattern detected.
             Keep it up.
@@ -349,21 +422,23 @@ export default function TiltDetection({ trades }: Props) {
               <span className="font-medium font-mono text-loss">
                 {fmtDollar(postTiltAvgPnl)}
               </span>
-              . Consider a{" "}
+              {" "}(vs{" "}
+              <span className="font-mono">{fmtDollar(normalAvgPnl)}</span> normal). Consider a{" "}
               <span className="font-medium text-primary">
                 10-minute cooldown rule
               </span>
               .
             </p>
             <div className="flex flex-wrap gap-2 mt-2">
-              {avgSizeIncrease > 10 && (
+              {avgSizeIncrease > REVENGE_SIZE_THRESHOLD_PCT && (
                 <span className="text-[10px] font-medium px-2 py-1 rounded-full bg-amber-muted text-amber border border-amber/20">
                   Revenge sizing detected (+{avgSizeIncrease.toFixed(0)}%)
                 </span>
               )}
-              {analysis.postTiltWinRate < analysis.overallWinRate * 0.8 && (
+              {analysis.normalWinRate > 0 &&
+                analysis.postTiltWinRate < analysis.normalWinRate * DISCIPLINED_WIN_RATE_RATIO && (
                 <span className="text-[10px] font-medium px-2 py-1 rounded-full bg-loss-muted text-loss border border-loss/20">
-                  Win rate drops {((1 - analysis.postTiltWinRate / analysis.overallWinRate) * 100).toFixed(0)}% post-tilt
+                  Win rate drops {((1 - analysis.postTiltWinRate / analysis.normalWinRate) * 100).toFixed(0)}% post-tilt
                 </span>
               )}
               {episodes.some((e) => e.impulseEntry) && (
@@ -414,13 +489,19 @@ export default function TiltDetection({ trades }: Props) {
                         Off-plan
                       </span>
                     )}
-                    {ep.postSizeIncrease !== null && ep.postSizeIncrease > 10 && (
+                    {ep.postSizeIncrease !== null && ep.postSizeIncrease > REVENGE_SIZE_THRESHOLD_PCT && (
                       <span className="text-[11px] font-medium bg-amber-muted text-amber border border-amber/30 rounded px-1.5 py-0.5">
                         +{ep.postSizeIncrease.toFixed(0)}% size
                       </span>
                     )}
                   </div>
                 </div>
+
+                {/* Why flagged — actual numbers + thresholds inline */}
+                <p className="text-[11px] text-tertiary mb-2 leading-relaxed">
+                  <span className="font-medium text-secondary">Why flagged: </span>
+                  {buildTiltExplainer(ep, threshold)}
+                </p>
 
                 {/* Trade sequence */}
                 <div className="space-y-0">
