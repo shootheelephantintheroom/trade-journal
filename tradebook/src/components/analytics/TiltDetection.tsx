@@ -88,12 +88,6 @@ export default function TiltDetection({ trades }: Props) {
   const analysis = useMemo(() => {
     if (trades.length === 0) return null;
 
-    // Overall stats for comparison
-    const allPnls = trades.map((t) => calcNetPnl(t));
-    const overallWinRate =
-      allPnls.filter((p) => p > 0).length / allPnls.length;
-    const overallAvgPnl =
-      allPnls.reduce((s, p) => s + p, 0) / allPnls.length;
     // Most common setups (top 3)
     const setupCounts = new Map<string, number>();
     for (const t of trades) {
@@ -266,7 +260,6 @@ export default function TiltDetection({ trades }: Props) {
       costOfTilt,
       avgSizeIncrease,
       postTiltWinRate,
-      overallWinRate,
       normalWinRate,
       isDisciplined,
       hasEnoughSamples,
