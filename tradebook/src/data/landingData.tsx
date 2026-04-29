@@ -70,7 +70,7 @@ export const MOMENTUM_CALLOUTS = [
 export const FAQS = [
   {
     q: "Is it really free?",
-    a: "Yes. The free tier is free forever. Trade logging, P&L tracking, win rate, streaks, trade grading, and CSV export — all included. No credit card required.",
+    a: "Yes. The free tier is free forever. Trade logging, P&L tracking, win rate, streaks, trade grading, and CSV export — all included.",
   },
   {
     q: "What does Pro include?",

@@ -133,7 +133,7 @@ export default function LandingPage() {
                 to="/login?mode=signup"
                 className="inline-block bg-brand hover:bg-brand/90 text-surface-0 font-medium text-sm px-8 py-3 rounded-md transition-colors"
               >
-                Start Free — No Credit Card
+                Start Free
               </Link>
             </div>
           </div>
@@ -358,7 +358,7 @@ export default function LandingPage() {
               to="/login?mode=signup"
               className="inline-block bg-brand hover:bg-brand/90 text-surface-0 font-medium text-sm px-8 py-3 rounded-md transition-colors"
             >
-              Start Free — No Credit Card
+              Start Free
             </Link>
             <p className="text-tertiary text-xs mt-4">
               Free forever. 14-day Pro trial available anytime.
