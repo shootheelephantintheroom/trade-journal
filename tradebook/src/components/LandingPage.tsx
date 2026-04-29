@@ -386,9 +386,7 @@ export default function LandingPage() {
               Terms
             </Link>
             <a
-              href="https://instagram.com/ohjudo"
-              target="_blank"
-              rel="noopener noreferrer"
+              href="mailto:countingthis@gmail.com?subject=MyTradeBook%20-%20Feedback%2FQuestions&body=Hi%2C%20feel%20free%20to%20reach%20out%20with%20feedback%2C%20questions%2C%20or%20anything%20else%20about%20MyTradeBook."
               className="hover:text-brand/80 transition-colors"
             >
               Contact
