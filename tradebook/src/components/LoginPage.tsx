@@ -50,9 +50,11 @@ export default function LoginPage() {
       }
     } else {
       setRememberMe(true);
-      const { error } = await signUp(email, password, username || undefined);
+      const { error, session } = await signUp(email, password, username || undefined);
       if (error) {
         setError(error);
+      } else if (session) {
+        navigate("/app", { replace: true });
       } else {
         setSignupSuccess(true);
       }
