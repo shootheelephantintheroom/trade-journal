@@ -10,19 +10,20 @@ export default function MobileTabBar({ navItems }: MobileTabBarProps) {
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-40 bg-surface-0/80 backdrop-blur-xl border-t border-white/[0.04] sm:hidden">
       <div className="flex justify-around items-center py-1.5">
-        {navItems.slice(0, 5).map((t) => (
+        {navItems.map((t) => (
           <NavLink
             key={t.to}
             to={t.to}
             end
             className={({ isActive }) =>
               cn(
-                "flex items-center px-2 py-1.5 text-[13px] font-medium transition-colors duration-150",
+                "flex flex-col items-center justify-center gap-1 px-1 py-1.5 font-medium transition-colors duration-150",
                 isActive ? "text-white" : "text-zinc-600"
               )
             }
           >
-            <span>{t.label}</span>
+            <t.icon className="w-5 h-5" />
+            <span className="text-[10px] leading-none">{t.label}</span>
           </NavLink>
         ))}
       </div>
