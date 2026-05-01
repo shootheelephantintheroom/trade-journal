@@ -29,7 +29,7 @@ const TIMEZONES = [
 ];
 
 const inputClass =
-  "w-full h-[34px] rounded-[6px] border border-white/[0.06] bg-transparent px-[10px] py-[7px] text-[13px] text-primary placeholder-tertiary hover:border-white/[0.1] focus:border-white/[0.15] focus:outline-none transition-colors";
+  "w-full h-[34px] rounded-[6px] border border-white/[0.06] bg-transparent px-[10px] py-[7px] text-base sm:text-[13px] text-primary placeholder-tertiary hover:border-white/[0.1] focus:border-white/[0.15] focus:outline-none transition-colors";
 const labelClass =
   "block text-[13px] font-medium text-secondary mb-1.5";
 
@@ -148,7 +148,7 @@ export default function Onboarding() {
   }
 
   return (
-    <div className="min-h-screen bg-surface-0 flex items-center justify-center px-4 py-12">
+    <div className="min-h-[100dvh] bg-surface-0 flex items-center justify-center px-4 py-12">
       <div className="w-full max-w-md">
         {/* Logo */}
         <p className="text-sm font-medium text-primary text-center mb-6">

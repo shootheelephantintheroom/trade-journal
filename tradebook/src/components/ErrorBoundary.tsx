@@ -22,7 +22,7 @@ export default class ErrorBoundary extends Component<Props, State> {
   render() {
     if (this.state.hasError) {
       return (
-        <div className="min-h-screen flex flex-col items-center justify-center bg-surface-0 text-primary gap-4">
+        <div className="min-h-[100dvh] flex flex-col items-center justify-center bg-surface-0 text-primary gap-4">
           <h1 className="text-base font-medium">Something went wrong</h1>
           <button
             onClick={() => window.location.reload()}

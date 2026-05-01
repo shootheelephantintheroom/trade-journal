@@ -8,7 +8,7 @@ interface MobileTabBarProps {
 
 export default function MobileTabBar({ navItems }: MobileTabBarProps) {
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-40 bg-surface-0/80 backdrop-blur-xl border-t border-white/[0.04] sm:hidden">
+    <nav className="fixed bottom-0 left-0 right-0 z-40 bg-surface-0/80 backdrop-blur-xl border-t border-white/[0.04] sm:hidden pb-[env(safe-area-inset-bottom)]">
       <div className="flex justify-around items-center py-1.5">
         {navItems.map((t) => (
           <NavLink

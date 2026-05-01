@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   AreaChart,
   Area,
@@ -14,35 +14,6 @@ const LINE_COLOR = "#3b82f6";
 const fmtDollar = (v: number) =>
   Math.abs(v) >= 1000 ? `$${(v / 1000).toFixed(1)}k` : `$${v.toFixed(0)}`;
 
-/* Custom tooltip */
-function ChartTooltip({ active, payload, label }: any) {
-  if (!active || !payload?.length) return null;
-  return (
-    <div
-      style={{
-        background: "var(--color-surface-3)",
-        border: "1px solid rgba(255,255,255,0.1)",
-        borderRadius: 6,
-        padding: "8px 12px",
-        fontFamily: "'Geist Mono', ui-monospace, monospace",
-      }}
-    >
-      <p style={{ color: "#a1a1aa", fontSize: 10, margin: 0 }}>{label}</p>
-      <p
-        style={{
-          color: payload[0].value >= 0 ? "#22c55e" : "#ef4444",
-          fontSize: 13,
-          fontWeight: 600,
-          margin: "2px 0 0",
-        }}
-      >
-        {payload[0].value >= 0 ? "+" : ""}
-        {fmtDollar(payload[0].value)}
-      </p>
-    </div>
-  );
-}
-
 export default function EquityCurve({
   points,
 }: {
@@ -50,6 +21,9 @@ export default function EquityCurve({
   drawdownRegion?: { peakIdx: number; troughIdx: number };
 }) {
   const wrapperRef = useRef<HTMLDivElement>(null);
+  const [activePoint, setActivePoint] = useState<
+    { date: string; value: number } | null
+  >(null);
 
   // Animate the stroke line drawing from left to right on mount
   useEffect(() => {
@@ -89,10 +63,33 @@ export default function EquityCurve({
 
   return (
     <div ref={wrapperRef}>
+      {/* Value readout — desktop hover + mobile touch */}
+      <div className="flex items-center justify-between h-5 text-[12px] mb-1 px-1">
+        {activePoint ? (
+          <>
+            <span className="text-tertiary">{activePoint.date}</span>
+            <span
+              className={`font-medium font-mono ${activePoint.value >= 0 ? "text-profit" : "text-loss"}`}
+            >
+              {activePoint.value >= 0 ? "+" : ""}
+              {fmtDollar(activePoint.value)}
+            </span>
+          </>
+        ) : (
+          <span className="text-zinc-600 text-[11px]">
+            Tap or hover the chart for value
+          </span>
+        )}
+      </div>
       <ResponsiveContainer width="100%" height={180}>
         <AreaChart
           data={points}
           margin={{ top: 8, right: 8, bottom: 0, left: -8 }}
+          onMouseMove={(state: any) => {
+            const i = state?.activeTooltipIndex;
+            if (typeof i === "number" && points[i]) setActivePoint(points[i]);
+          }}
+          onMouseLeave={() => setActivePoint(null)}
         >
           <defs>
             <linearGradient id="eqGradRc" x1="0" y1="0" x2="0" y2="1">
@@ -133,8 +130,12 @@ export default function EquityCurve({
           />
 
           <Tooltip
-            content={<ChartTooltip />}
-            cursor={false}
+            content={() => null}
+            cursor={{
+              stroke: "rgba(255,255,255,0.2)",
+              strokeWidth: 1,
+              strokeDasharray: "3 3",
+            }}
           />
 
           <Area

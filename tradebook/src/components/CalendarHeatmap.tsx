@@ -21,6 +21,8 @@ export default function CalendarHeatmap({
   dailyStats: DayData[];
 }) {
   const [hoveredDay, setHoveredDay] = useState<DayData | null>(null);
+  const [selectedDay, setSelectedDay] = useState<DayData | null>(null);
+  const activeDay = selectedDay ?? hoveredDay;
 
   const statsMap = new Map<string, DayData>();
   for (const d of dailyStats) {
@@ -90,7 +92,10 @@ export default function CalendarHeatmap({
   const svgH = LABEL_TOP + 7 * STEP;
 
   return (
-    <div className="rounded-lg bg-white/[0.02] border border-white/[0.06] p-4">
+    <div
+      className="rounded-lg bg-white/[0.02] border border-white/[0.06] p-4"
+      onClick={() => setSelectedDay(null)}
+    >
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-baseline gap-3">
@@ -146,7 +151,7 @@ export default function CalendarHeatmap({
 
         {days.map((d) => {
           const stats = statsMap.get(d.dateStr);
-          const isHovered = hoveredDay?.date === d.dateStr;
+          const isActive = activeDay?.date === d.dateStr;
           return (
             <rect
               key={d.dateStr}
@@ -156,11 +161,19 @@ export default function CalendarHeatmap({
               height={CELL}
               rx={3}
               fill={cellColor(d.dateStr)}
-              stroke={isHovered ? "rgba(255,255,255,0.3)" : "transparent"}
+              stroke={isActive ? "rgba(255,255,255,0.3)" : "transparent"}
               strokeWidth={1}
               className="transition-all duration-150 cursor-pointer"
               onMouseEnter={() => stats && stats.trades > 0 ? setHoveredDay(stats) : setHoveredDay(null)}
               onMouseLeave={() => setHoveredDay(null)}
+              onClick={(e) => {
+                e.stopPropagation();
+                if (!stats || stats.trades === 0) {
+                  setSelectedDay(null);
+                  return;
+                }
+                setSelectedDay((prev) => (prev?.date === stats.date ? null : stats));
+              }}
             />
           );
         })}
@@ -168,27 +181,27 @@ export default function CalendarHeatmap({
 
       {/* Hover detail bar */}
       <div className="mt-3 flex items-center justify-between h-5 text-[12px]">
-        {hoveredDay ? (
+        {activeDay ? (
           <>
-            <span className="text-tertiary">{hoveredDay.date}</span>
+            <span className="text-tertiary">{activeDay.date}</span>
             <div className="flex items-center gap-4">
               <span className="text-tertiary">
-                {hoveredDay.trades} trade{hoveredDay.trades !== 1 ? "s" : ""}
+                {activeDay.trades} trade{activeDay.trades !== 1 ? "s" : ""}
               </span>
               <span className="text-tertiary">
-                <span className="text-profit font-medium">{hoveredDay.wins}W</span>
+                <span className="text-profit font-medium">{activeDay.wins}W</span>
                 {" / "}
-                <span className="text-loss font-medium">{hoveredDay.losses}L</span>
+                <span className="text-loss font-medium">{activeDay.losses}L</span>
               </span>
               <span
-                className={`font-medium font-mono ${hoveredDay.pnl >= 0 ? "text-profit" : "text-loss"}`}
+                className={`font-medium font-mono ${activeDay.pnl >= 0 ? "text-profit" : "text-loss"}`}
               >
-                {hoveredDay.pnl >= 0 ? "+" : ""}${hoveredDay.pnl.toFixed(2)}
+                {activeDay.pnl >= 0 ? "+" : ""}${activeDay.pnl.toFixed(2)}
               </span>
             </div>
           </>
         ) : (
-          <span className="text-zinc-600 text-[11px]">Hover a day for details</span>
+          <span className="text-zinc-600 text-[11px]">Tap or hover a day for details</span>
         )}
       </div>
 

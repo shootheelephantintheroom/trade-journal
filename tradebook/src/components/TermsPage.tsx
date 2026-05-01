@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 export default function TermsPage() {
   return (
-    <div className="min-h-screen bg-surface-0 text-primary">
+    <div className="min-h-[100dvh] bg-surface-0 text-primary">
       <header className="border-b border-border">
         <div className="max-w-3xl mx-auto px-4 py-5 flex items-center justify-between">
           <Link to="/" className="text-[13px] font-medium text-primary">

@@ -127,7 +127,7 @@ export default function TradeForm({
   }
 
   const inputClass =
-    "w-full h-[34px] rounded-[6px] border border-white/[0.06] bg-transparent px-[10px] py-[7px] text-[13px] text-white font-sans placeholder-tertiary focus:outline-none focus:border-white/[0.15] transition-colors";
+    "w-full h-[34px] rounded-[6px] border border-white/[0.06] bg-transparent px-[10px] py-[7px] text-base sm:text-[13px] text-white font-sans placeholder-tertiary focus:outline-none focus:border-white/[0.15] transition-colors";
 
   const labelClass = "block text-[13px] font-medium text-secondary mb-1.5";
 

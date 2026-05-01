@@ -70,7 +70,7 @@ export default function App() {
   }
 
   return (
-    <div className="h-screen flex bg-surface-0 text-primary overflow-hidden">
+    <div className="h-[100dvh] flex bg-surface-0 text-primary overflow-hidden">
       {/* Desktop sidebar */}
       <aside
         onDoubleClick={() => sidebarCollapsed && setSidebarCollapsed(false)}
@@ -129,7 +129,7 @@ export default function App() {
 
         {/* Page content */}
         <main className="flex-1 overflow-y-auto">
-          <div className="max-w-6xl mx-auto px-4 sm:px-8 py-8">
+          <div className="max-w-6xl mx-auto px-4 sm:px-8 pt-8 pb-20 sm:pb-8">
               <div key={location.pathname} className="animate-page-enter">
                 <Suspense fallback={<LazySpinner />}>
                   <Routes>

@@ -142,7 +142,7 @@ const pillInactive =
   "text-tertiary border-transparent hover:text-secondary hover:border-white/[0.06]";
 
 const inputClass =
-  "w-full h-[34px] rounded-[6px] border border-white/[0.06] bg-transparent px-[10px] py-[7px] text-[13px] text-primary placeholder-tertiary hover:border-white/[0.1] focus:border-white/[0.15] focus:outline-none transition-colors";
+  "w-full h-[34px] rounded-[6px] border border-white/[0.06] bg-transparent px-[10px] py-[7px] text-base sm:text-[13px] text-primary placeholder-tertiary hover:border-white/[0.1] focus:border-white/[0.15] focus:outline-none transition-colors";
 const labelClass =
   "block text-[13px] font-medium text-secondary mb-1.5";
 

@@ -59,7 +59,7 @@ export default function LandingPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-surface-0 flex items-center justify-center">
+      <div className="min-h-[100dvh] bg-surface-0 flex items-center justify-center">
         <div className="h-4 w-4 border-2 border-white/10 border-t-white/50 rounded-full animate-spin" />
       </div>
     );
@@ -68,7 +68,7 @@ export default function LandingPage() {
   if (user) return <Navigate to="/app" replace />;
 
   return (
-    <div className={cn("min-h-screen bg-surface-0 text-primary flex flex-col", showReveal && "has-cinematic-reveal")}>
+    <div className={cn("min-h-[100dvh] bg-surface-0 text-primary flex flex-col", showReveal && "has-cinematic-reveal")}>
       {/* ───── Cinematic page-load reveal ───── */}
       {showReveal && (
         <div className="cinematic-overlay" onAnimationEnd={() => setShowReveal(false)} />
@@ -106,7 +106,7 @@ export default function LandingPage() {
                 "px-4 py-1.5 rounded-md text-[13px] font-medium bg-brand hover:bg-brand/90 text-surface-0 transition-all duration-300",
                 scrolled
                   ? "opacity-100 translate-y-0"
-                  : "opacity-0 -translate-y-2 pointer-events-none"
+                  : "opacity-100 translate-y-0 sm:opacity-0 sm:-translate-y-2 sm:pointer-events-none"
               )}
             >
               Start Free
@@ -271,7 +271,7 @@ export default function LandingPage() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               {/* Free */}
-              <div className="bg-surface-1/40 border border-border rounded-md p-5 flex flex-col">
+              <div className="order-2 sm:order-none bg-surface-1/40 border border-border rounded-md p-5 flex flex-col">
                 <div className="text-[13px] font-medium text-secondary mb-1">Free</div>
                 <div className="text-4xl font-semibold text-primary mb-1">
                   $0
@@ -294,7 +294,7 @@ export default function LandingPage() {
               </div>
 
               {/* Pro */}
-              <div className="relative bg-surface-1/60 border-2 border-brand/40 rounded-md p-5 flex flex-col">
+              <div className="order-1 sm:order-none relative bg-surface-1/60 border-2 border-brand/40 rounded-md p-5 flex flex-col">
                 {pricingPlan === "yearly" && (
                   <div className="absolute -top-3 left-6 bg-brand text-primary text-[11px] font-medium uppercase tracking-wider px-3 py-1 rounded-full">
                     Recommended

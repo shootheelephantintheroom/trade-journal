@@ -23,7 +23,7 @@ const GRADES = [
 ];
 
 const inputClass =
-  "w-full rounded-[6px] border border-white/[0.06] bg-transparent px-[10px] py-[7px] text-[13px] text-primary placeholder-tertiary hover:border-white/[0.1] focus:border-white/[0.15] focus:outline-none transition-colors duration-150";
+  "w-full rounded-[6px] border border-white/[0.06] bg-transparent px-[10px] py-[7px] text-base sm:text-[13px] text-primary placeholder-tertiary hover:border-white/[0.1] focus:border-white/[0.15] focus:outline-none transition-colors duration-150";
 const labelClass =
   "block text-[13px] font-medium text-secondary mb-1.5";
 
@@ -212,7 +212,7 @@ export default function Journal() {
               value={selectedDate}
               max={todayLocal()}
               onChange={(e) => e.target.value && setSelectedDate(e.target.value)}
-              className="md:hidden rounded-md border border-transparent bg-surface-2 px-2 py-1.5 text-xs text-primary hover:border-border-hover focus:border-brand focus:outline-none transition-colors duration-150"
+              className="md:hidden rounded-md border border-transparent bg-surface-2 px-2 py-1.5 text-base sm:text-xs text-primary hover:border-border-hover focus:border-brand focus:outline-none transition-colors duration-150"
             />
             {/* Save status */}
             <span className={cn(

@@ -26,7 +26,7 @@ const queryClient = new QueryClient({
 
 function NotFoundPage() {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-surface-0 text-primary">
+    <div className="min-h-[100dvh] flex flex-col items-center justify-center bg-surface-0 text-primary">
       <h1 className="text-4xl font-semibold mb-4">Page not found</h1>
       <Link to="/" className="text-brand hover:text-brand/80 transition-colors">
         Go back home

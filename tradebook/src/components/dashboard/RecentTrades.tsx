@@ -1,15 +1,57 @@
+import { useState } from "react";
 import type { Trade } from "../../types/trade";
 import { calcPnl } from "../../lib/calc";
 import { cn } from "../../lib/utils";
+import TradeDetailContent from "../TradeDetailContent";
 
 export default function RecentTrades({
   recentTrades,
 }: {
   recentTrades: Trade[];
 }) {
+  const [expandedId, setExpandedId] = useState<string | null>(null);
+
   return (
     <div>
-      <div className="overflow-x-auto">
+      {/* Mobile card list — phones only (<sm) */}
+      <div className="sm:hidden flex flex-col gap-2">
+        {recentTrades.map((t) => {
+          const pl = calcPnl(t);
+          const isExpanded = expandedId === t.id;
+          return (
+            <div
+              key={t.id}
+              onClick={() => setExpandedId(isExpanded ? null : t.id)}
+              className={cn(
+                "rounded-lg border border-white/[0.06] p-3 cursor-pointer transition-colors",
+                isExpanded ? "bg-white/[0.04]" : "bg-white/[0.02]"
+              )}
+            >
+              <div className="flex items-center justify-between min-h-[32px]">
+                <span className="font-medium text-base font-mono text-primary">
+                  {t.ticker}
+                </span>
+                <span
+                  className={cn(
+                    "font-medium text-base font-mono tabular-nums",
+                    pl >= 0 ? "text-profit" : "text-loss"
+                  )}
+                >
+                  {pl >= 0 ? "+" : ""}${pl.toFixed(2)}
+                </span>
+              </div>
+              {isExpanded && (
+                <div className="mt-3 pt-3 border-t border-white/[0.06]">
+                  <TradeDetailContent trade={t} showSummary />
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Desktop table — sm and up */}
+      <div className="hidden sm:block overflow-x-auto">
         <table className="w-full text-[13px] text-left">
           <thead>
             <tr className="border-b border-border">

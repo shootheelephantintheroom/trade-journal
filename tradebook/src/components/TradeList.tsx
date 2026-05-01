@@ -8,6 +8,7 @@ import { sortTrades, type SortKey, type SortDir } from "../lib/tradeSort";
 import { useToast } from "./Toast";
 import TradeImport from "./TradeImport";
 import TradeRowDetail from "./TradeRowDetail";
+import TradeDetailContent from "./TradeDetailContent";
 import { cn } from "../lib/utils";
 import { usePaginatedTrades } from "../hooks/useTrades";
 import { useDeleteTrade } from "../hooks/useMutations";
@@ -345,7 +346,54 @@ export default function TradeList({
       {/* Table */}
       {sorted.length > 0 ? (
         <div className={cn("transition-opacity", isFetching && "opacity-60")}>
-          <div className="overflow-x-auto">
+          {/* Mobile card list — phones only (<sm) */}
+          <div className="sm:hidden flex flex-col gap-2">
+            {sorted.map((t) => {
+              const pl = calcPnl(t);
+              const isExpanded = expandedId === t.id;
+              return (
+                <div
+                  key={t.id}
+                  onClick={() => setExpandedId(isExpanded ? null : t.id)}
+                  className={cn(
+                    "rounded-lg border border-white/[0.06] p-3 cursor-pointer transition-colors",
+                    isExpanded ? "bg-white/[0.04]" : "bg-white/[0.02]"
+                  )}
+                >
+                  <div className="flex items-center justify-between min-h-[32px]">
+                    <span className="font-medium text-base font-mono text-primary">
+                      {t.ticker}
+                    </span>
+                    <span
+                      className={cn(
+                        "font-medium text-base font-mono tabular-nums",
+                        pl >= 0 ? "text-profit" : "text-loss"
+                      )}
+                    >
+                      {pl >= 0 ? "+" : ""}${pl.toFixed(2)}
+                    </span>
+                  </div>
+                  {isExpanded && (
+                    <div className="mt-3 pt-3 border-t border-white/[0.06]">
+                      <TradeDetailContent
+                        trade={t}
+                        deleting={
+                          deleteTrade.isPending &&
+                          deleteTrade.variables?.tradeId === t.id
+                        }
+                        onEdit={onEdit}
+                        onDelete={handleDelete}
+                        showSummary
+                      />
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Desktop table — sm and up */}
+          <div className="hidden sm:block overflow-x-auto">
             <table className="w-full text-[13px] text-left">
               <thead>
                 <tr className="border-b border-white/[0.06]">

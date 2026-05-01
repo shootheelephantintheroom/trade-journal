@@ -75,7 +75,7 @@ export default function LoginPage() {
 
   if (signupSuccess) {
     return (
-      <div className="min-h-screen bg-surface-0 flex items-center justify-center px-4">
+      <div className="min-h-[100dvh] bg-surface-0 flex items-center justify-center px-4">
         <div className="w-full max-w-xs mx-auto text-center space-y-4">
           <p className="text-sm font-medium text-primary mb-4">MyTradeBook</p>
           <div className="border border-profit/20 rounded-[6px] px-3 py-2">
@@ -114,7 +114,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-surface-0 flex items-center justify-center px-4">
+    <div className="min-h-[100dvh] bg-surface-0 flex items-center justify-center px-4">
       <div className="w-full max-w-xs mx-auto">
         <p className="text-sm font-medium text-primary text-center mb-6">
           MyTradeBook
@@ -136,7 +136,7 @@ export default function LoginPage() {
                   type="text"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  className="w-full h-[34px] rounded-[6px] border border-white/[0.06] bg-transparent px-[10px] py-[7px] text-[13px] text-primary placeholder-tertiary hover:border-white/[0.1] focus:border-white/[0.15] focus:outline-none transition-colors"
+                  className="w-full h-[34px] rounded-[6px] border border-white/[0.06] bg-transparent px-[10px] py-[7px] text-base sm:text-[13px] text-primary placeholder-tertiary hover:border-white/[0.1] focus:border-white/[0.15] focus:outline-none transition-colors"
                   placeholder="Your name"
                 />
               </div>
@@ -147,9 +147,11 @@ export default function LoginPage() {
               <input
                 type="email"
                 required
+                name="email"
+                autoComplete="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full h-[34px] rounded-[6px] border border-white/[0.06] bg-transparent px-[10px] py-[7px] text-[13px] text-primary placeholder-tertiary hover:border-white/[0.1] focus:border-white/[0.15] focus:outline-none transition-colors"
+                className="w-full h-[34px] rounded-[6px] border border-white/[0.06] bg-transparent px-[10px] py-[7px] text-base sm:text-[13px] text-primary placeholder-tertiary hover:border-white/[0.1] focus:border-white/[0.15] focus:outline-none transition-colors"
                 placeholder="you@example.com"
               />
             </div>
@@ -163,9 +165,11 @@ export default function LoginPage() {
                   type="password"
                   required
                   minLength={6}
+                  name="password"
+                  autoComplete={mode === "signup" ? "new-password" : "current-password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full h-[34px] rounded-[6px] border border-white/[0.06] bg-transparent px-[10px] py-[7px] text-[13px] text-primary placeholder-tertiary hover:border-white/[0.1] focus:border-white/[0.15] focus:outline-none transition-colors"
+                  className="w-full h-[34px] rounded-[6px] border border-white/[0.06] bg-transparent px-[10px] py-[7px] text-base sm:text-[13px] text-primary placeholder-tertiary hover:border-white/[0.1] focus:border-white/[0.15] focus:outline-none transition-colors"
                   placeholder="••••••••"
                 />
               </div>
