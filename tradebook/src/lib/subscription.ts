@@ -1,5 +1,16 @@
 import { supabase } from "./supabase";
 
+/** Owner/comp accounts that get Pro access bypassing Stripe entirely.
+ *  These users return true from isPro() regardless of subscription state. */
+const COMP_USER_IDS = new Set<string>([
+  "bbdc22c2-f4d5-409c-99fd-724c78be2914", // Mano (owner)
+]);
+
+/** Check if a user ID is on the comp list */
+export function isCompUser(userId: string | null | undefined): boolean {
+  return !!userId && COMP_USER_IDS.has(userId);
+}
+
 /** Call a Supabase Edge Function with a guaranteed-fresh auth token */
 export async function invokeEdgeFunction<T = unknown>(
   functionName: string,
@@ -66,6 +77,7 @@ export async function getProfile(userId: string): Promise<Profile | null> {
 
 export function isPro(profile: Profile | null): boolean {
   if (!profile) return false;
+  if (COMP_USER_IDS.has(profile.id)) return true;
   if (profile.plan === "pro" && (profile.subscription_status === "active" || profile.subscription_status === "past_due")) return true;
   if (profile.trial_ends_at && new Date(profile.trial_ends_at) > new Date()) return true;
   return false;
