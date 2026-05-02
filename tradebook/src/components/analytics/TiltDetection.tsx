@@ -1,10 +1,12 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, type ReactNode } from "react";
+import { ChevronDown, Settings2 } from "lucide-react";
 import { cn } from "../../lib/utils";
 import type { Trade } from "../../types/trade";
 import { calcNetPnl } from "../../lib/calc";
 
 interface Props {
   trades: Trade[];
+  dateRangeLabel?: string;
 }
 
 interface TiltEpisode {
@@ -21,7 +23,7 @@ interface TiltEpisode {
 
 /* ── thresholds (eyeball these) ─────────────────────────────── */
 
-const DEFAULT_TILT_THRESHOLD = 3;              // consecutive losses to trigger an episode (slider still 2–4)
+const DEFAULT_TILT_THRESHOLD = 2;              // consecutive losses to trigger an episode (slider still 2–4)
 const MIN_POST_TILT_SAMPLE = 10;               // post-tilt trades needed before firing the aggregate verdict
 const REVENGE_SIZE_THRESHOLD_PCT = 15;         // per-episode: post-streak avg size > streak avg by this % → flagged (onset, not late-stage)
 const IMPULSE_ENTRY_THRESHOLD_MIN = 2;         // per-episode: re-entry within this many minutes of last stop-out → flagged
@@ -82,8 +84,9 @@ function buildTiltExplainer(ep: TiltEpisode, threshold: number): string {
 
 /* ── component ──────────────────────────────────────────────── */
 
-export default function TiltDetection({ trades }: Props) {
+export default function TiltDetection({ trades, dateRangeLabel = "this period" }: Props) {
   const [threshold, setThreshold] = useState(DEFAULT_TILT_THRESHOLD);
+  const [showThresholdControl, setShowThresholdControl] = useState(false);
 
   const analysis = useMemo(() => {
     if (trades.length === 0) return null;
@@ -279,174 +282,258 @@ export default function TiltDetection({ trades }: Props) {
 
   if (!analysis) return null;
 
-  const { episodes, postTiltAvgPnl, normalAvgPnl, costOfTilt, avgSizeIncrease, isDisciplined, hasEnoughSamples, allPostTiltTrades } = analysis;
+  const {
+    episodes,
+    postTiltAvgPnl,
+    normalAvgPnl,
+    costOfTilt,
+    avgSizeIncrease,
+    postTiltWinRate,
+    normalWinRate,
+  } = analysis;
+
+  const tiltEpisodes = episodes.length;
+  const totalTrades = trades.length;
+  const postTiltWinRatePct = Math.round(postTiltWinRate * 100);
+  const normalWinRatePct = Math.round(normalWinRate * 100);
+  const hasEpisodes = tiltEpisodes > 0;
+  const hasPostTiltTrades = analysis.allPostTiltTrades.length > 0;
+
+  /* ── Verdict hero copy ────────────────────────────────────── */
+  let verdictHeadline: string;
+  let verdictSub: ReactNode;
+  let verdictTone: "clean" | "neutral" | "alert";
+
+  if (!hasEpisodes && totalTrades >= 10) {
+    verdictHeadline = "You don't tilt.";
+    verdictSub = (
+      <>
+        0 tilt episodes in the last {dateRangeLabel}. Your post-loss discipline holds.
+      </>
+    );
+    verdictTone = "clean";
+  } else if (!hasEpisodes && totalTrades < 10) {
+    verdictHeadline = "Not enough data yet.";
+    verdictSub = (
+      <>
+        Log at least 10 trades to detect tilt patterns. You have {totalTrades}.
+      </>
+    );
+    verdictTone = "neutral";
+  } else {
+    verdictHeadline = `You're tilting after ${threshold} losses in a row.`;
+    verdictSub = (
+      <>
+        {tiltEpisodes} episode{tiltEpisodes === 1 ? "" : "s"} this period cost you{" "}
+        <span className="font-mono text-loss">{fmtDollar(costOfTilt)}</span>.{" "}
+        Post-tilt win rate:{" "}
+        <span className="font-mono text-loss">{postTiltWinRatePct}%</span> vs your normal{" "}
+        <span className="font-mono">{normalWinRatePct}%</span>.
+      </>
+    );
+    verdictTone = "alert";
+  }
+
+  /* ── Footer rule copy ─────────────────────────────────────── */
+  let footerLabel: string;
+  let footerBody: ReactNode;
+  let footerTone: "clean" | "alert" | "watch";
+
+  if (!hasEpisodes) {
+    footerLabel = "Insight";
+    footerBody = "Your post-loss trading is disciplined. No rule needed.";
+    footerTone = "clean";
+  } else if (postTiltWinRatePct < normalWinRatePct - 10) {
+    footerLabel = "Suggested rule";
+    footerBody = (
+      <>
+        After {threshold} losses, your win rate drops from{" "}
+        <span className="font-mono">{normalWinRatePct}%</span> →{" "}
+        <span className="font-mono text-loss">{postTiltWinRatePct}%</span>. Suggested
+        rule: stop trading for 30 minutes after {threshold} consecutive losses.
+      </>
+    );
+    footerTone = "alert";
+  } else {
+    footerLabel = "Insight";
+    footerBody =
+      "You take more trades after losses, but your win rate holds. Worth watching, not stopping.";
+    footerTone = "watch";
+  }
 
   return (
     <div className="space-y-8">
-      {/* ── Threshold slider ───────────────────────────────────── */}
-      <div className="border-t border-white/[0.04] pt-4">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-[13px] font-medium text-secondary">
-            Tilt Detection
+      {/* ── Verdict hero ─────────────────────────────────────── */}
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+        <div className="space-y-1.5 flex-1 min-w-0">
+          <h3
+            className={cn(
+              "text-2xl sm:text-3xl font-semibold tracking-tight",
+              verdictTone === "clean" && "text-profit",
+              verdictTone === "alert" && "text-loss",
+              verdictTone === "neutral" && "text-primary",
+            )}
+          >
+            {verdictHeadline}
           </h3>
-          <div className="flex items-center gap-3">
-            <span className="text-[11px] text-tertiary">
-              Consecutive losses to trigger:
-            </span>
-            <div className="flex items-center gap-2">
-              <input
-                type="range"
-                min={2}
-                max={4}
-                step={1}
-                value={threshold}
-                onChange={(e) => setThreshold(Number(e.target.value))}
-                className="w-20 h-1 bg-surface-3 rounded-full appearance-none cursor-pointer accent-brand"
-              />
-              <span className="text-xs font-medium text-primary w-4 text-center">
-                {threshold}
-              </span>
-            </div>
-          </div>
+          <p className="text-[13px] text-secondary leading-relaxed">
+            {verdictSub}
+          </p>
         </div>
 
-        {/* ── Summary stats ──────────────────────────────────── */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <div className="border-t border-white/[0.04] pt-4">
-            <p className="text-[13px] font-medium text-secondary mb-1.5">
-              Tilt Episodes
-            </p>
-            <p className="text-xl font-medium text-primary tabular-nums">
-              {episodes.length}
-            </p>
-          </div>
+        <button
+          type="button"
+          onClick={() => setShowThresholdControl((v) => !v)}
+          className="inline-flex items-center gap-1.5 self-start text-[11px] font-medium text-tertiary hover:text-secondary transition-colors shrink-0"
+        >
+          <Settings2 size={12} strokeWidth={1.75} />
+          Adjust threshold
+          <ChevronDown
+            size={12}
+            strokeWidth={1.75}
+            className={cn(
+              "transition-transform",
+              showThresholdControl && "rotate-180",
+            )}
+          />
+        </button>
+      </div>
 
-          <div className="border-t border-white/[0.04] pt-4">
-            <p className="text-[13px] font-medium text-secondary mb-1.5">
-              Post-Tilt Avg Profit / Loss
+      {/* ── Threshold drawer ─────────────────────────────────── */}
+      {showThresholdControl && (
+        <div className="rounded-md border border-white/[0.06] bg-white/[0.02] px-4 py-3 -mt-4">
+          <div className="flex items-center gap-3">
+            <input
+              type="range"
+              min={2}
+              max={4}
+              step={1}
+              value={threshold}
+              onChange={(e) => setThreshold(Number(e.target.value))}
+              className="w-24 h-1 bg-surface-3 rounded-full appearance-none cursor-pointer accent-brand"
+            />
+            <span className="text-xs font-medium text-primary tabular-nums w-4 text-center">
+              {threshold}
+            </span>
+          </div>
+          <p className="text-[11px] text-tertiary mt-2">
+            We flag a tilt episode when you take a trade within 30 minutes of {threshold}{" "}
+            consecutive losses.
+          </p>
+        </div>
+      )}
+
+      {/* ── Summary stats ────────────────────────────────────── */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div className="border-t border-white/[0.04] pt-4">
+          <p className="text-[13px] font-medium text-secondary mb-1.5">
+            Tilt Episodes
+          </p>
+          <p className="text-xl font-medium text-primary tabular-nums">
+            {tiltEpisodes}
+          </p>
+          {!hasEpisodes && (
+            <p className="text-xs text-tertiary mt-1">
+              No tilt patterns detected
             </p>
-            <p
-              className={cn(
-                "text-xl font-medium font-mono tabular-nums",
-                postTiltAvgPnl >= 0 ? "text-profit" : "text-loss",
-              )}
-            >
-              {episodes.length > 0 ? fmtDollar(postTiltAvgPnl) : "—"}
-            </p>
-            {episodes.length > 0 && (
+          )}
+        </div>
+
+        <div className="border-t border-white/[0.04] pt-4">
+          <p className="text-[13px] font-medium text-secondary mb-1.5">
+            Post-Tilt Avg Profit / Loss
+          </p>
+          {hasPostTiltTrades ? (
+            <>
+              <p
+                className={cn(
+                  "text-xl font-medium font-mono tabular-nums",
+                  postTiltAvgPnl >= 0 ? "text-profit" : "text-loss",
+                )}
+              >
+                {fmtDollar(postTiltAvgPnl)}
+              </p>
               <p className="text-xs text-tertiary mt-1">
                 vs <span className="font-mono">{fmtDollar(normalAvgPnl)}</span> normal
               </p>
-            )}
-          </div>
+            </>
+          ) : (
+            <p className="text-[13px] text-tertiary leading-relaxed">
+              Not enough post-tilt trades
+            </p>
+          )}
+        </div>
 
-          <div className="border-t border-white/[0.04] pt-4">
-            <p className="text-[13px] font-medium text-secondary mb-1.5">
-              Cost of Tilt
+        <div className="border-t border-white/[0.04] pt-4">
+          <p className="text-[13px] font-medium text-secondary mb-1.5">
+            Cost of Tilt
+          </p>
+          {hasEpisodes && costOfTilt < 0 ? (
+            <>
+              <p className="text-xl font-medium font-mono tabular-nums text-loss">
+                {fmtDollar(costOfTilt)}
+              </p>
+              <p className="text-xs text-tertiary mt-1">
+                post-tilt losing trades
+              </p>
+            </>
+          ) : (
+            <p className="text-[13px] text-tertiary leading-relaxed">
+              Nothing to measure
             </p>
-            <p
-              className={cn(
-                "text-xl font-medium font-mono tabular-nums",
-                costOfTilt < 0 ? "text-loss" : "text-tertiary",
-              )}
-            >
-              {episodes.length > 0 ? fmtDollar(costOfTilt) : "—"}
-            </p>
-            <p className="text-xs text-tertiary mt-1">
-              post-tilt losing trades
-            </p>
-          </div>
+          )}
+        </div>
 
-          <div className="border-t border-white/[0.04] pt-4">
-            <p className="text-[13px] font-medium text-secondary mb-1.5">
-              Avg Size Increase
+        <div className="border-t border-white/[0.04] pt-4">
+          <p className="text-[13px] font-medium text-secondary mb-1.5">
+            Avg Size Increase
+          </p>
+          {hasEpisodes ? (
+            <>
+              <p
+                className={cn(
+                  "text-xl font-medium font-mono tabular-nums",
+                  avgSizeIncrease > REVENGE_SIZE_THRESHOLD_PCT
+                    ? "text-amber"
+                    : "text-primary",
+                )}
+              >
+                {`${avgSizeIncrease >= 0 ? "+" : ""}${avgSizeIncrease.toFixed(0)}%`}
+              </p>
+              <p className="text-xs text-tertiary mt-1">
+                post-tilt position sizing
+              </p>
+            </>
+          ) : (
+            <p className="text-[13px] text-tertiary leading-relaxed">
+              Sizing held steady
             </p>
-            <p
-              className={cn(
-                "text-xl font-medium font-mono tabular-nums",
-                avgSizeIncrease > REVENGE_SIZE_THRESHOLD_PCT ? "text-amber" : "text-primary",
-              )}
-            >
-              {episodes.length > 0 ? `${avgSizeIncrease >= 0 ? "+" : ""}${avgSizeIncrease.toFixed(0)}%` : "—"}
-            </p>
-            <p className="text-xs text-tertiary mt-1">
-              post-tilt position sizing
-            </p>
-          </div>
+          )}
         </div>
       </div>
 
-      {/* ── Tilt Rules suggestion ──────────────────────────────── */}
+      {/* ── Footer rule / insight ────────────────────────────── */}
       <div
         className={cn(
-          "border-t border-white/[0.04] pt-4 border-l-2",
-          episodes.length === 0 || (hasEnoughSamples && isDisciplined)
-            ? "border-l-brand"
-            : !hasEnoughSamples
-              ? "border-l-white/10"
-              : "border-l-amber",
+          "rounded-md border-l-2 border border-white/[0.04] bg-white/[0.02] px-4 py-3",
+          footerTone === "clean" && "border-l-brand",
+          footerTone === "alert" && "border-l-loss",
+          footerTone === "watch" && "border-l-amber",
         )}
       >
-        <h3 className="text-[13px] font-medium text-secondary mb-2">
-          Tilt Rules
-        </h3>
-        {episodes.length === 0 ? (
-          <p className="text-[13px] text-secondary">
-            Your post-loss trading is disciplined — no tilt pattern detected.
-            Keep it up.
-          </p>
-        ) : !hasEnoughSamples ? (
-          <p className="text-[13px] text-secondary">
-            Need more trades to detect a pattern — keep logging.
-            <span className="block text-[11px] text-tertiary mt-1">
-              {allPostTiltTrades.length} of {MIN_POST_TILT_SAMPLE} post-tilt trades logged.
-            </span>
-          </p>
-        ) : isDisciplined ? (
-          <p className="text-[13px] text-secondary">
-            Your post-loss trading is disciplined — no tilt pattern detected.
-            Keep it up.
-          </p>
-        ) : (
-          <div className="space-y-2">
-            <p className="text-[13px] text-secondary">
-              After {threshold} consecutive losses, your average post-tilt profit / loss
-              is{" "}
-              <span className="font-medium font-mono text-loss">
-                {fmtDollar(postTiltAvgPnl)}
-              </span>
-              {" "}(vs{" "}
-              <span className="font-mono">{fmtDollar(normalAvgPnl)}</span> normal). Consider a{" "}
-              <span className="font-medium text-primary">
-                10-minute cooldown rule
-              </span>
-              .
-            </p>
-            <div className="flex flex-wrap gap-2 mt-2">
-              {avgSizeIncrease > REVENGE_SIZE_THRESHOLD_PCT && (
-                <span className="text-[10px] font-medium px-2 py-1 rounded-full bg-amber-muted text-amber border border-amber/20">
-                  Revenge sizing detected (+{avgSizeIncrease.toFixed(0)}%)
-                </span>
-              )}
-              {analysis.normalWinRate > 0 &&
-                analysis.postTiltWinRate < analysis.normalWinRate * DISCIPLINED_WIN_RATE_RATIO && (
-                <span className="text-[10px] font-medium px-2 py-1 rounded-full bg-loss-muted text-loss border border-loss/20">
-                  Win rate drops {((1 - analysis.postTiltWinRate / analysis.normalWinRate) * 100).toFixed(0)}% post-tilt
-                </span>
-              )}
-              {episodes.some((e) => e.impulseEntry) && (
-                <span className="text-[10px] font-medium px-2 py-1 rounded-full bg-orange-500/10 text-orange-400 border border-orange-500/20">
-                  Impulse entries detected
-                </span>
-              )}
-              {episodes.some((e) => e.deviatedSetup) && (
-                <span className="text-[10px] font-medium px-2 py-1 rounded-full bg-purple-500/10 text-purple-400 border border-purple-500/20">
-                  Setup deviation post-tilt
-                </span>
-              )}
-            </div>
-          </div>
-        )}
+        <p
+          className={cn(
+            "text-[10px] font-medium uppercase tracking-wider mb-1",
+            footerTone === "clean" && "text-brand",
+            footerTone === "alert" && "text-loss",
+            footerTone === "watch" && "text-amber",
+          )}
+        >
+          {footerLabel}
+        </p>
+        <p className="text-[13px] text-secondary leading-relaxed">
+          {footerBody}
+        </p>
       </div>
 
       {/* ── Episode timeline ───────────────────────────────────── */}

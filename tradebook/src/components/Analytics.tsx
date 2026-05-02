@@ -14,6 +14,24 @@ import HoldTimeAnalysis from "./analytics/HoldTimeAnalysis";
 import TiltDetection from "./analytics/TiltDetection";
 import { useAllTrades } from "../hooks/useTrades";
 
+/* -- Date range label ------------------------------------------- */
+
+function describeRange(from: string, to: string): string {
+  if (!from && !to) return "all time";
+  if (!from || !to) return "this period";
+  const fromDate = new Date(from + "T00:00:00");
+  const toDate = new Date(to + "T00:00:00");
+  const days = Math.round(
+    (toDate.getTime() - fromDate.getTime()) / (1000 * 60 * 60 * 24),
+  );
+  if (days <= 8) return "7 days";
+  if (days <= 31) return "30 days";
+  if (days <= 62) return "60 days";
+  if (days <= 92) return "90 days";
+  if (days <= 366) return "year";
+  return "this period";
+}
+
 /* -- Tab Navigation --------------------------------------------- */
 
 const TABS = [
@@ -412,10 +430,10 @@ export default function Analytics() {
         )}
 
         {activeTab === "behavior" && (
-          <div>
-            <h3 className="text-[13px] font-medium text-secondary mb-4">Tilt Detection</h3>
-            <TiltDetection trades={filteredTrades} />
-          </div>
+          <TiltDetection
+            trades={filteredTrades}
+            dateRangeLabel={describeRange(filters.from, filters.to)}
+          />
         )}
       </div>
     </div>
